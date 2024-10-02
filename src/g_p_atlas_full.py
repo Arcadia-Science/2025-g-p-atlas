@@ -1,23 +1,18 @@
+import pickle as pk
+import sys
+import time as tm
+from argparse import ArgumentParser
+
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy as sc
+import seaborn as sns
 import torch
-import math
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-import matplotlib.pyplot as plt
-from torchvision import datasets, transforms
-import numpy as np
-from torch.autograd import Variable
-from argparse import ArgumentParser
-from torch.utils.data.dataset import Dataset
-import pickle as pk
-import time as tm
-import scipy as sc
-from scipy import stats
-from sklearn.metrics import mean_squared_error, r2_score
 from captum.attr import FeatureAblation
-import sys
-import seaborn as sns
-from sklearn import mixture
+from sklearn.metrics import mean_squared_error, r2_score
+from torch.utils.data.dataset import Dataset
 
 sns.set_theme()
 
@@ -272,7 +267,7 @@ def mean_absolute_percentage_error(y_true, y_pred):
 
 
 # load the training and test datasets
-if vabs.dataset_path == None:
+if vabs.dataset_path is None:
     # dataset_path = '/home/dmets/git/arcadia-genotype-phenotype-map-nn/data/n_3000_nlp_30/'
     dataset_path = "/home/dmets/git/arcadia-genotype-phenotype-map-nn/data/n_3000_nlip_10/"
     # dataset_path = '/home/dmets/git/dm_archive/arcadia/dgrp_analysis/dgrp_data/gen_phen_test_train/'
@@ -333,10 +328,10 @@ test_loader_phen_geno = torch.utils.data.DataLoader(
 # encoder
 class Q_net(nn.Module):
     def __init__(self, phen_dim=None, N=None):
-        super(Q_net, self).__init__()
-        if N == None:
+        super().__init__()
+        if N is None:
             N = vabs.e_hidden_dim
-        if phen_dim == None:
+        if phen_dim is None:
             phen_dim = vabs.n_phens_to_analyze
 
         batchnorm_momentum = vabs.batchnorm_momentum
@@ -358,19 +353,18 @@ class Q_net(nn.Module):
 # decoder
 class P_net(nn.Module):
     def __init__(self, phen_dim=None, N=None):
-        if N == None:
+        if N is None:
             N = vabs.d_hidden_dim
-        if phen_dim == None:
+        if phen_dim is None:
             phen_dim = vabs.n_phens_to_analyze
 
         out_phen_dim = vabs.n_phens_to_predict
-        n_env = vabs.n_env
-        n_allelic_states = vabs.n_locs * vabs.n_alleles
+        vabs.n_locs * vabs.n_alleles
         latent_dim = vabs.latent_dim
 
         batchnorm_momentum = vabs.batchnorm_momentum
 
-        super(P_net, self).__init__()
+        super().__init__()
         self.decoder = nn.Sequential(
             nn.Linear(in_features=latent_dim, out_features=N),
             nn.BatchNorm1d(N, momentum=batchnorm_momentum),
@@ -386,10 +380,10 @@ class P_net(nn.Module):
 # gencoder
 class GQ_net(nn.Module):
     def __init__(self, n_loci=None, N=None):
-        super(GQ_net, self).__init__()
-        if N == None:
+        super().__init__()
+        if N is None:
             N = vabs.ge_hidden_dim
-        if n_loci == None:
+        if n_loci is None:
             n_loci = vabs.n_loci_measured * vabs.n_alleles
 
         batchnorm_momentum = vabs.batchnorm_momentum
@@ -411,10 +405,10 @@ class GQ_net(nn.Module):
 # gendecoder
 class GP_net(nn.Module):
     def __init__(self, n_loci=None, N=None):
-        super(GP_net, self).__init__()
-        if N == None:
+        super().__init__()
+        if N is None:
             N = vabs.ge_hidden_dim
-        if n_loci == None:
+        if n_loci is None:
             n_loci = vabs.n_loci_measured * vabs.n_alleles
 
         batchnorm_momentum = vabs.batchnorm_momentum
@@ -434,8 +428,8 @@ class GP_net(nn.Module):
 
 class GQ_to_P_net(nn.Module):
     def __init__(self, N=None):
-        super(GQ_to_P_net, self).__init__()
-        if N == None:
+        super().__init__()
+        if N is None:
             N = vabs.gq_to_p_hidden_dim
 
         batchnorm_momentum = vabs.batchnorm_momentum
@@ -467,7 +461,7 @@ GP = GP_net()
 GQP = GQ_to_P_net()
 
 # load precomputed weights
-if vabs.hot_start == True:
+if vabs.hot_start is True:
     Q.load_state_dict(torch.load(vabs.hot_start_path_e, weights_only=True), strict=False)
     P.load_state_dict(torch.load(vabs.hot_start_path_d, weights_only=True), strict=False)
     GQ.load_state_dict(torch.load(vabs.hot_start_path_ge, weights_only=True), strict=False)
