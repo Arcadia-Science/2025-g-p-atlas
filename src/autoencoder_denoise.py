@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pickle as pk
 import time as tm
 from argparse import ArgumentParser
@@ -268,4 +270,3 @@ errs=[mean_absolute_percentage_error(phens[n],phen_encodings[n]) for n in range(
 print(errs)
 plt.hist(errs,bins=20)
 plt.show()
-

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+
 import pickle as pk
 import sys
 import time as tm
@@ -249,7 +251,7 @@ def sequential_forward_attr_gen_phen(input, phens):
     mod_2_input = GQ(input)
     mod_2_input = GQP(mod_2_input)
     X_sample = P(mod_2_input)
-    output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS, reduction="none")
+    output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
     return output
 
 
@@ -257,7 +259,7 @@ def sequential_forward_attr_phen_phen(input, phens):
     """puts together two models for use of captum feature importance"""
     mod_2_input = Q(input)
     X_sample = P(mod_2_input)
-    output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS, reduction="none")
+    output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
     return output
 
 
@@ -371,7 +373,6 @@ class P_net(nn.Module):
             nn.BatchNorm1d(N, momentum=batchnorm_momentum),
             nn.LeakyReLU(0.01),
             nn.Linear(in_features=N, out_features=out_phen_dim),
-            nn.Sigmoid(),
         )
 
     def forward(self, x):
@@ -544,237 +545,6 @@ for n in range(num_epochs):
     )
 
 
-# train genetic autoencoder
-g_rcon_loss = []
-
-num_epochs_gen = vabs.n_epochs_gen
-
-start_time = tm.time()
-
-gen_noise = 1 - vabs.gen_noise
-
-for n in range(num_epochs_gen):
-    for i, (gens) in enumerate(train_loader_geno):
-        batch_size = gens.shape[0]  # redefine batch size here to allow for incomplete batches
-
-        # reconstruction loss
-        GP.zero_grad()
-        GQ.zero_grad()
-
-        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles]
-
-        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
-
-        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
-
-        noise_gens = torch.tensor(
-            np.where((gens + pos_noise - neg_noise) > 0, 1, 0), dtype=torch.float32
-        )
-
-        noise_gens = noise_gens.to(device)
-
-        gens = gens.to(device)
-
-        z_sample = GQ(noise_gens)
-        X_sample = GP(z_sample)
-
-        g_recon_loss = F.binary_cross_entropy(X_sample + EPS, gens + EPS)
-
-        g_rcon_loss.append(float(g_recon_loss.detach()))
-
-        g_recon_loss.backward()
-        optim_GQ_enc.step()
-        optim_GP_dec.step()
-
-    cur_time = tm.time() - start_time
-    start_time = tm.time()
-    print(
-        "Epoch num: "
-        + str(n)
-        + " batchno "
-        + str(i)
-        + " r_con_loss: "
-        + str(g_rcon_loss[-1])
-        + " epoch duration: "
-        + str(cur_time)
-    )
-
-# train genotype to phenotype network
-
-P.requires_grad_(False)  # freeze weights in P (phenotype decoder)
-P.eval()
-
-GQ.requires_grad_(False)  # freeze weights in GQ (genetic encoder)
-GQ.eval()
-
-num_epochs_gen_phen = vabs.n_epochs_gen_phen
-
-gen_noise = 1 - vabs.gen_noise
-
-g_p_rcon_loss = []
-
-start_time = tm.time()
-
-for n in range(num_epochs_gen_phen):
-    for i, (phens, gens) in enumerate(train_loader_phen_geno):
-        phens = phens.to(device)
-
-        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles]
-
-        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
-
-        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
-
-        noise_gens = torch.tensor(
-            np.where((gens + pos_noise - neg_noise) > 0, 1, 0), dtype=torch.float32
-        )
-
-        noise_gens = noise_gens.to(device)
-
-        batch_size = phens.shape[0]
-
-        P.zero_grad()
-        GQP.zero_grad()
-        GQ.zero_grad()
-
-        z_sample = GQ(noise_gens)
-        z_sample = GQP(z_sample)
-        X_sample = P(z_sample)
-
-        # g_p_recon_loss = F.mse_loss(X_sample+EPS,phens[:,:n_phens_pred]+EPS)
-
-        g_p_recon_loss = F.l1_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
-
-        g_p_rcon_loss.append(float(g_p_recon_loss.detach()))
-
-        l1_reg = torch.linalg.norm(torch.sum(GQP.encoder[0].weight, axis=0), 1)
-        l2_reg = torch.linalg.norm(torch.sum(GQP.encoder[0].weight, axis=0), 2)
-        g_p_recon_loss = g_p_recon_loss + l1_reg * vabs.l1_lambda + l2_reg * vabs.l2_lambda
-
-        g_p_recon_loss.backward()
-
-        optim_P.step()
-        optim_GQ_enc.step()
-        optim_GQP_dec.step()
-
-    cur_time = tm.time() - start_time
-    start_time = tm.time()
-    print(
-        "Epoch num: "
-        + str(n)
-        + " batchno "
-        + str(i)
-        + " r_con_loss: "
-        + str(g_p_rcon_loss[-1])
-        + " epoch duration: "
-        + str(cur_time)
-    )
-
-plt.plot(rcon_loss)
-plt.plot(g_rcon_loss)
-plt.plot(g_p_rcon_loss)
-plt.savefig(dataset_path + "reconstruction_loss.svg")
-plt.close()
-
-
-# test the g-p prediction
-phen_encodings = []
-phens = []
-phen_latent = []
-fa_attr = []
-
-
-GQ.eval()
-GQP.eval()
-
-for dat in test_loader_phen_geno:
-    ph, gt = dat
-    gt = gt[:, : vabs.n_loci_measured * vabs.n_alleles]
-    ph = ph.to(device)
-    gt = gt.to(device)
-    batch_size = ph.shape[0]
-    z_sample = GQ(gt)
-    z_sample = GQP(z_sample)
-    X_sample = P(z_sample)
-    phens += list(ph.detach().cpu().numpy())
-    phen_encodings += list(X_sample.detach().cpu().numpy())
-    phen_latent += list(z_sample.detach().cpu().numpy())
-    fa_attr.append(list(fa.attribute(inputs=(gt, ph))[0].squeeze().detach().cpu().numpy()))
-
-
-#fa_attr = np.mean(fa_attr, axis=0)
-
-# plt.imshow(fa_attr)
-#plt.hist(fa_attr, bins=20)
-#plt.savefig(dataset_path + "g_p_attr.svg")
-#plt.close()
-pk.dump(fa_attr, open(dataset_path + "g_p_attr_individual_pheno.pk", "wb"))
-
-print(len(phen_latent))
-print(len(phen_latent[0]))
-print(phen_latent[0])
-
-print(len(phens))
-print(len(phens[0]))
-print(len(phen_encodings))
-print(len(phen_encodings[0]))
-
-
-# [plt.plot(x) for x in phen_latent[:10]]
-# plt.show()
-
-torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")
-torch.save(Q.state_dict(), dataset_path + "phen_encoder_state.pt")
-torch.save(GQ.state_dict(), dataset_path + "gen_encoder_state.pt")
-torch.save(GQP.state_dict(), dataset_path + "G_P_map_state.pt")
-
-phens = np.array(phens).T
-phen_encodings = np.array(phen_encodings).T
-phen_latent = np.array(phen_latent).T
-
-pk.dump(
-    [phens, phen_encodings, phen_latent],
-    open(dataset_path + "phens_phen_encodings_dng_gp.pk", "wb"),
-)
-
-for n in range(len(phens[:n_phens_pred])):
-    plt.plot(phens[n], phen_encodings[n], "o")
-plt.xlabel("real")
-plt.ylabel("predicted")
-plt.gca().set_aspect("equal")
-plt.savefig(dataset_path + "phen_real_pred_dng_attr_gg.svg")
-plt.close()
-
-cors = [sc.stats.pearsonr(phens[n], phen_encodings[n])[0] for n in range(len(phens[:n_phens_pred]))]
-print(cors)
-plt.hist(cors, bins=20)
-# plt.show()
-plt.savefig(dataset_path + "phen_real_pred_pearsonsr_dng_attr_gg.svg")
-plt.close()
-
-errs = [mean_squared_error(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
-print(errs)
-plt.hist(errs, bins=20)
-# plt.show()
-plt.savefig(dataset_path + "phen_real_pred_mse_dng_attr_gg.svg")
-plt.close()
-
-errs = [
-    mean_absolute_percentage_error(phens[n], phen_encodings[n])
-    for n in range(len(phens[:n_phens_pred]))
-]
-print(errs)
-plt.hist(errs, bins=20)
-# plt.show()
-plt.savefig(dataset_path + "phen_real_pred_mape_dng_attr_gg.svg")
-plt.close()
-
-errs = [r2_score(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
-print(errs)
-plt.hist(errs, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_r2_dng_attr_gg.svg")
-plt.close()
-
 # test the p-p prediction
 Q.eval()
 
@@ -795,12 +565,12 @@ for dat in test_loader_pheno:
     fa_attr.append(list(fa_p.attribute(inputs=(ph, ph))[0].squeeze().detach().cpu().numpy()))
 
 
-#fa_attr = np.mean(fa_attr, axis=0)
+fa_attr = np.mean(fa_attr, axis=0)
 # plt.imshow(fa_attr)
-#plt.hist(fa_attr, bins=20)
-#plt.savefig(dataset_path + "p_p_attr.svg")
-#plt.close()
-pk.dump(fa_attr, open(dataset_path + "p_p_attr_individual_pheno.pk", "wb"))
+plt.hist(fa_attr, bins=20)
+plt.savefig(dataset_path + "p_p_attr.svg")
+plt.close()
+pk.dump(fa_attr, open(dataset_path + "p_p_attr.pk", "wb"))
 
 
 phens = np.array(phens).T
@@ -847,40 +617,4 @@ plt.hist(errs, bins=20)
 plt.savefig(dataset_path + "phen_real_pred_r2_dng_attr_p.svg")
 plt.close()
 
-
-# test the g-g prediction
-#GQ.eval()
-#GP.eval()
-
-#gen_encodings = []
-#gens = []
-#gen_latent = []
-#fa_attr = []
-
-#for dat in test_loader_geno:
-#    gt = dat
-#    gt = gt.to(device)
-#    batch_size = gt.shape[0]
-#    z_sample = GQ(gt)
-#    X_sample = GP(z_sample)
-#    gens += list(gt.detach().cpu().numpy())
-#    gen_encodings += list(X_sample.detach().cpu().numpy())
-#    gen_latent += list(z_sample.detach().cpu().numpy())
-#    fa_attr.append(list(fa_g.attribute(inputs=(gt, gt))[0].squeeze().detach().cpu().numpy()))
-
-
-#fa_attr = np.mean(fa_attr, axis=0)
-# plt.imshow(fa_attr)
-#plt.hist(fa_attr, bins=20)
-#plt.savefig(dataset_path + "g_g_attr.svg")
-#plt.close()
-#pk.dump(fa_attr, open(dataset_path + "g_g_attr.pk", "wb"))
-
-
-#gens = np.array(gens).T
-#gen_encodings = np.array(gen_encodings).T
-#gen_latent = np.array(gen_latent).T
-
-#pk.dump(
-#    [gens, gen_encodings, gen_latent], open(dataset_path + "gens_gen_encodings_dng_attr_g.pk", "wb")
-#)
+torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")

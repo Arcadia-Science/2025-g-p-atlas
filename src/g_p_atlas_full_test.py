@@ -520,9 +520,15 @@ for n in range(num_epochs):
         z_sample = Q(noise_phens)
         X_sample = P(z_sample)
 
-        # recon_loss = F.mse_loss(X_sample+EPS,phens[:,:n_phens_pred]+EPS)
-
         recon_loss = F.l1_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
+
+        #add sparsity
+        l1_reg = torch.linalg.norm(torch.sum(Q.encoder[0].weight, axis=0), 1)
+        l2_reg = torch.linalg.norm(torch.sum(Q.encoder[0].weight, axis=0), 2)
+
+        recon_loss = recon_loss + l1_reg * 0.0000000001 + l2_reg * 0.000000001
+
+
 
         rcon_loss.append(float(recon_loss.detach()))
 
@@ -710,14 +716,14 @@ for dat in test_loader_phen_geno:
 #plt.close()
 pk.dump(fa_attr, open(dataset_path + "g_p_attr_individual_pheno.pk", "wb"))
 
-print(len(phen_latent))
-print(len(phen_latent[0]))
-print(phen_latent[0])
+#print(len(phen_latent))
+#print(len(phen_latent[0]))
+#print(phen_latent[0])
 
-print(len(phens))
-print(len(phens[0]))
-print(len(phen_encodings))
-print(len(phen_encodings[0]))
+#print(len(phens))
+#print(len(phens[0]))
+#print(len(phen_encodings))
+#print(len(phen_encodings[0]))
 
 
 # [plt.plot(x) for x in phen_latent[:10]]
@@ -800,7 +806,7 @@ for dat in test_loader_pheno:
 #plt.hist(fa_attr, bins=20)
 #plt.savefig(dataset_path + "p_p_attr.svg")
 #plt.close()
-pk.dump(fa_attr, open(dataset_path + "p_p_attr_individual_pheno.pk", "wb"))
+pk.dump(fa_attr, open(dataset_path + "p_p_attr_individual_pheno_TEST.pk", "wb"))
 
 
 phens = np.array(phens).T
@@ -846,41 +852,3 @@ print(errs)
 plt.hist(errs, bins=20)
 plt.savefig(dataset_path + "phen_real_pred_r2_dng_attr_p.svg")
 plt.close()
-
-
-# test the g-g prediction
-#GQ.eval()
-#GP.eval()
-
-#gen_encodings = []
-#gens = []
-#gen_latent = []
-#fa_attr = []
-
-#for dat in test_loader_geno:
-#    gt = dat
-#    gt = gt.to(device)
-#    batch_size = gt.shape[0]
-#    z_sample = GQ(gt)
-#    X_sample = GP(z_sample)
-#    gens += list(gt.detach().cpu().numpy())
-#    gen_encodings += list(X_sample.detach().cpu().numpy())
-#    gen_latent += list(z_sample.detach().cpu().numpy())
-#    fa_attr.append(list(fa_g.attribute(inputs=(gt, gt))[0].squeeze().detach().cpu().numpy()))
-
-
-#fa_attr = np.mean(fa_attr, axis=0)
-# plt.imshow(fa_attr)
-#plt.hist(fa_attr, bins=20)
-#plt.savefig(dataset_path + "g_g_attr.svg")
-#plt.close()
-#pk.dump(fa_attr, open(dataset_path + "g_g_attr.pk", "wb"))
-
-
-#gens = np.array(gens).T
-#gen_encodings = np.array(gen_encodings).T
-#gen_latent = np.array(gen_latent).T
-
-#pk.dump(
-#    [gens, gen_encodings, gen_latent], open(dataset_path + "gens_gen_encodings_dng_attr_g.pk", "wb")
-#)
