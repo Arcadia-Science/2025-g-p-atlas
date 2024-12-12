@@ -212,10 +212,7 @@ def mean_absolute_percentage_error(y_true, y_pred):
 transform = transforms.ToTensor()
 
 # load the training and test datasets
-if vabs.dataset_path is None:
-    dataset_path = "/home/dmets/git/arcadia-genotype-phenotype-map-nn/data/n_3000_nlip_10/"  # FIX
-else:
-    dataset_path = vabs.dataset_path
+dataset_path = vabs.dataset_path
 
 params_file = open(dataset_path + "run_params.txt", "w")
 params_file.write(" ".join(sys.argv[:]))
