@@ -12,9 +12,7 @@ from sklearn import metrics
  python3 plot_gp_simulated_linkage.py [PATH TO G-P ATLAS OUTPUT]"""
 
 # folder containing output of g-p atlas when run on simulated data
-target_folder = sys.argv[
-    1
-]
+target_folder = sys.argv[1]
 
 # load the variable imporance measures for genes
 gene_attributions = pk.load(open(target_folder + "g_p_attr.pk", "rb"))
@@ -38,7 +36,7 @@ def calculate_fpr_threshold(fpr, thresholds):
 
 
 # plot ROC curve for alleles determining the utility of allele attributions in
-#identifying influential genes
+# identifying influential genes
 max_weights = np.max(
     np.array([np.ndarray.flatten(np.array(x)) for x in test_data["weights"]]), axis=0
 )
