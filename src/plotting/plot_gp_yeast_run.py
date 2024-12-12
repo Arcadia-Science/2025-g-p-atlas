@@ -1,11 +1,12 @@
-import sys as sys
 import os as os
+import pickle as pk
+import sys as sys
+
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.manifold import TSNE
-import pickle as pk
-import seaborn as sns
 import scipy as sc
+import seaborn as sns
+from sklearn.manifold import TSNE
 
 '''This script runs an initial analysis on the output G-P Atlas of the yeast cross
  data from DOI_FOR_YEAST_PAPER and presented in DOI_FOR_PUB. It creates a series of figures
@@ -25,12 +26,12 @@ def MSE(y_true,y_pred):
     y_true, y_pred = np.array(y_true), np.array(y_pred)
     return np.mean((y_true-y_pred)**2)
 
-def calc_coef_of_det(y_true,f_pred):
+def calc_coef_of_det(y_true,y_pred):
     #calculates the coefficient of determination of a model
         y_true = np.array(y_true)
-        f_pred = np.array(fy_pred)
-        ssres = np.sum((y-f)**2) 
-        sstot = np.sum((y-np.mean(y))**2)
+        np.array(y_pred)
+        ssres = np.sum((y_true-y_pred)**2)
+        sstot = np.sum((y_true-np.mean(y_true))**2)
         return 1-(ssres/sstot)
 
 #load real and predicted phenotypes. Predictions are based on phenotypes
@@ -146,7 +147,8 @@ plt.close()
 herit = [0.85,0.33,0.38,0.40,0.59,0.65,0.44,0.66,0.60,0.59,0.56,0.41,0.32,0.56,0.35,0.48,\
 0.44,0.63,0.64,0.80,0.33,0.43,0.74,0.27,0.50,0.72,0.64,0.48,0.54,0.49,0.57,0.74,0.53,0.78,\
 0.58,0.71,0.43,0.55,0.73,0.29,0.50,0.73,0.53,0.69,0.54,0.55]
-coef_det = [calc_coef_of_det(gen_encodings[0][n],gen_encodings[1][n]) for n in range(len(gen_encodings[0]))]
+coef_det = [calc_coef_of_det(gen_encodings[0][n],gen_encodings[1][n]) for n in \
+range(len(gen_encodings[0]))]
 plt.plot(herit,coef_det,'o')
 print('gp vs. h')
 print(sc.stats.wilcoxon(herit,coef_det))
@@ -163,7 +165,8 @@ plt.savefig(target_folder+'coef_det_vs_h2_g_p.svg')
 plt.savefig(target_folder+'coef_det_vs_h2_g_p.png')
 plt.close()
 
-#plot the additive variance explained by genomic prediction vs the coefficient of determination for g-p atlas
+#plot the additive variance explained by genomic prediction vs the
+#coefficient of determination for g-p atlas
 add_var = [0.79,0.25,0.32,0.40,0.52,0.53,0.40,0.54,0.55,0.45,0.53,0.31,0.28,0.47,0.24,0.35,0.40,\
 0.56,0.62,0.74,0.40,0.47,0.65,0.31,0.47,0.64,0.54,0.39,0.50,0.47,0.54,0.61,0.48,0.61,0.43,0.60,0.38,\
 0.52,0.60,0.28,0.43,0.57,0.46,0.71,0.52,0.55]
@@ -184,9 +187,9 @@ plt.savefig(target_folder+'coef_det_vs_add_var_g_p.png')
 plt.close()
 
 #plot the broad sense heritability vs coefficient of determinaytion for g-p atlas
-herit_b = [0.96,0.44,0.47,0.49,0.85,0.71,0.78,0.72,0.70,0.77,0.75,0.76,0.63,0.58,0.60,0.74,0.81,0.84,0.89,\
-0.87,0.57,0.87,0.94,0.42,0.65,0.86,0.79,0.63,0.81,0.70,0.77,0.91,0.89,0.86,0.70,0.73,0.56,0.76,0.80,0.40,\
-0.78,0.76,0.84,0.83,0.88,0.90]
+herit_b = [0.96,0.44,0.47,0.49,0.85,0.71,0.78,0.72,0.70,0.77,0.75,0.76,0.63,0.58,0.60,0.74,0.81,\
+0.84,0.89,0.87,0.57,0.87,0.94,0.42,0.65,0.86,0.79,0.63,0.81,0.70,0.77,0.91,0.89,0.86,0.70,0.73,0.56,\
+0.76,0.80,0.40,0.78,0.76,0.84,0.83,0.88,0.90]
 plt.plot(herit_b,coef_det,'o')
 print('gp vs. H')
 print(sc.stats.wilcoxon(herit_b,coef_det))

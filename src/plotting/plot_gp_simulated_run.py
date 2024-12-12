@@ -1,11 +1,11 @@
-import sys as sys
 import os as os
+import pickle as pk
+import sys as sys
+
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.manifold import TSNE
-import pickle as pk
 import seaborn as sns
-from sklearn import metrics
+from sklearn.manifold import TSNE
 
 '''This script runs an initial analysis on the output a G-P Atlas of simulated data
  data from DOI_FOR_PHEN_NONLINEAR and presented in DOI_FOR_PUB. It creates a series of figures
@@ -76,18 +76,20 @@ plt.savefig(target_folder+'p_p_plot_raw.png')
 plt.close()
 
 #plot MAPE density
-errs = [mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n])for n in range(len(phenotypes))]
+errs = [mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n])for \
+n in range(len(phenotypes))]
 sns.kdeplot(errs,label="Within phenotype error")
 print('Median MAPE between real and predicted phenotypes based on phenotypiic data')
 print('Median MAPE within phenotypes')
 median = np.median(errs)
-plt.axvline(median) 
+plt.axvline(median)
 print(median)
-errs2 = [mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n])for n in range(len(phenotypes.T))]
+errs2 = [mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n]) \
+for n in range(len(phenotypes.T))]
 print('Median MAPE within individuals')
 median = np.median(errs2)
 plt.axvline(median)
-print(median) 
+print(median)
 sns.kdeplot(errs2,label="Within individual error")
 plt.xticks(fontfamily='monospace')
 plt.yticks(fontfamily='monospace')
@@ -116,19 +118,21 @@ plt.savefig(target_folder+'g_p_plot_raw.png')
 plt.close()
 
 #plot MAPE density
-errs = [mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n])for n in range(len(phenotypes))]
+errs = [mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n]) \
+for n in range(len(phenotypes))]
 sns.kdeplot(errs,label="Within phenotype error")
 print('Median MAPE between real and predicted phenotypes based on genetic data')
 print('Median MAPE within phenotypes')
 median = np.median(errs)
 plt.axvline(median)
 print(median)
-errs2 = [mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n])for n in range(len(phenotypes.T))]
+errs2 = [mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n])\
+ for n in range(len(phenotypes.T))]
 sns.kdeplot(errs2,label="Within individual error")
 median = np.median(errs2)
 plt.axvline(median)
 print('Median MAPE within individuals')
-print(median) 
+print(median)
 plt.xticks(fontfamily='monospace')
 plt.yticks(fontfamily='monospace')
 plt.xlabel('Mean absolute percentage error')
