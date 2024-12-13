@@ -289,9 +289,6 @@ class P_net(nn.Module):
         out_phen_dim = vabs.n_phens_to_predict
         vabs.n_locs * vabs.n_alleles
         latent_dim = vabs.latent_dim
-
-        batchnorm_momentum = vabs.batchnorm_momentum
-
         super().__init__()
         self.decoder = nn.Sequential(
             nn.Linear(in_features=latent_dim, out_features=out_phen_dim)

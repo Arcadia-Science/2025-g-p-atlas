@@ -320,10 +320,7 @@ class GQ_net(nn.Module):
         batchnorm_momentum = vabs.batchnorm_momentum
         latent_dim = vabs.latent_dim
         self.encoder = nn.Sequential(
-            nn.Linear(in_features=n_loci, out_features=N),
-            nn.BatchNorm1d(N, momentum=batchnorm_momentum),
-            nn.LeakyReLU(0.01),
-            nn.Linear(in_features=N, out_features=latent_dim),
+            nn.Linear(in_features=n_loci, out_features=latent_dim),
             nn.BatchNorm1d(latent_dim, momentum=batchnorm_momentum),
             nn.LeakyReLU(0.01)
         )
