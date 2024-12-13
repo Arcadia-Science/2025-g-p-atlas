@@ -17,7 +17,7 @@ from torchvision import transforms
 '''This is an implementation of the G-P Atlas method for mapping genotype
 to phenotype described in PUB_DOI. This version has no hidden layer in the
 genotype to phenotype network.
-For help type: 
+For help type:
 python3 g_p_atlas.py --help'''
 
 
