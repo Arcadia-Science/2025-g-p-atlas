@@ -14,11 +14,11 @@ from sklearn.metrics import mean_squared_error, r2_score
 from torch.utils.data.dataset import Dataset
 from torchvision import transforms
 
-'''This is an implementation of the G-P Atlas method for mapping genotype
+"""This is an implementation of the G-P Atlas method for mapping genotype
 to phenotype described in PUB_DOI. This version has no hidden layer in the
 phenotype to phenotype autoencoder.
 For help type:
-python3 g_p_atlas.py --help'''
+python3 g_p_atlas.py --help"""
 
 # parse commandline arguments
 args = ArgumentParser()
@@ -296,9 +296,7 @@ class P_net(nn.Module):
         vabs.n_locs * vabs.n_alleles
         latent_dim = vabs.latent_dim
         super().__init__()
-        self.decoder = nn.Sequential(
-            nn.Linear(in_features=latent_dim, out_features=out_phen_dim)
-        )
+        self.decoder = nn.Sequential(nn.Linear(in_features=latent_dim, out_features=out_phen_dim))
 
     def forward(self, x):
         x = self.decoder(x)
@@ -322,24 +320,25 @@ class GQ_net(nn.Module):
             nn.LeakyReLU(0.01),
             nn.Linear(in_features=N, out_features=latent_dim),
             nn.BatchNorm1d(latent_dim, momentum=batchnorm_momentum),
-            nn.LeakyReLU(0.01),
+            nn.LeakyReLU(0.01)
         )
 
     def forward(self, x):
         x = self.encoder(x)
         return x
 
-#G-P Atlas run
 
-EPS = 1e-15 #define a minimum value for variables to avoid divide by zero and buffer underflow
+# G-P Atlas run
 
-#define encoders and decoders
-Q = Q_net() #phenotype encoder
-P = P_net() #phenotype deocoder
-GQ = GQ_net() #genotype encoder
+EPS = 1e-15  # define a minimum value for variables to avoid divide by zero and buffer underflow
 
-#load precomputed weights
-#this allows you to specify precomuted weights so that the training can be 'hotstarted'
+# define encoders and decoders
+Q = Q_net()  # phenotype encoder
+P = P_net()  # phenotype deocoder
+GQ = GQ_net()  # genotype encoder
+
+# load precomputed weights
+# this allows you to specify precomuted weights so that the training can be 'hotstarted'
 if vabs.hot_start is True:
     Q.load_state_dict(torch.load(vabs.hot_start_path_e, weights_only=True), strict=False)
     P.load_state_dict(torch.load(vabs.hot_start_path_d, weights_only=True), strict=False)
@@ -351,8 +350,8 @@ P.to(device)
 GQ.to(device)
 
 # Set up feature importance measure
-fa = FeatureAblation(sequential_forward_attr_gen_phen) #genotype feature importance
-fa_p = FeatureAblation(sequential_forward_attr_phen_phen) #phenotype feature importance
+fa = FeatureAblation(sequential_forward_attr_gen_phen)  # genotype feature importance
+fa_p = FeatureAblation(sequential_forward_attr_phen_phen)  # phenotype feature importance
 
 # Set learning rates
 reg_lr = vabs.lr_r
@@ -474,9 +473,9 @@ for n in range(num_epochs_gen):
         + str(cur_time)
     )
 
-#plot the reconstruction losses
-plt.plot(rcon_loss) #reconstruction loss for the phenotype autoencoder
-plt.plot(g_rcon_loss) #reconstruction loss for the genetic weights
+# plot the reconstruction losses
+plt.plot(rcon_loss)  # reconstruction loss for the phenotype autoencoder
+plt.plot(g_rcon_loss)  # reconstruction loss for the genetic weights
 plt.savefig(dataset_path + "reconstruction_loss.svg")
 plt.close()
 
@@ -502,12 +501,12 @@ for dat in test_loader_geno:
     fa_attr.append(list(fa.attribute(inputs=(gt, ph))[0].squeeze().detach().cpu().numpy()))
 
 
-#plot a histogram of the genetic feature attributions
+# plot a histogram of the genetic feature attributions
 plt.hist(fa_attr, bins=20)
 plt.savefig(dataset_path + "g_p_attr.svg")
 plt.close()
 
-#save the genetic feature attributions
+# save the genetic feature attributions
 pk.dump(fa_attr, open(dataset_path + "g_p_attr.pk", "wb"))
 
 # save weights from networks
@@ -515,12 +514,12 @@ torch.save(Q.state_dict(), dataset_path + "phen_encoder_state.pt")
 torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")
 torch.save(GQ.state_dict(), dataset_path + "gen_encoder_state.pt")
 
-#save and plot phenotypes and phenotype predictions based on genotypes
+# save and plot phenotypes and phenotype predictions based on genotypes
 phens = np.array(phens).T
 phen_encodings = np.array(phen_encodings).T
 pk.dump([phens, phen_encodings], open(dataset_path + "phens_phen_encodings_dng_attr.pk", "wb"))
 
-#create a file and an agregator for statistics
+# create a file and an agregator for statistics
 out_stats = open(dataset_path + "test_stats.pk", "wb")
 stats_agregator = []
 
@@ -637,5 +636,5 @@ plt.hist(errs, bins=20)
 plt.savefig(dataset_path + "phen_real_pred_r2_dng_attr_p.svg")
 plt.close()
 
-#save stats
+# save stats
 pk.dump(stats_agregator, out_stats)
