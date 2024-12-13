@@ -14,6 +14,13 @@ from sklearn.metrics import mean_squared_error, r2_score
 from torch.utils.data.dataset import Dataset
 from torchvision import transforms
 
+'''This is an implementation of the G-P Atlas method for mapping genotype
+to phenotype described in PUB_DOI. This version has no hidden layer in the
+genotype to phenotype network.
+For help type: 
+python3 g_p_atlas.py --help'''
+
+
 # parse commandline arguments
 args = ArgumentParser()
 args.add_argument(
