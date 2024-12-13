@@ -276,7 +276,7 @@ class Q_net(nn.Module):
         self.encoder = nn.Sequential(
             nn.Linear(in_features=phen_dim, out_features=latent_dim),
             nn.BatchNorm1d(latent_dim, momentum=batchnorm_momentum),
-            nn.LeakyReLU(0.01, inplace=True)
+            nn.LeakyReLU(0.01, inplace=True),
         )
 
     def forward(self, x):
@@ -320,7 +320,7 @@ class GQ_net(nn.Module):
             nn.LeakyReLU(0.01),
             nn.Linear(in_features=N, out_features=latent_dim),
             nn.BatchNorm1d(latent_dim, momentum=batchnorm_momentum),
-            nn.LeakyReLU(0.01)
+            nn.LeakyReLU(0.01),
         )
 
     def forward(self, x):
