@@ -64,6 +64,9 @@ add_val = [max_weights[n] for n in range(len(labels)) if labels[n] > 0]
 one_percent_fpr = calculate_fpr_threshold(fpr, thresholds)
 print(len([x for x in max_attr if x > one_percent_fpr]))
 print(len(max_attr))
+print(len([y for y in [max(x) for x in [max_attr[i:i+3] for i in range(0,len(max_attr),3)]] if y > one_percent_fpr]))
+print(len(max_attr)/3)
+
 plt.scatter(add_val, max_attr, marker="o")
 plt.plot([-0.02, 10.02], [one_percent_fpr, one_percent_fpr], color="C1", linewidth=1)
 plt.legend("1% FPR", fontsize=14)

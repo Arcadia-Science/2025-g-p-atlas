@@ -140,12 +140,14 @@ percentile = np.percentile(max_attrs, 95)
 plt.plot(sorted_absolute_marker_position, max_attrs, "o", markersize=2)
 
 # format the plot
-plt.plot(
+'''plt.plot(
     [sorted_absolute_marker_position[n] for n in sorted_linked_marker_index],
     sorted_variance_explained,
     "o",
     markersize=2,
-)
+)'''
+
+
 plt.xticks(fontfamily="monospace")
 plt.yticks(fontfamily="monospace")
 plt.ylabel("Scaled mean squared variable importance")
@@ -292,6 +294,7 @@ percentiles = [np.percentile(max_attrs, x) for x in range(1, 101)]
 cumulative_fraction = [
     len([x for x in max_attr_per_locus if x < y]) / len(max_attr_per_locus) for y in percentiles
 ]
+
 cumulative_fraction_reverse = list(reversed(cumulative_fraction))
 plt.plot(list(reversed(list(np.array(range(0, 100)) / 100))), cumulative_fraction_reverse)
 plt.xticks(fontfamily="monospace")
@@ -303,6 +306,13 @@ plt.xlim(0, 1.001)
 plt.savefig(target_folder + "fraction_loc_identified_per_variable_importance.svg")
 plt.savefig(target_folder + "fraction_loc_identified_per_variable_importance.png")
 plt.close()
+
+#print the number of true loci identified in the top 10th percentile of feature attribution scores
+ninteith_percentile = np.percentile(max_attrs,90)
+print(ninteith_percentile)
+print(len([x for x in max_attr_per_locus if x > ninteith_percentile]))
+all_loci_captured_index = (cumulative_fraction_reverse.index(0))
+print(list(reversed(list(np.array(range(0, 100)) / 100)))[22])
 
 # feature importance vs variance explained
 max_attr_per_linked_locus = [max_attrs[n] for n in sorted_linked_marker_index]
