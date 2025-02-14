@@ -1,12 +1,11 @@
-import os as os
+import os
 import pickle as pk
-import sys as sys
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sc
 import seaborn as sns
-from matplotlib.colors import ListedColormap
 from sklearn import metrics
 
 """This script runs an analysis of the variable importance measures provided by
@@ -25,11 +24,6 @@ gp_attr = pk.load(open(target_folder + "g_p_attr.pk", "rb"))
 
 # load data for the published analysis of the yeast data
 yeast_chr_dat = pk.load(open(target_folder + "../yeast_cross_test.pk", "rb"))
-
-# make useful colormap
-default_cycler = plt.rcParams["axes.prop_cycle"]
-colors = [c["color"] for c in default_cycler]
-cmap = ListedColormap(colors)
 
 # load previously created yeast linkage data and create some useful transformations of those data
 yeast_linkage_data = (

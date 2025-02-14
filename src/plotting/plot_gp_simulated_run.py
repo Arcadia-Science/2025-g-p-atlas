@@ -1,6 +1,6 @@
-import os as os
+import os
 import pickle as pk
-import sys as sys
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
