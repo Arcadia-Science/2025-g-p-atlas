@@ -20,7 +20,8 @@ with open(target_folder + "g_p_attr.pk", "rb") as data:
     gene_attributions = pk.load(data))
 
 # load the test data dictionary for the analysis
-test_data = pk.load(open(target_folder + "../test.pk", "rb"))
+with open(target_folder + "../test.pk", "rb") as data:
+    test_data = pk.load(data)
 
 
 # helper functions
