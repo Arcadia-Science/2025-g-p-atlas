@@ -283,7 +283,7 @@ plt.savefig(target_folder + "variance_exp_vs_var_imp.png")
 plt.close()
 
 
-# cunulative fraction of linked loci identified based on variable importance
+# cumulative fraction of linked loci identified based on variable importance
 percentiles = [np.percentile(max_attrs, x) for x in range(1, 101)]
 cumulative_fraction = [
     len([x for x in max_attr_per_locus if x < y]) / len(max_attr_per_locus) for y in percentiles
