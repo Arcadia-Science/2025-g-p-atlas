@@ -41,7 +41,8 @@ def calc_coef_of_det(y_true, y_pred):
 
 
 # load real and predicted phenotypes. Predictions are based on phenotypes
-phen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr_p.pk", "rb"))
+with open(target_folder + "phens_phen_encodings_dng_attr_p.pk", "rb") as data:
+    phen_encodings = pk.load(data)
 
 # load real and predicted phenotypes. predictions are based on genotypes
 with open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb") as data:
