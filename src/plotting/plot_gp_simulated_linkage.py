@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import metrics
 
+# TODO: add DOIs when available
 """This script runs an analysis of the variable importance measures provided by
  on the output a G-P Atlas of simulated data from DOI_FOR_PHEN_NONLINEAR and
  presented in DOI_FOR_PUB. It creates a series of figures
