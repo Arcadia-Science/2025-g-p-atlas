@@ -20,6 +20,7 @@ target_folder = sys.argv[
 # helper functions
 def mean_absolute_percentage_error(y_true, y_pred):
     # calculates the mean absolute percentage error of a set of predictions
+    eps = 1e-15 #minimum value to avoid underflow and allow handling of divzero
     y_true, y_pred = np.array(y_true + EPS), np.array(y_pred)
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
@@ -44,9 +45,6 @@ phen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr_p.p
 
 # load real and predicted phenotypes. predictions are based on genotypes
 gen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb"))
-
-# define a minimum value to avoid numerical underflow and deal with divide by zero issues
-EPS = 1e-15
 
 # tsne plot of phenotype latent space
 tsne_model = TSNE(n_components=2, learning_rate="auto", init="random", perplexity=50)
