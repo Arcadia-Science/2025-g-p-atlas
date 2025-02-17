@@ -288,7 +288,7 @@ plt.savefig(target_folder + "coef_det_vs_add_var_g_p.svg")
 plt.savefig(target_folder + "coef_det_vs_add_var_g_p.png")
 plt.close()
 
-# plot the broad sense heritability vs coefficient of determinaytion for g-p atlas
+# plot the broad sense heritability vs coefficient of determination for g-p atlas
 herit_b = [
     0.96,
     0.44,
