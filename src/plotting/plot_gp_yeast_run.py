@@ -149,6 +149,7 @@ plt.close()
 
 
 # plot heritability (narrow sense) vs the coefficient of determination for g-p atlas
+# heritability values are from 10.1038/nature11867
 herit = [
     0.85,
     0.33,
@@ -221,6 +222,7 @@ plt.close()
 
 # plot the additive variance explained by genomic prediction vs the
 # coefficient of determination for g-p atlas
+# additive variance explained values are from 10.1038/nature11867
 add_var = [
     0.79,
     0.25,
@@ -288,6 +290,7 @@ plt.savefig(target_folder + "coef_det_vs_add_var_g_p.png")
 plt.close()
 
 # plot the broad sense heritability vs coefficient of determination for g-p atlas
+# heritability values are from 10.1038/nature11867
 herit_b = [
     0.96,
     0.44,
