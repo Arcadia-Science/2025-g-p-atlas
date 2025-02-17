@@ -6,6 +6,7 @@ import numpy as np
 import seaborn as sns
 from sklearn.manifold import TSNE
 
+# TODO: add DOIs when available
 """This script runs an initial analysis on the output a G-P Atlas of simulated data
  data from DOI_FOR_PHEN_NONLINEAR and presented in DOI_FOR_PUB. It creates a series of figures
  presented in that pub. It is intended to be used as follows:
@@ -81,7 +82,7 @@ errs = [
     for n in range(len(phenotypes))
 ]
 sns.kdeplot(errs, label="Within phenotype error")
-print("Median MAPE between real and predicted phenotypes based on phenotypiic data")
+print("Median MAPE between real and predicted phenotypes based on phenotypic data")
 print("Median MAPE within phenotypes")
 median = np.median(errs)
 plt.axvline(median)

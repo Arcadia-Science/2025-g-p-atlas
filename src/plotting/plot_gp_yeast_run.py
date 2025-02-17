@@ -44,7 +44,8 @@ def calc_coef_of_det(y_true, y_pred):
 phen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr_p.pk", "rb"))
 
 # load real and predicted phenotypes. predictions are based on genotypes
-gen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb"))
+with open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb") as data:
+    gen_encodings = pk.load(data)
 
 # tsne plot of phenotype latent space
 tsne_model = TSNE(n_components=2, learning_rate="auto", init="random", perplexity=50)
