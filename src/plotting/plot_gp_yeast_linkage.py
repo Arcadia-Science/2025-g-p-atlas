@@ -17,7 +17,8 @@ from sklearn import metrics
 target_folder = sys.argv[1]  # folder containing the output of G-P Atlas when run on yeast data
 
 # load phenotypes and phenotype predictions.  predictions based on genetic data
-gen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb"))
+with open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb") as data:
+    gen_encodings = pk.load(data)
 
 # load the variable imporance measures for genes
 gp_attr = pk.load(open(target_folder + "g_p_attr.pk", "rb"))
