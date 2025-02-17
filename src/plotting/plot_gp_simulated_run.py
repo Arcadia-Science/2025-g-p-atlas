@@ -84,7 +84,7 @@ errs = [
     for n in range(len(phenotypes))
 ]
 sns.kdeplot(errs, label="Within phenotype error")
-print("Median MAPE between real and predicted phenotypes based on phenotypiic data")
+print("Median MAPE between real and predicted phenotypes based on phenotypic data")
 print("Median MAPE within phenotypes")
 median = np.median(errs)
 plt.axvline(median)
