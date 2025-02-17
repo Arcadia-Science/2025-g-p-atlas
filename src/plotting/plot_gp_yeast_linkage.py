@@ -25,7 +25,8 @@ with open(target_folder + "g_p_attr.pk", "rb") as data:
     gp_attr = pk.load(data)
 
 # load data for the published analysis of the yeast data
-yeast_chr_dat = pk.load(open(target_folder + "../yeast_cross_test.pk", "rb"))
+with open(target_folder + "../yeast_cross_test.pk", "rb") as data:
+    yeast_chr_dat = pk.load(data)
 
 # load previously created yeast linkage data and create some useful transformations of those data
 yeast_linkage_data = (
