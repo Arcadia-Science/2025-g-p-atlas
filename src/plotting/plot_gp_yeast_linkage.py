@@ -21,7 +21,8 @@ with open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb") as data:
     gen_encodings = pk.load(data)
 
 # load the variable imporance measures for genes
-gp_attr = pk.load(open(target_folder + "g_p_attr.pk", "rb"))
+with open(target_folder + "g_p_attr.pk", "rb") as data:
+    gp_attr = pk.load(data)
 
 # load data for the published analysis of the yeast data
 yeast_chr_dat = pk.load(open(target_folder + "../yeast_cross_test.pk", "rb"))
