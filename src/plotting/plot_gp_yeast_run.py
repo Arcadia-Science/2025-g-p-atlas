@@ -1,17 +1,17 @@
 import pickle as pk
 import sys
 
+import helper_functions as hf
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sc
 import seaborn as sns
-import helper_functions as hf
 from sklearn.manifold import TSNE
 
 """This script runs an initial analysis on the output G-P Atlas of the yeast cross
- data from 10.1038/nature11867 and presented in 10.57844/arcadia-d316-721f. It creates a series of figures
- presented in that pub. It is intended to be used as follows:
- python3 plot_gp_yeast_run.py [PATH TO G-P ATLAS OUTPUT]"""
+ data from 10.1038/nature11867 and presented in 10.57844/arcadia-d316-721f.
+ It creates a series of figures presented in that pub. It is intended to
+ be used as follows: python3 plot_gp_yeast_run.py [PATH TO G-P ATLAS OUTPUT]"""
 
 target_folder = sys.argv[
     1
@@ -177,7 +177,8 @@ herit = [
     0.55,
 ]
 coef_det = [
-    hf.calc_coef_of_det(gen_encodings[0][n], gen_encodings[1][n]) for n in range(len(gen_encodings[0]))
+    hf.calc_coef_of_det(gen_encodings[0][n], gen_encodings[1][n])
+    for n in range(len(gen_encodings[0]))
 ]
 plt.plot(herit, coef_det, "o")
 print("gp vs. h")

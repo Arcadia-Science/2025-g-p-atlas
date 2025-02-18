@@ -1,10 +1,10 @@
 import pickle as pk
 import sys
 
+import helper_functions as hf
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-import helper_functions as hf
 from sklearn.manifold import TSNE
 
 """This script runs an initial analysis on the output a G-P Atlas of simulated data
@@ -112,7 +112,7 @@ median = np.median(errs)
 plt.axvline(median)
 print(median)
 errs2 = [
-    mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n])
+    hf.mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n])
     for n in range(len(phenotypes.T))
 ]
 sns.kdeplot(errs2, label="Within individual error")

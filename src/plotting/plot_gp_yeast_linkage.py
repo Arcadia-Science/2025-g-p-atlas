@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sc
 import seaborn as sns
-import helper_functions as hf
 from sklearn import metrics
 
 """This script runs an analysis of the variable importance measures provided by

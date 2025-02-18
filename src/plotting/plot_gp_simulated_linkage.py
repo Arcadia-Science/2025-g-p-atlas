@@ -1,10 +1,10 @@
 import pickle as pk
 import sys
 
+import helper_functions as hf
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import metrics
-import helper_functions as hf
 
 """This script runs an analysis of the variable importance measures provided by
  on the output a G-P Atlas of simulated data from 10.57844/arcadia-5953-995f and
@@ -17,7 +17,7 @@ target_folder = sys.argv[1]
 
 # load the variable imporance measures for genes
 with open(target_folder + "g_p_attr.pk", "rb") as data:
-    gene_attributions = pk.load(data))
+    gene_attributions = pk.load(data)
 
 # load the test data dictionary for the analysis
 with open(target_folder + "../test.pk", "rb") as data:
@@ -47,12 +47,13 @@ plt.savefig(target_folder + "ROC_gene_classification.png")
 plt.close()
 
 # plot genetic attributions vs additive genetic contribution of all alleles
-max_attr = max_attr[labels>0] 
+max_attr = max_attr[labels>0]
 add_val = max_weights[labels>0]
 one_percent_fpr = hf.calculate_fpr_threshold(fpr, thresholds)
 print(len([x for x in max_attr if x > one_percent_fpr]))
 print(len(max_attr))
-print(len([y for y in [max(x) for x in [max_attr[i:i+3] for i in range(0,len(max_attr),3)]] if y > one_percent_fpr]))
+print(len([y for y in [max(x) for x in [max_attr[i:i+3] for i in\
+ range(0,len(max_attr),3)]] if y > one_percent_fpr]))
 print(len(max_attr)/3)
 
 plt.scatter(add_val, max_attr, marker="o")
