@@ -1,4 +1,3 @@
-import os
 import pickle as pk
 import sys
 
@@ -6,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sc
 import seaborn as sns
+import helper_functions as hf
 from sklearn import metrics
 
 """This script runs an analysis of the variable importance measures provided by
@@ -57,7 +57,7 @@ for x in yeast_chr_dat["loci"]:
     marker_absolute_position_dict[key] = int(abs_pos)
 
 """ The yeast data have many linked regions that overlap (based on confidence intervals)
-with one another. This loop creates 'clusters' of linked markers that all fall within a 
+with one another. This loop creates 'clusters' of linked markers that all fall within a
 continuous linked region. It also provides a 'chromosome' label for each cluster."""
 locus_cluster_ids = [1]
 current_id = 1
@@ -138,12 +138,12 @@ percentile = np.percentile(max_attrs, 95)
 plt.plot(sorted_absolute_marker_position, max_attrs, "o", markersize=2)
 
 # format the plot
-'''plt.plot(
+"""plt.plot(
     [sorted_absolute_marker_position[n] for n in sorted_linked_marker_index],
     sorted_variance_explained,
     "o",
     markersize=2,
-)'''
+)"""
 
 
 plt.xticks(fontfamily="monospace")
@@ -305,11 +305,11 @@ plt.savefig(target_folder + "fraction_loc_identified_per_variable_importance.svg
 plt.savefig(target_folder + "fraction_loc_identified_per_variable_importance.png")
 plt.close()
 
-#print the number of true loci identified in the top 10th percentile of feature attribution scores
-ninteith_percentile = np.percentile(max_attrs,90)
+# print the number of true loci identified in the top 10th percentile of feature attribution scores
+ninteith_percentile = np.percentile(max_attrs, 90)
 print(ninteith_percentile)
 print(len([x for x in max_attr_per_locus if x > ninteith_percentile]))
-all_loci_captured_index = (cumulative_fraction_reverse.index(0))
+all_loci_captured_index = cumulative_fraction_reverse.index(0)
 print(list(reversed(list(np.array(range(0, 100)) / 100)))[22])
 
 # feature importance vs variance explained

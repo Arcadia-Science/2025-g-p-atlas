@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sc
 import seaborn as sns
+import helper_functions as hf
 from sklearn.manifold import TSNE
-from helper_functions import *
-
 
 """This script runs an initial analysis on the output G-P Atlas of the yeast cross
  data from 10.1038/nature11867 and presented in 10.57844/arcadia-d316-721f. It creates a series of figures
@@ -62,7 +61,7 @@ plt.savefig(target_folder + "p_p_plot_raw.png")
 plt.close()
 
 # plot MSE density
-errs = [MSE(phenotypes[n], phenotype_encodings[n]) for n in range(len(phenotypes))]
+errs = [hf.MSE(phenotypes[n], phenotype_encodings[n]) for n in range(len(phenotypes))]
 sns.kdeplot(errs, label="within phenotype error")
 median = np.median(errs)
 plt.axvline(median)
@@ -70,7 +69,7 @@ print("Median MSE between real and predicted phenotypes based on phenotypiic dat
 print("Median MSE within phenotypes")
 print(median)
 plt.axvline(median)
-errs2 = [MSE(phenotypes.T[n], phenotype_encodings.T[n]) for n in range(len(phenotypes.T))]
+errs2 = [hf.MSE(phenotypes.T[n], phenotype_encodings.T[n]) for n in range(len(phenotypes.T))]
 sns.kdeplot(errs2, label="Within individual error")
 median = np.median(errs2)
 plt.axvline(median)
@@ -104,7 +103,7 @@ plt.savefig(target_folder + "g_p_plot_raw.png")
 plt.close()
 
 # plot MSE density
-errs = [MSE(phenotypes[n], phenotype_encodings[n]) for n in range(len(phenotypes))]
+errs = [hf.MSE(phenotypes[n], phenotype_encodings[n]) for n in range(len(phenotypes))]
 sns.kdeplot(errs, label="Within phenotype error")
 median = np.median(errs)
 print("Median MSE between real and predicted phenotypes based on genetic data")
@@ -112,7 +111,7 @@ print("Median MSE within phenotypes")
 print(median)
 plt.axvline(median)
 plt.xlim(0, 7)
-errs2 = [MSE(phenotypes.T[n], phenotype_encodings.T[n]) for n in range(len(phenotypes.T))]
+errs2 = [hf.MSE(phenotypes.T[n], phenotype_encodings.T[n]) for n in range(len(phenotypes.T))]
 sns.kdeplot(errs2, label="Within individual error")
 median = np.median(errs2)
 print("Median MSE within individual")
@@ -178,7 +177,7 @@ herit = [
     0.55,
 ]
 coef_det = [
-    calc_coef_of_det(gen_encodings[0][n], gen_encodings[1][n]) for n in range(len(gen_encodings[0]))
+    hf.calc_coef_of_det(gen_encodings[0][n], gen_encodings[1][n]) for n in range(len(gen_encodings[0]))
 ]
 plt.plot(herit, coef_det, "o")
 print("gp vs. h")

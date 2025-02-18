@@ -4,15 +4,15 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import helper_functions as hf
 from sklearn.manifold import TSNE
-from helper_functions import *
 
 """This script runs an initial analysis on the output a G-P Atlas of simulated data
- data from 10.57844/arcadia-5953-995f and presented in 10.57844/arcadia-d316-721f. It 
+ data from 10.57844/arcadia-5953-995f and presented in 10.57844/arcadia-d316-721f. It
  creates a series of figures presented in that pub. It is intended to be used as follows:
  python3 plot_gp_yeast_run.py [PATH TO G-P ATLAS OUTPUT]"""
 
-target_folder = sys.argv[1] #folder containing output of G-P Atlas when run on simulated data
+target_folder = sys.argv[1]  # folder containing output of G-P Atlas when run on simulated data
 
 # load real and predicted phenotypes. Predictions are based on phenotypes
 phen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr_p.pk", "rb"))
@@ -56,7 +56,7 @@ plt.close()
 
 # plot MAPE density
 errs = [
-    mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n])
+    hf.mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n])
     for n in range(len(phenotypes))
 ]
 sns.kdeplot(errs, label="Within phenotype error")
@@ -66,7 +66,7 @@ median = np.median(errs)
 plt.axvline(median)
 print(median)
 errs2 = [
-    mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n])
+    hf.mean_absolute_percentage_error(phenotypes.T[n], phenotype_encodings.T[n])
     for n in range(len(phenotypes.T))
 ]
 print("Median MAPE within individuals")
@@ -102,7 +102,7 @@ plt.close()
 
 # plot MAPE density
 errs = [
-    mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n])
+    hf.mean_absolute_percentage_error(phenotypes[n], phenotype_encodings[n])
     for n in range(len(phenotypes))
 ]
 sns.kdeplot(errs, label="Within phenotype error")
