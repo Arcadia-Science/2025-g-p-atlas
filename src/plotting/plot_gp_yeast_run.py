@@ -10,7 +10,7 @@ from helper_functions import *
 
 
 """This script runs an initial analysis on the output G-P Atlas of the yeast cross
- data from 10.1038/nature11867 and presented in DOI_FOR_PUB. It creates a series of figures
+ data from 10.1038/nature11867 and presented in 10.57844/arcadia-d316-721f. It creates a series of figures
  presented in that pub. It is intended to be used as follows:
  python3 plot_gp_yeast_run.py [PATH TO G-P ATLAS OUTPUT]"""
 

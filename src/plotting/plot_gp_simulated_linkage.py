@@ -6,10 +6,9 @@ import numpy as np
 from sklearn import metrics
 from helper_functions import *
 
-# TODO: add DOIs when available
 """This script runs an analysis of the variable importance measures provided by
- on the output a G-P Atlas of simulated data from DOI_FOR_PHEN_NONLINEAR and
- presented in DOI_FOR_PUB. It creates a series of figures
+ on the output a G-P Atlas of simulated data from 10.57844/arcadia-5953-995f and
+ presented in 10.57844/arcadia-d316-721f. It creates a series of figures
  presented in that pub. It is intended to be used as follows:
  python3 plot_gp_simulated_linkage.py [PATH TO G-P ATLAS OUTPUT]"""
 

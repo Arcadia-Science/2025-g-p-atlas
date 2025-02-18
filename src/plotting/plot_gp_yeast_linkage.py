@@ -10,7 +10,7 @@ from sklearn import metrics
 
 """This script runs an analysis of the variable importance measures provided by
  on the output a G-P Atlas analysis of yeast data from 10.1038/nature11867 and
- presented in DOI_FOR_PUB. It creates a series of figures
+ presented in 10.57844/arcadia-5953-995f. It creates a series of figures
  presented in that pub. It is intended to be used as follows:
  python3 plot_gp_yeast_linkage.py [PATH TO G-P ATLAS OUTPUT]"""
 

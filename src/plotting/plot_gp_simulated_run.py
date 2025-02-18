@@ -7,10 +7,9 @@ import seaborn as sns
 from sklearn.manifold import TSNE
 from helper_functions import *
 
-# TODO: add DOIs when available
 """This script runs an initial analysis on the output a G-P Atlas of simulated data
- data from DOI_FOR_PHEN_NONLINEAR and presented in DOI_FOR_PUB. It creates a series of figures
- presented in that pub. It is intended to be used as follows:
+ data from 10.57844/arcadia-5953-995f and presented in 10.57844/arcadia-d316-721f. It 
+ creates a series of figures presented in that pub. It is intended to be used as follows:
  python3 plot_gp_yeast_run.py [PATH TO G-P ATLAS OUTPUT]"""
 
 target_folder = sys.argv[1] #folder containing output of G-P Atlas when run on simulated data
