@@ -4,6 +4,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import metrics
+from helper_functions import *
 
 # TODO: add DOIs when available
 """This script runs an analysis of the variable importance measures provided by
@@ -22,21 +23,6 @@ with open(target_folder + "g_p_attr.pk", "rb") as data:
 # load the test data dictionary for the analysis
 with open(target_folder + "../test.pk", "rb") as data:
     test_data = pk.load(data)
-
-
-# helper functions
-def calculate_fpr_threshold(fpr, thresholds):
-    """Uses interpolation to calculate the threshold required to achieve a 1% false positive rate.
-    Expects a vector of false positive rates and thresholds."""
-    upper_index = list(fpr).index(min([x for x in fpr if x > 0.01])) + 1
-    lower_index = list(fpr).index(max([x for x in fpr if x <= 0.01]))
-    x_0 = fpr[lower_index]
-    x_1 = fpr[upper_index]
-    y_0 = thresholds[lower_index]
-    y_1 = thresholds[upper_index]
-    out_fpr = y_0 + (0.01 - x_0) * (y_1 - y_0) / (x_1 - x_0)
-    return out_fpr
-
 
 # plot ROC curve for alleles determining the utility of allele attributions in
 # identifying influential genes
@@ -85,7 +71,8 @@ plt.close()
 # interactors and pleiotropy
 # replots the additive genetic contributions vs the allele atribution determined by G-P Atlas
 # and colors them by pleiotropy
-ints = np.zeros(9000)
+number_of_alleles = test_data["n_loci"]*test_data["n_as"]
+ints = np.zeros()
 for x in test_data["interact_matrix"]:
     for y in x:
         ints[y[0] * 3 + y[-1]] += 1
