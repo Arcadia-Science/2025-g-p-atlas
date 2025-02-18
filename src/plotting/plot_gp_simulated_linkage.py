@@ -48,8 +48,8 @@ plt.savefig(target_folder + "ROC_gene_classification.png")
 plt.close()
 
 # plot genetic attributions vs additive genetic contribution of all alleles
-max_attr = [max_attr[n] for n in range(len(max_attr)) if labels[n] > 0]
-add_val = [max_weights[n] for n in range(len(labels)) if labels[n] > 0]
+max_attr = max_attr[labels>0] 
+add_val = max_weights[labels>0]
 one_percent_fpr = calculate_fpr_threshold(fpr, thresholds)
 print(len([x for x in max_attr if x > one_percent_fpr]))
 print(len(max_attr))
