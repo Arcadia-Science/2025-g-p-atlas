@@ -27,7 +27,7 @@ with open(target_folder + "../test.pk", "rb") as data:
 # plot ROC curve for alleles determining the utility of allele attributions in
 # identifying influential genes
 max_weights = np.max(
-    np.array([np.ndarray.flatten(np.array(x)) for x in test_data["weights"]]), axis=0
+    [np.array(x).ravel() for x in test_data["weights"]], axis=0
 )
 labels = np.where(max_weights != 0, 1, 0)
 max_attr = np.mean(np.array(gene_attributions) ** 2, axis=0)
