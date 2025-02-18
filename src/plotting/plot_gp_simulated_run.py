@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from sklearn.manifold import TSNE
+from helper_functions import *
 
 # TODO: add DOIs when available
 """This script runs an initial analysis on the output a G-P Atlas of simulated data
@@ -12,29 +13,7 @@ from sklearn.manifold import TSNE
  presented in that pub. It is intended to be used as follows:
  python3 plot_gp_yeast_run.py [PATH TO G-P ATLAS OUTPUT]"""
 
-target_folder = sys.argv[1]
-
-
-# helper functions
-def mean_absolute_percentage_error(y_true, y_pred):
-    # calculates the mean absolute percentage error of a set of predictions
-    eps = 1e-15 #minimum value to avoid underflow and allow handling of divzero
-    y_true, y_pred = np.array(y_true + eps), np.array(y_pred)
-    return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
-
-
-def calculate_fpr_threshold(fpr, thresholds):
-    # uses interpolation to calculate the thershold required to achieve a 1% false positive rate
-    # expects a vector of false positive rates and thresholds
-    upper_index = list(fpr).index(min([x for x in fpr if x > 0.01])) + 1
-    lower_index = list(fpr).index(max([x for x in fpr if x <= 0.01]))
-    x_0 = fpr[lower_index]
-    x_1 = fpr[upper_index]
-    y_0 = thresholds[lower_index]
-    y_1 = thresholds[upper_index]
-    out_fpr = y_0 + (0.01 - x_0) * (y_1 - y_0) / (x_1 - x_0)
-    return out_fpr
-
+target_folder = sys.argv[1] #folder containing output of G-P Atlas when run on simulated data
 
 # load real and predicted phenotypes. Predictions are based on phenotypes
 phen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr_p.pk", "rb"))
