@@ -26,3 +26,14 @@ def calc_coef_of_det(y_true, y_pred):
     sstot = np.sum((y_true - np.mean(y_true)) ** 2)
     return 1 - (ssres / sstot)
 
+def calculate_fpr_threshold(fpr, thresholds):
+    # uses interpolation to calculate the thershold required to achieve a 1% false positive rate
+    # expects a vector of false positive rates and thresholds
+    upper_index = list(fpr).index(min([x for x in fpr if x > 0.01])) + 1
+    lower_index = list(fpr).index(max([x for x in fpr if x <= 0.01]))
+    x_0 = fpr[lower_index]
+    x_1 = fpr[upper_index]
+    y_0 = thresholds[lower_index]
+    y_1 = thresholds[upper_index]
+    out_fpr = y_0 + (0.01 - x_0) * (y_1 - y_0) / (x_1 - x_0)
+    return out_fpr
