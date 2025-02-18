@@ -56,8 +56,10 @@ for x in yeast_chr_dat["loci"]:
     key = chromosome.strip("chr").lstrip("0") + "_" + chr_pos
     marker_absolute_position_dict[key] = int(abs_pos)
 
-# cluster yeast loci influencing phenotypes. Join genetic regions based on
-# overlapping confidence intervals
+""" The yeast data have many linked regions that overlap (based on confidence intervals)
+with one another. This loop creates 'clusters' of linked markers that all fall within a 
+continuous linked region. It also provides a 'chromosome' label for each cluster."""
+
 locus_cluster_ids = [1]
 current_id = 1
 interval_start = [int(sorted_linkage_data[0][5])]
