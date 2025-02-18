@@ -295,7 +295,7 @@ cumulative_fraction = [
 ]
 
 cumulative_fraction_reverse = list(reversed(cumulative_fraction))
-plt.plot(list(reversed(list(np.array(range(0, 100)) / 100))), cumulative_fraction_reverse)
+plt.plot(np.arange(100)[::-1] / 100, cumulative_fraction_reverse)
 plt.xticks(fontfamily="monospace")
 plt.yticks(fontfamily="monospace")
 plt.ylabel("Fraction of linked loci identified")
