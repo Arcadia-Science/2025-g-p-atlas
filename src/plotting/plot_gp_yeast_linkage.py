@@ -59,7 +59,6 @@ for x in yeast_chr_dat["loci"]:
 """ The yeast data have many linked regions that overlap (based on confidence intervals)
 with one another. This loop creates 'clusters' of linked markers that all fall within a 
 continuous linked region. It also provides a 'chromosome' label for each cluster."""
-
 locus_cluster_ids = [1]
 current_id = 1
 interval_start = [int(sorted_linkage_data[0][5])]
