@@ -61,7 +61,7 @@ args.add_argument(
     "--ge_hidden_dim",
     type=int,
     default=32,
-    help="number of neurons in the hidden layers of gencoder",
+    help="number of neurons in the hidden layers of the genetic encoder",
 )
 args.add_argument(
     "--batchnorm_momentum",
