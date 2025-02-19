@@ -456,7 +456,6 @@ for n in range(num_epochs_gen):
 
         g_recon_loss.backward()
 
-        optim_P.step()
         optim_GQ_enc.step()
 
     cur_time = tm.time() - start_time
