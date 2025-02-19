@@ -12,7 +12,6 @@ import torch.nn.functional as F
 from captum.attr import FeatureAblation
 from sklearn.metrics import mean_squared_error, r2_score
 from torch.utils.data.dataset import Dataset
-from torchvision import transforms
 
 """This is an implementation of the G-P Atlas method for mapping genotype
 to phenotype described in https://doi.org/10.57844/arcadia-d316-721f. 
@@ -60,13 +59,13 @@ args.add_argument(
     "--ge_hidden_dim",
     type=int,
     default=32,
-    help="number of neurons in the hidden layers of gencoder",
+    help="number of neurons in the hidden layers of the genetic encoder",
 )
 args.add_argument(
     "--batchnorm_momentum",
     type=float,
     default=0.8,
-    help="momentum for the batchnormalization layers",
+    help="momentum for the batch normalization layers",
 )
 args.add_argument(
     "--latent_dim", type=int, default=32, help="number of neurons in the latent space"
@@ -89,13 +88,13 @@ args.add_argument(
     help="number of genetic loci for which there is data",
 )
 args.add_argument(
-    "--l1_lambda", type=float, default=0.8, help="l1 regularlization weight for the genetic weights"
+    "--l1_lambda", type=float, default=0.8, help="l1 regularization weight for the genetic weights"
 )
 args.add_argument(
     "--l2_lambda",
     type=float,
     default=0.01,
-    help="l2 regularlization weight for the genetic weights",
+    help="l2 regularization weight for the genetic weights",
 )
 args.add_argument(
     "--dataset_path", type=str, default=None, help="where the train and test files are located"
@@ -104,10 +103,13 @@ args.add_argument(
     "--train_suffix",
     type=str,
     default="dgrp_g_p_train_set.pk",
-    help="name of the training data file",
+    help="name of the training data file, defaults to DGRP dataset",
 )
 args.add_argument(
-    "--test_suffix", type=str, default="dgrp_g_p_test_set.pk", help="name of the test data file"
+    "--test_suffix",
+    type=str,
+    default="dgrp_g_p_test_set.pk",
+    help="name of the test data file, defaults to DGRP dataset"
 )
 args.add_argument(
     "--hot_start",
@@ -139,14 +141,14 @@ vabs = args.parse_args()
 
 
 # define a torch dataset object
-class dataset_dgrp_pheno(Dataset):
+class dataset_pheno(Dataset):
     """a class for importing simulated genotype-phenotype data.
     It expects a pickled object that is organized as a list of tensors:
     genotypes[n_animals, n_loci, n_alleles] (one hot at allelic state)
     gen_locs[n_animals, n_loci] (index of allelic state)
     weights[n_phens, n_loci, n_alleles] float weight for allelic contribution to phen
     phens[n_animals,n_phens] float value for phenotype
-    indexes_of_loci_influencing_phen[n_phens,n_loci_ip] integer indicies of
+    indexes_of_loci_influencing_phen[n_phens,n_loci_ip] integer indices of
     loci that influence a phenotype interaction_matrix
     pleiotropy_matrix[n_phens, n_phens, gen_index]"""
 
@@ -164,7 +166,7 @@ class dataset_dgrp_pheno(Dataset):
         return phenotypes
 
 
-class dataset_dgrp_geno(Dataset):
+class dataset_geno(Dataset):
     """a class for importing simulated genotype-phenotype data.
     It expects a pickled object that is organized as a list of tensors:
     genotypes[n_animals, n_loci, n_alleles] (one hot at allelic state)
@@ -194,7 +196,7 @@ class dataset_dgrp_geno(Dataset):
 
 # helper functions
 def sequential_forward_attr_gen_phen(input, phens):
-    """puts together two models for use of captum feature importance"""
+    """puts together two models for use of captum feature importance in genotype-phenotype prediction"""
     mod_2_input = GQ(input)
     X_sample = P(mod_2_input)
     output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
@@ -202,7 +204,7 @@ def sequential_forward_attr_gen_phen(input, phens):
 
 
 def sequential_forward_attr_phen_phen(input, phens):
-    """puts together two models for use of captum feature importance"""
+    """puts together two models for use of captum feature importance in phenotype-phenotype prediction"""
     mod_2_input = Q(input)
     X_sample = P(mod_2_input)
     output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
@@ -214,9 +216,6 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
 
-# convert data to torch.FloatTensor
-transform = transforms.ToTensor()
-
 # load the training and test datasets
 dataset_path = vabs.dataset_path
 
@@ -227,13 +226,13 @@ params_file.close()
 train_dat = vabs.train_suffix
 test_dat = vabs.test_suffix
 
-train_data_pheno = dataset_dgrp_pheno(dataset_path + train_dat, n_phens=vabs.n_phens_to_analyze)
-test_data_pheno = dataset_dgrp_pheno(dataset_path + test_dat, n_phens=vabs.n_phens_to_analyze)
+train_data_pheno = dataset_pheno(dataset_path + train_dat, n_phens=vabs.n_phens_to_analyze)
+test_data_pheno = dataset_pheno(dataset_path + test_dat, n_phens=vabs.n_phens_to_analyze)
 
-train_data_geno = dataset_dgrp_geno(
+train_data_geno = dataset_geno(
     dataset_path + train_dat, n_geno=vabs.n_loci_measured, n_phens=vabs.n_phens_to_analyze
 )
-test_data_geno = dataset_dgrp_geno(
+test_data_geno = dataset_geno(
     dataset_path + test_dat, n_geno=vabs.n_loci_measured, n_phens=vabs.n_phens_to_analyze
 )
 
@@ -264,6 +263,12 @@ test_loader_geno = torch.utils.data.DataLoader(
 # model (encoders and decoders) classes
 # encoder
 class Q_net(nn.Module):
+    """
+    Encoder for either genotypic or phenotypic data.
+    Parameters:
+        phen_dim (int): Number of input phenotypes.
+        N (int): Number of channels in hidden layers.
+    """
     def __init__(self, phen_dim=None, N=None):
         super().__init__()
         if N is None:
@@ -286,14 +291,15 @@ class Q_net(nn.Module):
 
 # decoder
 class P_net(nn.Module):
-    def __init__(self, phen_dim=None, N=None):
-        if N is None:
-            N = vabs.d_hidden_dim
-        if phen_dim is None:
-            phen_dim = vabs.n_phens_to_analyze
+    """
+    Single-layer decoder for predicting phenotypes from either genotypic or phenotypic data.
+    Parameters:
+        out_phen_dim (int): Number of output phenotypes.
+    """
+    def __init__(self, out_phen_dim=None):
+        if out_phen_dim is None:
+            out_phen_dim = vabs.n_phens_to_predict
 
-        out_phen_dim = vabs.n_phens_to_predict
-        vabs.n_locs * vabs.n_alleles
         latent_dim = vabs.latent_dim
         super().__init__()
         self.decoder = nn.Sequential(nn.Linear(in_features=latent_dim, out_features=out_phen_dim))
@@ -305,6 +311,14 @@ class P_net(nn.Module):
 
 # gencoder
 class GQ_net(nn.Module):
+    """
+    Genetic encoder to produce latent embedding of genotypic data for predicting 
+    either phenotypes or genotypes.
+    
+    Parameters:
+        n_loci (int): number of input measured loci * number of segregating alleles
+        N (int): Number of channels in hidden layers.
+    """
     def __init__(self, n_loci=None, N=None):
         super().__init__()
         if N is None:
@@ -338,7 +352,7 @@ P = P_net()  # phenotype deocoder
 GQ = GQ_net()  # genotype encoder
 
 # load precomputed weights
-# this allows you to specify precomuted weights so that the training can be 'hotstarted'
+# this allows you to specify precomputed weights so that the training can be 'hotstarted'
 if vabs.hot_start is True:
     Q.load_state_dict(torch.load(vabs.hot_start_path_e, weights_only=True), strict=False)
     P.load_state_dict(torch.load(vabs.hot_start_path_d, weights_only=True), strict=False)
@@ -477,13 +491,130 @@ plt.plot(g_rcon_loss)  # reconstruction loss for the genetic weights
 plt.savefig(dataset_path + "reconstruction_loss.svg")
 plt.close()
 
-# test the g-p prediction
-phen_encodings = []
-phens = []
-phen_latent = []
-fa_attr = []
+# A function to evaluate the performance of each model, saving summaries of model performance
+def analyze_predictions(
+    phens,
+    phen_encodings,
+    phen_latent,
+    fa_attr,
+    dataset_path,
+    n_phens_pred,
+    model_type="g_p",
+):
+    """Analyze predictions and save visualization results.
 
+    Parameters
+    ----------
+    phens : list
+        List of real phenotype values (numpy arrays) from model evaluation
+    phen_encodings : list
+        List of predicted phenotype values (numpy arrays) from model evaluation
+    phen_latent : list
+        List of latent space representations (numpy arrays) from model evaluation
+    fa_attr : list
+        List of feature attribution values (numpy arrays) from captum analysis
+    dataset_path : str
+        Path to directory where all output files should be saved
+    n_phens_pred : int
+        Number of phenotypes to analyze and plot (uses first n_phens_pred phenotypes)
+    model_type : str, optional
+        Type of prediction being analyzed - either 'g_p' (genotype-phenotype) or
+        'p_p' (phenotype-phenotype). Affects file naming and data saving. Default is 'g_p'
+
+    Returns
+    -------
+    list
+        List of metric results, containing in order: Pearson correlations, MSE values,
+        MAPE values, and R2 scores for the first n_phens_pred phenotypes
+    """
+    suffix = "_p" if model_type == "p_p" else ""
+    
+    # Save attributions
+    plt.hist(fa_attr, bins=20)
+    plt.savefig(dataset_path + f"{model_type}_attr.svg")
+    plt.close()
+    pk.dump(fa_attr, open(dataset_path + f"{model_type}_attr.pk", "wb"))
+
+    # Convert and transpose data
+    phens = np.array(phens).T
+    phen_encodings = np.array(phen_encodings).T
+    
+    # Save predictions data
+    if model_type == "p_p":
+        phen_latent = np.array(phen_latent).T
+        pk.dump(
+            [phens, phen_encodings, phen_latent],
+            open(dataset_path + f"phens_phen_encodings_dng_attr{suffix}.pk", "wb")
+        )
+    else:
+        pk.dump(
+            [phens, phen_encodings],
+            open(dataset_path + f"phens_phen_encodings_dng_attr{suffix}.pk", "wb")
+        )
+
+    # Plot predictions
+    for n in range(len(phens[:n_phens_pred])):
+        plt.plot(phens[n], phen_encodings[n], "o")
+    plt.xlabel("real")
+    plt.ylabel("predicted")
+    plt.gca().set_aspect("equal")
+    plt.savefig(dataset_path + f"phen_real_pred_dng_attr{suffix}.svg")
+    plt.close()
+
+    # Calculate and plot metrics
+    stats_aggregator = []
+    
+    # Pearson correlation
+    cors = [sc.stats.pearsonr(phens[n], phen_encodings[n])[0] 
+            for n in range(len(phens[:n_phens_pred]))]
+    print(cors)
+    stats_aggregator.append(cors)
+    plt.hist(cors, bins=20)
+    plt.savefig(dataset_path + f"phen_real_pred_pearsonsr_dng_attr{suffix}.svg")
+    plt.close()
+
+    # MSE
+    errs = [mean_squared_error(phens[n], phen_encodings[n]) 
+            for n in range(len(phens[:n_phens_pred]))]
+    print(errs)
+    stats_aggregator.append(errs)
+    plt.hist(errs, bins=20)
+    plt.savefig(dataset_path + f"phen_real_pred_mse_dng_attr{suffix}.svg")
+    plt.close()
+
+    # MAPE
+    errs = [mean_absolute_percentage_error(phens[n], phen_encodings[n])
+            for n in range(len(phens[:n_phens_pred]))]
+    print(errs)
+    stats_aggregator.append(errs)
+    plt.hist(errs, bins=20)
+    plt.savefig(dataset_path + f"phen_real_pred_mape_dng_attr{suffix}.svg")
+    plt.close()
+
+    # R2
+    errs = [r2_score(phens[n], phen_encodings[n]) 
+            for n in range(len(phens[:n_phens_pred]))]
+    print(errs)
+    stats_aggregator.append(errs)
+    plt.hist(errs, bins=20)
+    plt.savefig(dataset_path + f"phen_real_pred_r2_dng_attr{suffix}.svg")
+    plt.close()
+
+    return stats_aggregator
+
+
+# Now use this function to analyze predictions and save outputs
+out_stats = open(dataset_path + "test_stats.pk", "wb")
+stats_aggregator = []
+
+# Save model states first
+torch.save(Q.state_dict(), dataset_path + "phen_encoder_state.pt")
+torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")
+torch.save(GQ.state_dict(), dataset_path + "gen_encoder_state.pt")
+
+# G-P prediction
 GQ.eval()
+phens, phen_encodings, phen_latent, fa_attr = [], [], [], []
 
 for dat in test_loader_geno:
     ph, gt = dat
@@ -498,75 +629,13 @@ for dat in test_loader_geno:
     phen_latent += list(z_sample.detach().cpu().numpy())
     fa_attr.append(list(fa.attribute(inputs=(gt, ph))[0].squeeze().detach().cpu().numpy()))
 
+stats_aggregator.extend(
+    analyze_predictions(phens, phen_encodings, phen_latent, fa_attr, dataset_path, n_phens_pred, "g_p")
+)
 
-# plot a histogram of the genetic feature attributions
-plt.hist(fa_attr, bins=20)
-plt.savefig(dataset_path + "g_p_attr.svg")
-plt.close()
-
-# save the genetic feature attributions
-pk.dump(fa_attr, open(dataset_path + "g_p_attr.pk", "wb"))
-
-# save weights from networks
-torch.save(Q.state_dict(), dataset_path + "phen_encoder_state.pt")
-torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")
-torch.save(GQ.state_dict(), dataset_path + "gen_encoder_state.pt")
-
-# save and plot phenotypes and phenotype predictions based on genotypes
-phens = np.array(phens).T
-phen_encodings = np.array(phen_encodings).T
-pk.dump([phens, phen_encodings], open(dataset_path + "phens_phen_encodings_dng_attr.pk", "wb"))
-
-# create a file and an agregator for statistics
-out_stats = open(dataset_path + "test_stats.pk", "wb")
-stats_agregator = []
-
-for n in range(len(phens[:n_phens_pred])):
-    plt.plot(phens[n], phen_encodings[n], "o")
-plt.xlabel("real")
-plt.ylabel("predicted")
-plt.gca().set_aspect("equal")
-plt.savefig(dataset_path + "phen_real_pred_dng_attr.svg")
-plt.close()
-
-cors = [sc.stats.pearsonr(phens[n], phen_encodings[n])[0] for n in range(len(phens[:n_phens_pred]))]
-print(cors)
-stats_agregator.append(cors)
-plt.hist(cors, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_pearsonsr_dng_attr.svg")
-plt.close()
-
-errs = [mean_squared_error(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
-print(errs)
-stats_agregator.append(errs)
-plt.hist(errs, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_mse_dng_attr.svg")
-plt.close()
-
-errs = [
-    mean_absolute_percentage_error(phens[n], phen_encodings[n])
-    for n in range(len(phens[:n_phens_pred]))
-]
-print(errs)
-stats_agregator.append(errs)
-plt.hist(errs, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_mape_dng_attr.svg")
-plt.close()
-
-errs = [r2_score(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
-print(errs)
-stats_agregator.append(errs)
-plt.hist(errs, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_r2_dng_attr.svg")
-plt.close()
-
-# test the p-p prediction
+# P-P prediction
 Q.eval()
-
-phen_encodings = []
-phens = []
-phen_latent = []
-fa_attr = []
+phens, phen_encodings, phen_latent, fa_attr = [], [], [], []
 
 for dat in test_loader_pheno:
     ph = dat
@@ -579,60 +648,11 @@ for dat in test_loader_pheno:
     phen_latent += list(z_sample.detach().cpu().numpy())
     fa_attr.append(list(fa_p.attribute(inputs=(ph, ph))[0].squeeze().detach().cpu().numpy()))
 
-
-plt.hist(fa_attr, bins=20)
-plt.savefig(dataset_path + "p_p_attr.svg")
-plt.close()
-pk.dump(fa_attr, open(dataset_path + "p_p_attr.pk", "wb"))
-
-phens = np.array(phens).T
-phen_encodings = np.array(phen_encodings).T
-phen_latent = np.array(phen_latent).T
-
-pk.dump(
-    [phens, phen_encodings, phen_latent],
-    open(dataset_path + "phens_phen_encodings_dng_attr_p.pk", "wb"),
+stats_aggregator.extend(
+    analyze_predictions(phens, phen_encodings, phen_latent, fa_attr, dataset_path, n_phens_pred, "p_p")
 )
 
+# Save and close stats
+pk.dump(stats_aggregator, out_stats)
+out_stats.close()
 
-for n in range(len(phens[:n_phens_pred])):
-    plt.plot(phens[n], phen_encodings[n], "o")
-plt.xlabel("real")
-plt.ylabel("predicted")
-plt.gca().set_aspect("equal")
-plt.savefig(dataset_path + "phen_real_pred_dng_attr_p.svg")
-plt.close()
-
-cors = [sc.stats.pearsonr(phens[n], phen_encodings[n])[0] for n in range(len(phens[:n_phens_pred]))]
-print(cors)
-stats_agregator.append(cors)
-plt.hist(cors, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_pearsonsr_dng_attr_p.svg")
-plt.close()
-
-errs = [mean_squared_error(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
-print(errs)
-stats_agregator.append(errs)
-plt.hist(errs, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_mse_dng_attr_p.svg")
-plt.close()
-
-errs = [
-    mean_absolute_percentage_error(phens[n], phen_encodings[n])
-    for n in range(len(phens[:n_phens_pred]))
-]
-print(errs)
-stats_agregator.append(errs)
-plt.hist(errs, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_mape_dng_attr_p.svg")
-plt.close()
-
-errs = [r2_score(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
-print(errs)
-stats_agregator.append(errs)
-plt.hist(errs, bins=20)
-plt.savefig(dataset_path + "phen_real_pred_r2_dng_attr_p.svg")
-plt.close()
-
-# save stats
-pk.dump(stats_agregator, out_stats)
