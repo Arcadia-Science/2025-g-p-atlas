@@ -322,6 +322,14 @@ class P_net(nn.Module):
 # gencoder
 class GQ_net(nn.Module):
     """
+    Genetic encoder to produce latent embedding of genotypic data for predicting 
+    either phenotypes or genotypes.
+    
+    Parameters:
+        n_loci (int): number of input measured loci * number of segregating alleles
+        N (int): Number of channels in hidden layers.
+    """
+    """
     Genetic encoder to produce latent embedding of genotypic data for predicting
     either phenotypes or genotypes.
 
