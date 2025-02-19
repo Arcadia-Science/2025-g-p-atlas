@@ -15,7 +15,8 @@ from torch.utils.data.dataset import Dataset
 from torchvision import transforms
 
 """This is an implementation of the G-P Atlas method for mapping genotype
-to phenotype described in PUB_DOI. For help type:
+to phenotype described in https://doi.org/10.57844/arcadia-d316-721f.
+For help type:
 python3 g_p_atlas.py --help"""
 
 # parse commandline arguments
