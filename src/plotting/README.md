@@ -60,15 +60,8 @@ The scripts generate various output files, including:
 - **ROC Curves** for evaluating classification performance (e.g., `ROC_gene_classification.png`)
 - **Linkage Analysis** plots highlighting genomic regions of interest
 
-## Configuration
-
-Some scripts require specific dataset structures. Ensure the input data files match the expected format outlined in the script comments.
-
 ## Contributing
 
 See how we recognize [feedback and contributions to our code](https://github.com/Arcadia-Science/arcadia-software-handbook/blob/main/guides-and-standards/guide-credit-for-contributions.md).
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
