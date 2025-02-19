@@ -192,7 +192,8 @@ class dataset_geno(Dataset):
 
 # helper functions
 def sequential_forward_attr_gen_phen(input, phens):
-    """puts together two models for use of captum feature importance in genotype-phenotype prediction"""
+    """puts together two models for use of captum feature
+    importance in genotype-phenotype prediction"""
     mod_2_input = GQ(input)
     X_sample = P(mod_2_input)
     output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
@@ -200,7 +201,8 @@ def sequential_forward_attr_gen_phen(input, phens):
 
 
 def sequential_forward_attr_phen_phen(input, phens):
-    """puts together two models for use of captum feature importance in phenotype-phenotype prediction"""
+    """puts together two models for use of captum feature
+    importance in phenotype-phenotype prediction"""
     mod_2_input = Q(input)
     X_sample = P(mod_2_input)
     output = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
@@ -290,6 +292,7 @@ class P_net(nn.Module):
         out_phen_dim (int): Number of output phenotypes.
         N (int): Number of channels in hidden layers.
     """
+
     def __init__(self, out_phen_dim=None, N=None):
         if N is None:
             N = vabs.d_hidden_dim
@@ -315,13 +318,14 @@ class P_net(nn.Module):
 # gencoder
 class GQ_net(nn.Module):
     """
-    Genetic encoder to produce latent embedding of genotypic data for predicting 
+    Genetic encoder to produce latent embedding of genotypic data for predicting
     either phenotypes or genotypes.
-    
+
     Parameters:
         n_loci (int): number of input measured loci * number of segregating alleles
         N (int): Number of channels in hidden layers.
     """
+
     def __init__(self, n_loci=None, N=None):
         super().__init__()
         if N is None:
@@ -494,6 +498,7 @@ plt.plot(g_rcon_loss)  # reconstruction loss for the genetic weights
 plt.savefig(dataset_path + "reconstruction_loss.svg")
 plt.close()
 
+
 # A function to evaluate the performance of each model, saving summaries of model performance
 def analyze_predictions(
     phens,
@@ -531,7 +536,7 @@ def analyze_predictions(
         MAPE values, and R2 scores for the first n_phens_pred phenotypes
     """
     suffix = "_p" if model_type == "p_p" else ""
-    
+
     # Save attributions
     plt.hist(fa_attr, bins=20)
     plt.savefig(dataset_path + f"{model_type}_attr.svg")
@@ -541,18 +546,18 @@ def analyze_predictions(
     # Convert and transpose data
     phens = np.array(phens).T
     phen_encodings = np.array(phen_encodings).T
-    
+
     # Save predictions data
     if model_type == "p_p":
         phen_latent = np.array(phen_latent).T
         pk.dump(
             [phens, phen_encodings, phen_latent],
-            open(dataset_path + f"phens_phen_encodings_dng_attr{suffix}.pk", "wb")
+            open(dataset_path + f"phens_phen_encodings_dng_attr{suffix}.pk", "wb"),
         )
     else:
         pk.dump(
             [phens, phen_encodings],
-            open(dataset_path + f"phens_phen_encodings_dng_attr{suffix}.pk", "wb")
+            open(dataset_path + f"phens_phen_encodings_dng_attr{suffix}.pk", "wb"),
         )
 
     # Plot predictions
@@ -566,10 +571,11 @@ def analyze_predictions(
 
     # Calculate and plot metrics
     stats_aggregator = []
-    
+
     # Pearson correlation
-    cors = [sc.stats.pearsonr(phens[n], phen_encodings[n])[0] 
-            for n in range(len(phens[:n_phens_pred]))]
+    cors = [
+        sc.stats.pearsonr(phens[n], phen_encodings[n])[0] for n in range(len(phens[:n_phens_pred]))
+    ]
     print(cors)
     stats_aggregator.append(cors)
     plt.hist(cors, bins=20)
@@ -577,8 +583,9 @@ def analyze_predictions(
     plt.close()
 
     # MSE
-    errs = [mean_squared_error(phens[n], phen_encodings[n]) 
-            for n in range(len(phens[:n_phens_pred]))]
+    errs = [
+        mean_squared_error(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))
+    ]
     print(errs)
     stats_aggregator.append(errs)
     plt.hist(errs, bins=20)
@@ -586,8 +593,10 @@ def analyze_predictions(
     plt.close()
 
     # MAPE
-    errs = [mean_absolute_percentage_error(phens[n], phen_encodings[n])
-            for n in range(len(phens[:n_phens_pred]))]
+    errs = [
+        mean_absolute_percentage_error(phens[n], phen_encodings[n])
+        for n in range(len(phens[:n_phens_pred]))
+    ]
     print(errs)
     stats_aggregator.append(errs)
     plt.hist(errs, bins=20)
@@ -595,8 +604,7 @@ def analyze_predictions(
     plt.close()
 
     # R2
-    errs = [r2_score(phens[n], phen_encodings[n]) 
-            for n in range(len(phens[:n_phens_pred]))]
+    errs = [r2_score(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
     print(errs)
     stats_aggregator.append(errs)
     plt.hist(errs, bins=20)
@@ -633,7 +641,9 @@ for dat in test_loader_geno:
     fa_attr.append(list(fa.attribute(inputs=(gt, ph))[0].squeeze().detach().cpu().numpy()))
 
 stats_aggregator.extend(
-    analyze_predictions(phens, phen_encodings, phen_latent, fa_attr, dataset_path, n_phens_pred, "g_p")
+    analyze_predictions(
+        phens, phen_encodings, phen_latent, fa_attr, dataset_path, n_phens_pred, "g_p"
+    )
 )
 
 # P-P prediction
@@ -652,10 +662,11 @@ for dat in test_loader_pheno:
     fa_attr.append(list(fa_p.attribute(inputs=(ph, ph))[0].squeeze().detach().cpu().numpy()))
 
 stats_aggregator.extend(
-    analyze_predictions(phens, phen_encodings, phen_latent, fa_attr, dataset_path, n_phens_pred, "p_p")
+    analyze_predictions(
+        phens, phen_encodings, phen_latent, fa_attr, dataset_path, n_phens_pred, "p_p"
+    )
 )
 
 # Save and close stats
 pk.dump(stats_aggregator, out_stats)
 out_stats.close()
-
