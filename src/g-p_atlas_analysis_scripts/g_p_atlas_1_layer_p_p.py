@@ -441,7 +441,6 @@ for n in range(num_epochs_gen):
 
         batch_size = phens.shape[0]
 
-        P.zero_grad()
         GQ.zero_grad()
 
         z_sample = GQ(noise_gens)
