@@ -1,43 +1,40 @@
-# TODO: Replace with the name of the repo
+# 2025-g-p-atlas
 
 [![run with conda](https://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/projects/miniconda/en/latest/)
 
-Note: Analysis repo names should be prefixed with the year (ie `2024-noveltree-analysis`)
-
 ## Purpose
 
-TODO: Briefly describe the core analyses performed in the repository and the motivation behind them.
+This repository contains scripts for running and analyzing the output of **G-P Atlas**, a method for creating holistic genotype-to-phenotype mappings that capture all phenotypic and genetic data in a single model. These models can be used for phenotype prediction from genetic or phenotypic data, linkage analysis and so on. The method is explained and demonstrated in 10.57844/arcadia-d316-721f
+
+Key functionalities include:
+
+- Running the **G-P Atlas** model to infer genetic contributions to phenotypes
+- Computing model performance metrics such as **mean squared error (MSE), mean absolute percentage error (MAPE), and coefficient of determination (R²)**
+- Visualizing and comparing the results of different **G-P Atlas runs**
+- Generating **ROC curves** and evaluating variable importance
+
 
 ## Installation and Setup
 
-This repository uses conda to manage software environments and installations. You can find operating system-specific instructions for installing miniconda [here](https://docs.conda.io/projects/miniconda/en/latest/). After installing conda and [mamba](https://mamba.readthedocs.io/en/latest/), run the following command to create the pipeline run environment.
+To directly replicate the environment used to produce the pub use conda in the following way:
+Note: this environemnt is linux or mac specific.
 
-```{bash}
-TODO: Replace <NAME> with the name of your environment
-mamba env create -n <NAME> --file envs/dev.yml
-conda activate <NAME>
-```
+1. If you haven't already installed some form of conda, install miniconda:
+   [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) and [Mamba](https://mamba.readthedocs.io/en/latest/).
 
-<details><summary>Developer Notes (click to expand/collapse)</summary>
+2. Create and activate the environment.
+   From the main repository folder:
+   ```bash
+   mamba env create -n gp_atlas_env --file envs/exact_environment.yml
+   conda activate gp_atlas_env
+   ```
+To use PIP to install the necessary files for application to other datasets:
+Note: be sure to use an envionrment manager. This is only to install the necessary dependencies once you have a virtual environement.
 
-1. Install your pre-commit hooks:
-
-    ```{bash}
-    pre-commit install
-    ```
-
-    This installs the pre-commit hooks defined in your config (`./.pre-commit-config.yaml`).
-
-2. Export your conda environment before sharing:
-
-    As your project develops, the number of dependencies in your environment may increase. Whenever you install new dependencies (using either `pip install` or `mamba install`), you should update the environment file using the following command.
-
-    ```{bash}
-    conda env export --from-history --no-builds > envs/dev.yml
-    ```
-
-    `--from-history` only exports packages that were explicitly added by you (e.g., the packages you installed with `pip` or `mamba`) and `--no-builds` removes build specification from the exported packages to increase portability between different platforms.
-</details>
+1. From the main repository folder:
+   ```bash
+   pip3 install -c env/requirements.txt
+   ```
 
 ## Data
 
@@ -46,7 +43,30 @@ TODO: Add details about the description of input / output data and links to Zeno
 ## Overview
 
 ### Description of the folder structure
-
+```
+Project Root
+ -**src** # Contains all of the scripts and other code to produce the pub
+  -**plotting** # Contains all of the scripts used to create the plots in the pub
+   -plot_gp_simulated_linkage.py # Linkage analysis of simulated data
+   -plot_gp_simulated_run.py     # Performance visualization for runs on simulated
+   -plot_gp_yeast_linkage.py     # Linkage analysis of yeast data
+   -plot_gp_yeast_run.py         # Performance visualization for runs on yeast data
+   -plot_compare_coef_det_two_runs.py # Compares the R-squared for multiple G-P Atlas runs
+   -helper_functions.py          # Contains helper functions used in more than one script
+   -README.md                    # Readme discussing all of the plotting functions
+   -matplotlibrc                 # Default matplotlib format file used to create plots for the pub
+  -**g-p_atlas_analysis_scripts** # Contains the main G-P Atlas scripts
+   -g_p_atlas.py                 # Main script for running G-P Atlas
+   -g_p_atlas_1_layer_g_p.py     # Version of G-P Atlas with no hidden layer in the genetic encoder
+   -g_p_atlas_1_layer_p_p.py     # Version of G-P Atlas with no hidden layer in the phenotype encoder
+ -**envs** # Contains the conda .yml file and the requirements.txt for installing required software
+  -exact_environment.yml         # conda .yml file for creating an environment to replicate the pub
+  -requirements.txt              # Requirements.txt file to facilitate installing dependencies with PIP
+ -README.md # This file
+ -Makefile # Makefile to controll the repository updates
+ -pyproject.toml # .toml file to define the python module in this repository
+ -LICENSE   # File containing the software liscence
+```
 ### Methods
 
 TODO: Include a brief, step-wise overview of analyses performed.
@@ -60,7 +80,7 @@ TODO: Include a brief, step-wise overview of analyses performed.
 
 ### Compute Specifications
 
-TODO: Describe what compute resources were used to run the analysis. For example, you could list the operating system, number of cores, RAM, and storage space.
+
 
 ## Contributing
 
