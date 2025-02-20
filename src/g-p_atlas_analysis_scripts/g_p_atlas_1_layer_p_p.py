@@ -271,6 +271,7 @@ class Q_net(nn.Module):
         phen_dim (int): Number of input phenotypes.
         N (int): Number of channels in hidden layers.
     """
+
     """
     Encoder for either genotypic or phenotypic data.
     Parameters:
@@ -329,6 +330,7 @@ class GQ_net(nn.Module):
         n_loci (int): number of input measured loci * number of segregating alleles
         N (int): Number of channels in hidden layers.
     """
+
     """
     Genetic encoder to produce latent embedding of genotypic data for predicting
     either phenotypes or genotypes.

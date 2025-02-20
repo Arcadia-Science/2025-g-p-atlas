@@ -272,6 +272,7 @@ class Q_net(nn.Module):
         phen_dim (int): Number of input phenotypes.
         N (int): Number of channels in hidden layers.
     """
+
     """
     Encoder for either genotypic or phenotypic data.
     Parameters:
