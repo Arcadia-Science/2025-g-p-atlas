@@ -13,7 +13,6 @@ Key functionalities include:
 - Visualizing and comparing the results of different **G-P Atlas runs**
 - Generating **ROC curves** and evaluating variable importance
 
-
 ## Installation and Setup
 
 To directly replicate the environment used to produce the pub use conda in the following way:
@@ -41,6 +40,8 @@ Note: be sure to use an envionrment manager. This is only to install the necessa
 TODO: Add details about the description of input / output data and links to Zenodo depositions, if applicable.
 
 ## Overview
+
+TODO: Add more detailed overview
 
 ### Description of the folder structure
 ```
@@ -81,28 +82,16 @@ TODO: Include a brief, step-wise overview of analyses performed.
 
 ### Compute Specifications
 
+Exact specifications used for the pub:
 
+- OS: Linux (Ubuntu 22.04.5 LTS)
+- Processor: AMD Ryzen 9 5950x 16-core processor
+- RAM: 128 GB
+- GPU: NVIDIA GeForce RTX 3070
+
+Note: It is very likely this will run efficiently with much less ram and fewer cores 
 
 ## Contributing
 
 See how we recognize [feedback and contributions to our code](https://github.com/Arcadia-Science/arcadia-software-handbook/blob/main/guides-and-standards/guide-credit-for-contributions.md).
 
----
-## For Developers
-
-This section contains information for developers who are working off of this template. Please adjust or edit this section as appropriate when you're ready to share your repo.
-
-### GitHub templates
-This template uses GitHub templates to provide checklists when making new pull requests. These templates are stored in the [.github/](./.github/) directory.
-
-### VSCode
-This template includes recommendations to VSCode users for extensions, particularly the `ruff` linter. These recommendations are stored in `.vscode/extensions.json`. When you open the repository in VSCode, you should see a prompt to install the recommended extensions.
-
-### `.gitignore`
-This template uses a `.gitignore` file to prevent certain files from being committed to the repository.
-
-### `pyproject.toml`
-`pyproject.toml` is a configuration file to specify your project's metadata and to set the behavior of other tools such as linters, type checkers etc. You can learn more [here](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)
-
-### Linting
-This template automates linting and formatting using GitHub Actions and the `ruff` linter. When you push changes to your repository, GitHub will automatically run the linter and report any errors, blocking merges until they are resolved.
