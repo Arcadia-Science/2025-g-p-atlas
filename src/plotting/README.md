@@ -14,6 +14,7 @@ When run on G-P Atlas anaslysis of simulated data from 10.57844/arcadia-5953-995
 - **`plot_gp_simulated_run.py`**: Similar to the yeast run script but applied to simulated data for comparative analysis.
 - **`plot_gp_yeast_linkage.py`**: Analyzes variable importance measures derived from G-P Atlas for yeast data, highlighting significant genomic regions.
 - **`plot_gp_simulated_linkage.py`**: Performs an equivalent analysis on simulated datasets, focusing on the importance of genetic features.
+- **`plot_compare_coef_det_two_runs.py`**: Determines and plots the coefficient of determination for two different runs of G-P Atlas.
 
 ### Helper Scripts
 
