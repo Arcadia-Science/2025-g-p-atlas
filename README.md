@@ -43,9 +43,10 @@ TODO: Add details about the description of input / output data and links to Zeno
 ## Overview
 
 ### Description of the folder structure
+```
 Project Root
- -**src** # Contains all of the scripts and other code to produce the pub
-  -**plotting** # Contains all of the scripts used to create the plots in the pub
+ -src # Contains all of the scripts and other code to produce the pub
+  -plotting # Contains all of the scripts used to create the plots in the pub
    -plot_gp_simulated_linkage.py # Linkage analysis of simulated data
    -plot_gp_simulated_run.py     # Performance visualization for runs on simulated
    -plot_gp_yeast_linkage.py     # Linkage analysis of yeast data
@@ -54,18 +55,18 @@ Project Root
    -helper_functions.py          # Contains helper functions used in more than one script
    -README.md                    # Readme discussing all of the plotting functions
    -matplotlibrc                 # Default matplotlib format file used to create plots for the pub
-  -**g-p_atlas_analysis_scripts** # Contains the main G-P Atlas scripts
+  -g-p_atlas_analysis_scripts # Contains the main G-P Atlas scripts
    -g_p_atlas.py                 # Main script for running G-P Atlas
    -g_p_atlas_1_layer_g_p.py     # Version of G-P Atlas with no hidden layer in the genetic encoder
    -g_p_atlas_1_layer_p_p.py     # Version of G-P Atlas with no hidden layer in the phenotype encoder
- -**envs** # Contains the conda .yml file and the requirements.txt for installing required software
+ -envs # Contains the conda .yml file and the requirements.txt for installing required software
   -exact_environment.yml         # conda .yml file for creating an environment to replicate the pub
   -requirements.txt              # Requirements.txt file to facilitate installing dependencies with PIP
  -README.md # This file
  -Makefile # Makefile to controll the repository updates
  -pyproject.toml # .toml file to define the python module in this repository
  -LICENSE   # File containing the software liscence
-
+```
 
 ### Methods
 
