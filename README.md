@@ -43,7 +43,6 @@ TODO: Add details about the description of input / output data and links to Zeno
 ## Overview
 
 ### Description of the folder structure
-```
 Project Root
  -**src** # Contains all of the scripts and other code to produce the pub
   -**plotting** # Contains all of the scripts used to create the plots in the pub
@@ -66,7 +65,8 @@ Project Root
  -Makefile # Makefile to controll the repository updates
  -pyproject.toml # .toml file to define the python module in this repository
  -LICENSE   # File containing the software liscence
-```
+
+
 ### Methods
 
 TODO: Include a brief, step-wise overview of analyses performed.
