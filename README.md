@@ -45,9 +45,9 @@ TODO: Add more detailed overview
 
 ### Description of the folder structure
 ```bash
-Project Root
- -src # Contains all of the scripts and other code to produce the pub
-  -plotting # Contains all of the scripts used to create the plots in the pub
+.
+├──src # Contains all of the scripts and other code to produce the pub
++--plotting # Contains all of the scripts used to create the plots in the pub
    -plot_gp_simulated_linkage.py # Linkage analysis of simulated data
    -plot_gp_simulated_run.py     # Performance visualization for runs on simulated
    -plot_gp_yeast_linkage.py     # Linkage analysis of yeast data
