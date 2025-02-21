@@ -54,7 +54,7 @@ TODO: Add more detailed overview
 ├── LICENSE                     
 ├── Makefile
 ├── pyproject.toml
-├── README.md
+├── README.md			# this file
 └── src				# contains all of the source code for G-P Atlas
     ├── g-p_atlas_analysis_scripts	# contains the main G-P Atlas script
     │   ├── g_p_atlas_1_layer_g_p.py	# G-P Atlas with no hidden layer in genotype encoder
