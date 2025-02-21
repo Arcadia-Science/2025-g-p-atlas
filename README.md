@@ -44,7 +44,7 @@ TODO: Add details about the description of input / output data and links to Zeno
 TODO: Add more detailed overview
 
 ### Description of the folder structure
-```tree
+```bash tree
 .
 ├──src # Contains all of the scripts and other code to produce the pub
 +--plotting # Contains all of the scripts used to create the plots in the pub
