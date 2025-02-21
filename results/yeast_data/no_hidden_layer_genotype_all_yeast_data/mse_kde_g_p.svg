@@ -1,0 +1,1037 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="460.8pt" height="345.6pt" viewBox="0 0 460.8 345.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2024-12-02T14:34:38.565747</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 345.6 
+L 460.8 345.6 
+L 460.8 0 
+L 0 0 
+L 0 345.6 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 57.6 307.584 
+L 414.72 307.584 
+L 414.72 41.472 
+L 57.6 41.472 
+L 57.6 307.584 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="ma75f13e813" d="M 0 0 
+L 0 1.2 
+" style="stroke: #262626; stroke-width: 0.75"/>
+      </defs>
+      <g>
+       <use xlink:href="#ma75f13e813" x="57.6" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <!-- 0 -->
+      <g style="fill: #262626" transform="translate(54.370313 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-30" d="M 2061 -83 
+C 3232 -83 3686 902 3686 2342 
+C 3686 3782 3232 4723 2061 4723 
+C 890 4723 442 3782 442 2342 
+C 442 902 890 -83 2061 -83 
+z
+M 1037 2342 
+C 1037 3610 1363 4224 2061 4224 
+C 2618 4224 2944 3827 3046 3021 
+L 1043 2106 
+C 1037 2182 1037 2259 1037 2342 
+z
+M 2061 422 
+C 1510 422 1190 826 1082 1619 
+L 3085 2547 
+C 3091 2477 3091 2413 3091 2342 
+C 3091 1075 2758 422 2061 422 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-30"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#ma75f13e813" x="108.617143" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <!-- 1 -->
+      <g style="fill: #262626" transform="translate(105.387455 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-31" d="M 2093 4640 
+C 1856 4134 1478 4051 704 4032 
+L 704 3629 
+L 1888 3629 
+L 1888 506 
+L 704 506 
+L 704 0 
+L 3450 0 
+L 3450 506 
+L 2477 506 
+L 2477 4640 
+L 2093 4640 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-31"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#ma75f13e813" x="159.634286" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <!-- 2 -->
+      <g style="fill: #262626" transform="translate(156.404598 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-32" d="M 2138 4723 
+C 1197 4723 582 4051 595 3168 
+L 1197 3168 
+C 1210 3930 1651 4224 2131 4224 
+C 2656 4224 2931 3878 2931 3398 
+C 2931 2586 2067 1715 512 506 
+L 512 0 
+L 3642 0 
+L 3642 506 
+L 1338 506 
+C 2522 1453 3558 2400 3558 3475 
+C 3558 4262 2950 4723 2138 4723 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-32"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#ma75f13e813" x="210.651429" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <!-- 3 -->
+      <g style="fill: #262626" transform="translate(207.421741 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-33" d="M 2048 422 
+C 1427 422 1107 819 1043 1382 
+L 448 1382 
+C 506 627 1011 -83 2042 -83 
+C 2861 -83 3667 384 3667 1306 
+C 3667 1779 3482 2253 2829 2477 
+C 3296 2669 3552 3078 3552 3552 
+C 3552 4397 2835 4723 2086 4723 
+C 1178 4723 576 4147 512 3328 
+L 1114 3328 
+C 1158 3846 1478 4224 2067 4224 
+C 2541 4224 2925 3962 2925 3494 
+C 2925 2957 2515 2707 1754 2707 
+L 1683 2707 
+L 1683 2189 
+L 1773 2189 
+C 2483 2189 3040 1952 3040 1299 
+C 3040 749 2637 422 2048 422 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-33"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#ma75f13e813" x="261.668571" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <!-- 4 -->
+      <g style="fill: #262626" transform="translate(258.438884 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-34" d="M 2464 3846 
+L 2464 1696 
+L 890 1696 
+L 2464 3846 
+z
+M 3827 1696 
+L 3053 1696 
+L 3053 4640 
+L 2458 4640 
+L 275 1696 
+L 275 1146 
+L 2464 1146 
+L 2464 0 
+L 3053 0 
+L 3053 1146 
+L 3827 1146 
+L 3827 1696 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-34"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#ma75f13e813" x="312.685714" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <!-- 5 -->
+      <g style="fill: #262626" transform="translate(309.456027 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-35" d="M 2061 422 
+C 1440 422 1120 819 1056 1382 
+L 461 1382 
+C 518 627 1024 -83 2054 -83 
+C 2880 -83 3667 480 3667 1530 
+C 3667 2534 2950 3098 2182 3098 
+C 1811 3098 1466 2989 1222 2752 
+L 1389 4141 
+L 3462 4141 
+L 3462 4640 
+L 890 4640 
+L 589 2125 
+L 1203 2099 
+C 1299 2323 1606 2586 2048 2586 
+C 2528 2586 3040 2278 3040 1523 
+C 3040 819 2592 422 2061 422 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-35"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#ma75f13e813" x="363.702857" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <!-- 6 -->
+      <g style="fill: #262626" transform="translate(360.47317 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-36" d="M 1126 1485 
+C 1126 2106 1517 2560 2093 2560 
+C 2656 2560 3053 2106 3053 1485 
+C 3053 858 2650 422 2086 422 
+C 1504 422 1126 851 1126 1485 
+z
+M 2176 4224 
+C 2598 4224 2899 3987 2970 3578 
+L 3603 3578 
+C 3514 4154 3072 4723 2208 4723 
+C 934 4723 454 3443 454 2138 
+C 454 730 992 -83 2093 -83 
+C 3040 -83 3680 659 3680 1510 
+C 3680 2432 3046 3085 2227 3085 
+C 1638 3085 1261 2810 1062 2451 
+C 1088 3507 1466 4224 2176 4224 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-36"/>
+      </g>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#ma75f13e813" x="414.72" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_8">
+      <!-- 7 -->
+      <g style="fill: #262626" transform="translate(411.490313 317.234) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-37" d="M 525 4141 
+L 3066 4141 
+C 1965 3238 1210 1664 1107 0 
+L 1779 0 
+C 1824 1702 2598 3232 3782 4141 
+L 3782 4640 
+L 525 4640 
+L 525 4141 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-37"/>
+      </g>
+     </g>
+    </g>
+    <g id="text_9">
+     <!-- Mean squared error -->
+     <g transform="translate(171.315469 332.259) scale(0.15 -0.15)">
+      <defs>
+       <path id="SuisseIntl-Light-4d" d="M 2554 0 
+L 2989 0 
+L 4563 4230 
+L 4563 0 
+L 4992 0 
+L 4992 4640 
+L 4307 4640 
+L 2778 486 
+L 1242 4640 
+L 550 4640 
+L 550 0 
+L 979 0 
+L 979 4230 
+L 2554 0 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-65" d="M 211 1709 
+C 211 640 826 -83 1837 -83 
+C 2592 -83 3162 320 3328 1030 
+L 2912 1030 
+C 2778 557 2400 282 1862 282 
+C 1158 282 634 774 621 1606 
+L 3360 1606 
+C 3411 2682 2797 3501 1824 3501 
+C 902 3501 211 2822 211 1709 
+z
+M 634 1971 
+C 717 2733 1178 3142 1818 3142 
+C 2509 3142 2925 2554 2925 1971 
+L 634 1971 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-61" d="M 2643 525 
+L 2662 0 
+L 3066 0 
+C 3046 371 3027 710 3027 1101 
+C 3027 1376 3034 1690 3034 2163 
+C 3034 3187 2502 3520 1702 3520 
+C 934 3520 384 3072 294 2394 
+L 710 2394 
+C 742 2842 1094 3168 1677 3168 
+C 2176 3168 2637 2995 2637 2214 
+L 2637 2093 
+C 979 1926 211 1638 211 858 
+C 211 288 710 -83 1350 -83 
+C 1990 -83 2419 160 2643 525 
+z
+M 1440 269 
+C 986 269 653 499 653 864 
+C 653 1402 1254 1587 2656 1741 
+L 2656 1574 
+C 2656 595 2080 269 1440 269 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-6e" d="M 877 2861 
+L 877 3443 
+L 480 3443 
+L 480 0 
+L 877 0 
+L 877 1914 
+C 877 2643 1325 3142 1920 3142 
+C 2618 3142 2784 2707 2784 2061 
+L 2784 0 
+L 3181 0 
+L 3181 2170 
+C 3181 3014 2835 3501 2022 3501 
+C 1382 3501 1043 3187 877 2861 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-20" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-73" d="M 2541 2502 
+L 2957 2502 
+C 2874 3053 2368 3507 1632 3507 
+C 858 3507 314 3104 314 2560 
+C 314 2022 749 1734 1248 1638 
+L 1786 1536 
+C 2253 1446 2637 1306 2637 902 
+C 2637 442 2118 269 1702 269 
+C 1171 269 736 512 659 1056 
+L 243 1056 
+C 346 269 960 -83 1670 -83 
+C 2419 -83 3040 282 3040 966 
+C 3040 1619 2413 1811 1850 1914 
+L 1363 2003 
+C 986 2074 717 2253 717 2592 
+C 717 3008 1216 3155 1594 3155 
+C 2080 3155 2458 2912 2541 2502 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-71" d="M 1645 3501 
+C 851 3501 205 2854 205 1709 
+C 205 570 851 -83 1645 -83 
+C 2150 -83 2566 154 2810 570 
+L 2810 -1120 
+L 3206 -1120 
+L 3206 3443 
+L 2810 3443 
+L 2810 2854 
+C 2566 3264 2150 3501 1645 3501 
+z
+M 1728 3142 
+C 2246 3142 2835 2726 2835 1709 
+C 2835 691 2246 275 1728 275 
+C 1088 275 634 794 634 1709 
+C 634 2624 1088 3142 1728 3142 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-75" d="M 2605 557 
+L 2605 0 
+L 3002 0 
+L 3002 3443 
+L 2605 3443 
+L 2605 1504 
+C 2605 774 2150 275 1600 275 
+C 928 275 774 710 774 1357 
+L 774 3443 
+L 378 3443 
+L 378 1248 
+C 378 403 710 -83 1498 -83 
+C 2093 -83 2438 230 2605 557 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-72" d="M 1990 3040 
+L 1990 3462 
+C 1952 3469 1907 3469 1875 3469 
+C 1459 3469 1011 3219 858 2816 
+L 858 3443 
+L 480 3443 
+L 480 0 
+L 870 0 
+L 870 1805 
+C 870 2534 1101 3046 1811 3046 
+C 1869 3046 1926 3046 1990 3040 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-64" d="M 1645 3501 
+C 851 3501 205 2848 205 1709 
+C 205 563 851 -83 1645 -83 
+C 2150 -83 2566 154 2810 563 
+L 2810 0 
+L 3206 0 
+L 3206 4640 
+L 2810 4640 
+L 2810 2848 
+C 2566 3264 2150 3501 1645 3501 
+z
+M 1728 3142 
+C 2246 3142 2835 2726 2835 1709 
+C 2835 691 2246 275 1728 275 
+C 1088 275 634 794 634 1709 
+C 634 2624 1088 3142 1728 3142 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-6f" d="M 1766 3501 
+C 941 3501 211 2963 211 1709 
+C 211 454 941 -83 1766 -83 
+C 2592 -83 3328 454 3328 1709 
+C 3328 2963 2592 3501 1766 3501 
+z
+M 1766 282 
+C 1107 282 634 723 634 1709 
+C 634 2694 1107 3136 1766 3136 
+C 2426 3136 2906 2694 2906 1709 
+C 2906 723 2426 282 1766 282 
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#SuisseIntl-Light-4d"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="86.599991"/>
+      <use xlink:href="#SuisseIntl-Light-61" x="142.399979"/>
+      <use xlink:href="#SuisseIntl-Light-6e" x="195.299973"/>
+      <use xlink:href="#SuisseIntl-Light-20" x="250.899963"/>
+      <use xlink:href="#SuisseIntl-Light-73" x="274.59996"/>
+      <use xlink:href="#SuisseIntl-Light-71" x="326.699951"/>
+      <use xlink:href="#SuisseIntl-Light-75" x="384.299942"/>
+      <use xlink:href="#SuisseIntl-Light-61" x="438.699936"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="491.59993"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="522.799927"/>
+      <use xlink:href="#SuisseIntl-Light-64" x="578.599915"/>
+      <use xlink:href="#SuisseIntl-Light-20" x="636.199905"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="659.899902"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="715.69989"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="746.899887"/>
+      <use xlink:href="#SuisseIntl-Light-6f" x="778.099884"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="833.399872"/>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_9">
+      <defs>
+       <path id="m386d581da0" d="M 0 0 
+L -1.2 0 
+" style="stroke: #262626; stroke-width: 0.75"/>
+      </defs>
+      <g>
+       <use xlink:href="#m386d581da0" x="57.6" y="307.584" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_10">
+      <!-- 0.0 -->
+      <g style="fill: #262626" transform="translate(35.821875 311.209) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-2e" d="M 2432 0 
+L 2432 736 
+L 1696 736 
+L 1696 0 
+L 2432 0 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-30"/>
+       <use xlink:href="#SuisseIntlMono-2e" x="64.599991"/>
+       <use xlink:href="#SuisseIntlMono-30" x="129.199982"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#m386d581da0" x="57.6" y="258.044581" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_11">
+      <!-- 0.2 -->
+      <g style="fill: #262626" transform="translate(35.821875 261.669581) scale(0.1 -0.1)">
+       <use xlink:href="#SuisseIntlMono-30"/>
+       <use xlink:href="#SuisseIntlMono-2e" x="64.599991"/>
+       <use xlink:href="#SuisseIntlMono-32" x="129.199982"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_11">
+      <g>
+       <use xlink:href="#m386d581da0" x="57.6" y="208.505162" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_12">
+      <!-- 0.4 -->
+      <g style="fill: #262626" transform="translate(35.821875 212.130162) scale(0.1 -0.1)">
+       <use xlink:href="#SuisseIntlMono-30"/>
+       <use xlink:href="#SuisseIntlMono-2e" x="64.599991"/>
+       <use xlink:href="#SuisseIntlMono-34" x="129.199982"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_12">
+      <g>
+       <use xlink:href="#m386d581da0" x="57.6" y="158.965743" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_13">
+      <!-- 0.6 -->
+      <g style="fill: #262626" transform="translate(35.821875 162.590743) scale(0.1 -0.1)">
+       <use xlink:href="#SuisseIntlMono-30"/>
+       <use xlink:href="#SuisseIntlMono-2e" x="64.599991"/>
+       <use xlink:href="#SuisseIntlMono-36" x="129.199982"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_13">
+      <g>
+       <use xlink:href="#m386d581da0" x="57.6" y="109.426324" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_14">
+      <!-- 0.8 -->
+      <g style="fill: #262626" transform="translate(35.821875 113.051324) scale(0.1 -0.1)">
+       <defs>
+        <path id="SuisseIntlMono-38" d="M 2067 4723 
+C 1165 4723 557 4218 557 3539 
+C 557 3168 730 2720 1171 2477 
+C 589 2227 422 1722 422 1306 
+C 422 435 1158 -83 2067 -83 
+C 2976 -83 3712 435 3712 1306 
+C 3712 1722 3539 2227 2963 2477 
+C 3398 2720 3571 3168 3571 3539 
+C 3571 4218 2970 4723 2067 4723 
+z
+M 2067 2214 
+C 2688 2214 3085 1843 3085 1306 
+C 3085 768 2688 422 2067 422 
+C 1446 422 1043 768 1043 1306 
+C 1043 1843 1446 2214 2067 2214 
+z
+M 2982 3482 
+C 2982 3021 2618 2669 2067 2669 
+C 1517 2669 1152 3021 1152 3482 
+C 1152 3936 1517 4218 2067 4218 
+C 2618 4218 2982 3955 2982 3482 
+z
+" transform="scale(0.015625)"/>
+       </defs>
+       <use xlink:href="#SuisseIntlMono-30"/>
+       <use xlink:href="#SuisseIntlMono-2e" x="64.599991"/>
+       <use xlink:href="#SuisseIntlMono-38" x="129.199982"/>
+      </g>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_14">
+      <g>
+       <use xlink:href="#m386d581da0" x="57.6" y="59.886905" style="fill: #262626; stroke: #262626; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_15">
+      <!-- 1.0 -->
+      <g style="fill: #262626" transform="translate(35.821875 63.511905) scale(0.1 -0.1)">
+       <use xlink:href="#SuisseIntlMono-31"/>
+       <use xlink:href="#SuisseIntlMono-2e" x="64.599991"/>
+       <use xlink:href="#SuisseIntlMono-30" x="129.199982"/>
+      </g>
+     </g>
+    </g>
+    <g id="text_16">
+     <!-- Density -->
+     <g transform="translate(30.796875 199.343625) rotate(-90) scale(0.15 -0.15)">
+      <defs>
+       <path id="SuisseIntl-Light-44" d="M 1677 4640 
+L 550 4640 
+L 550 0 
+L 1677 0 
+C 3155 0 4192 538 4192 2323 
+C 4192 4102 3155 4640 1677 4640 
+z
+M 1664 4250 
+C 2720 4250 3738 4038 3738 2323 
+C 3738 608 2720 390 1664 390 
+L 979 390 
+L 979 4250 
+L 1664 4250 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-69" d="M 877 4640 
+L 480 4640 
+L 480 4006 
+L 877 4006 
+L 877 4640 
+z
+M 877 3443 
+L 480 3443 
+L 480 0 
+L 877 0 
+L 877 3443 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-74" d="M 640 4218 
+L 640 3443 
+L 70 3443 
+L 70 3098 
+L 640 3098 
+L 640 819 
+C 640 141 781 0 1395 0 
+L 1722 0 
+L 1722 358 
+L 1517 358 
+C 1056 358 1043 448 1043 896 
+L 1043 3098 
+L 1722 3098 
+L 1722 3443 
+L 1043 3443 
+L 1043 4218 
+L 640 4218 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-79" d="M 314 -1120 
+L 538 -1120 
+C 1158 -1120 1325 -1011 1568 -346 
+L 2982 3443 
+L 2554 3443 
+L 1517 550 
+L 448 3443 
+L 0 3443 
+L 1318 0 
+L 1210 -275 
+C 1030 -755 870 -774 544 -774 
+L 314 -774 
+L 314 -1120 
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#SuisseIntl-Light-44"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="69.499985"/>
+      <use xlink:href="#SuisseIntl-Light-6e" x="125.299973"/>
+      <use xlink:href="#SuisseIntl-Light-73" x="180.899963"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="232.999954"/>
+      <use xlink:href="#SuisseIntl-Light-74" x="254.199951"/>
+      <use xlink:href="#SuisseIntl-Light-79" x="284.299942"/>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_15">
+    <path d="M 63.7348 307.565704 
+L 67.728247 307.448037 
+L 70.390545 307.163877 
+L 71.721694 306.888472 
+L 73.052842 306.47589 
+L 74.383991 305.882548 
+L 75.71514 305.06176 
+L 77.046289 303.966682 
+L 78.377438 302.552661 
+L 79.708587 300.777763 
+L 81.039736 298.600572 
+L 82.370885 295.975165 
+L 83.702033 292.844299 
+L 85.033182 289.132929 
+L 86.364331 284.74461 
+L 87.69548 279.562836 
+L 89.026629 273.457999 
+L 90.357778 266.298898 
+L 91.688927 257.966407 
+L 93.020076 248.366709 
+L 94.351224 237.442544 
+L 95.682373 225.182622 
+L 97.013522 211.63062 
+L 99.67582 181.160465 
+L 106.331564 99.545698 
+L 107.662713 85.772993 
+L 108.993862 73.854682 
+L 110.325011 64.0578 
+L 111.65616 56.514483 
+L 112.987309 51.21598 
+L 114.318457 48.022853 
+L 115.649606 46.689881 
+L 116.980755 46.903061 
+L 118.311904 48.324739 
+L 119.643053 50.641066 
+L 120.974202 53.604349 
+L 122.305351 57.062545 
+L 123.6365 60.969878 
+L 124.967648 65.376393 
+L 126.298797 70.399217 
+L 127.629946 76.182596 
+L 128.961095 82.85606 
+L 130.292244 90.499406 
+L 131.623393 99.120004 
+L 134.285691 118.917776 
+L 140.941435 172.537226 
+L 142.272584 181.780378 
+L 143.603733 190.089472 
+L 144.934882 197.450653 
+L 146.26603 203.944795 
+L 147.597179 209.7227 
+L 150.259477 219.864409 
+L 154.252924 233.669145 
+L 158.24637 246.753318 
+L 160.908668 254.594565 
+L 163.570966 261.300758 
+L 164.902115 264.184044 
+L 166.233263 266.7726 
+L 168.895561 271.233643 
+L 171.557859 275.118429 
+L 183.538199 291.789183 
+L 186.200497 295.023766 
+L 188.862794 297.796859 
+L 190.193943 298.937638 
+L 191.525092 299.881822 
+L 192.856241 300.620209 
+L 194.18739 301.160275 
+L 195.518539 301.525305 
+L 198.180836 301.875451 
+L 206.16773 302.360395 
+L 208.830027 302.810644 
+L 212.823474 303.769553 
+L 216.816921 304.713868 
+L 219.479218 305.150154 
+L 226.134963 305.874617 
+L 230.128409 306.166272 
+L 232.790707 306.134039 
+L 240.7776 305.677178 
+L 244.771047 305.892111 
+L 251.426791 306.575504 
+L 258.082536 307.273849 
+L 262.075982 307.491778 
+L 268.731727 307.579316 
+L 288.69896 307.53317 
+L 294.023555 307.288612 
+L 299.348151 306.74442 
+L 303.341597 306.358024 
+L 307.335044 306.235783 
+L 311.328491 306.442753 
+L 323.30883 307.49096 
+L 328.633426 307.574623 
+L 328.633426 307.574623 
+" clip-path="url(#pe2756bfa62)" style="fill: none; stroke: #5088c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_16">
+    <path d="M 123.250472 307.584 
+L 123.250472 41.472 
+" clip-path="url(#pe2756bfa62)" style="fill: none; stroke: #5088c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_17">
+    <path d="M -1 302.466811 
+L 1.26411 301.723894 
+L 4.400616 300.521066 
+L 7.537122 299.125835 
+L 10.673628 297.519677 
+L 13.810135 295.684829 
+L 16.946641 293.604917 
+L 20.083147 291.265629 
+L 23.219653 288.655452 
+L 26.356159 285.766426 
+L 29.492666 282.594899 
+L 32.629172 279.142255 
+L 35.765678 275.415575 
+L 38.902184 271.428203 
+L 42.038691 267.200175 
+L 48.311703 258.137138 
+L 54.584715 248.525487 
+L 63.994234 233.977822 
+L 67.13074 229.336152 
+L 70.267246 224.906347 
+L 73.403753 220.753353 
+L 76.540259 216.939875 
+L 79.676765 213.524694 
+L 82.813271 210.561049 
+L 85.949777 208.09514 
+L 89.086284 206.164807 
+L 92.22279 204.798452 
+L 95.359296 204.014232 
+L 98.495802 203.819577 
+L 101.632309 204.211034 
+L 104.768815 205.174449 
+L 107.905321 206.685481 
+L 111.041827 208.710422 
+L 114.178333 211.207279 
+L 117.31484 214.127086 
+L 120.451346 217.415376 
+L 123.587852 221.013761 
+L 126.724358 224.86155 
+L 132.997371 233.060636 
+L 145.543396 249.880073 
+L 151.816408 257.745815 
+L 154.952914 261.422593 
+L 158.08942 264.899645 
+L 161.225927 268.162866 
+L 164.362433 271.203816 
+L 167.498939 274.019202 
+L 170.635445 276.610269 
+L 173.771951 278.982143 
+L 176.908458 281.143139 
+L 180.044964 283.104079 
+L 183.18147 284.877633 
+L 186.317976 286.4777 
+L 189.454482 287.91885 
+L 192.590989 289.215834 
+L 198.864001 291.434818 
+L 205.137014 293.242501 
+L 211.410026 294.731038 
+L 217.683038 295.973976 
+L 223.956051 297.026667 
+L 233.365569 298.332728 
+L 242.775088 299.386368 
+L 255.321113 300.496945 
+L 271.003644 301.571493 
+L 302.368706 303.378332 
+L 321.187743 304.307357 
+L 333.733768 304.692947 
+L 346.279793 304.811964 
+L 358.825818 304.700358 
+L 390.19088 304.295746 
+L 409.009917 304.40437 
+L 430.965461 304.551107 
+L 452.921004 304.418674 
+L 461.8 304.37193 
+L 461.8 304.37193 
+" clip-path="url(#pe2756bfa62)" style="fill: none; stroke: #f28360; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_18">
+    <path d="M 100.237643 307.584 
+L 100.237643 41.472 
+" clip-path="url(#pe2756bfa62)" style="fill: none; stroke: #5088c5; stroke-width: 1.5; stroke-linecap: round"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 57.6 307.584 
+L 57.6 41.472 
+" style="fill: none; stroke: #000000; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 57.6 307.584 
+L 414.72 307.584 
+" style="fill: none; stroke: #000000; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_19">
+     <path d="M 277.865313 54.222 
+L 287.865313 54.222 
+L 297.865313 54.222 
+" style="fill: none; stroke: #5088c5; stroke-width: 1.5; stroke-linecap: round"/>
+    </g>
+    <g id="text_17">
+     <!-- Within phenotype error -->
+     <g transform="translate(305.865313 57.722) scale(0.1 -0.1)">
+      <defs>
+       <path id="SuisseIntl-Light-57" d="M 4256 563 
+L 3213 4640 
+L 2733 4640 
+L 1722 563 
+L 538 4640 
+L 64 4640 
+L 1459 0 
+L 1952 0 
+L 2970 3891 
+L 3994 0 
+L 4486 0 
+L 5875 4640 
+L 5414 4640 
+L 4256 563 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-68" d="M 877 2861 
+L 877 4640 
+L 480 4640 
+L 480 0 
+L 877 0 
+L 877 1914 
+C 877 2643 1325 3142 1920 3142 
+C 2618 3142 2784 2707 2784 2061 
+L 2784 0 
+L 3181 0 
+L 3181 2170 
+C 3181 3014 2835 3501 2022 3501 
+C 1382 3501 1043 3187 877 2861 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-70" d="M 2042 -83 
+C 2835 -83 3482 570 3482 1709 
+C 3482 2854 2835 3501 2042 3501 
+C 1536 3501 1120 3264 877 2854 
+L 877 3443 
+L 480 3443 
+L 480 -1120 
+L 877 -1120 
+L 877 570 
+C 1120 154 1536 -83 2042 -83 
+z
+M 1958 275 
+C 1440 275 851 691 851 1709 
+C 851 2726 1440 3142 1958 3142 
+C 2598 3142 3053 2624 3053 1709 
+C 3053 794 2598 275 1958 275 
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#SuisseIntl-Light-57"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="92.799988"/>
+      <use xlink:href="#SuisseIntl-Light-74" x="113.999985"/>
+      <use xlink:href="#SuisseIntl-Light-68" x="144.099976"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="199.699966"/>
+      <use xlink:href="#SuisseIntl-Light-6e" x="220.899963"/>
+      <use xlink:href="#SuisseIntl-Light-20" x="276.499954"/>
+      <use xlink:href="#SuisseIntl-Light-70" x="300.199951"/>
+      <use xlink:href="#SuisseIntl-Light-68" x="357.799942"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="413.399933"/>
+      <use xlink:href="#SuisseIntl-Light-6e" x="469.199921"/>
+      <use xlink:href="#SuisseIntl-Light-6f" x="524.799911"/>
+      <use xlink:href="#SuisseIntl-Light-74" x="580.099899"/>
+      <use xlink:href="#SuisseIntl-Light-79" x="610.19989"/>
+      <use xlink:href="#SuisseIntl-Light-70" x="656.799881"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="714.399872"/>
+      <use xlink:href="#SuisseIntl-Light-20" x="770.19986"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="793.899857"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="849.699844"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="880.899841"/>
+      <use xlink:href="#SuisseIntl-Light-6f" x="912.099838"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="967.399826"/>
+     </g>
+    </g>
+    <g id="line2d_20">
+     <path d="M 277.865313 68.222 
+L 287.865313 68.222 
+L 297.865313 68.222 
+" style="fill: none; stroke: #f28360; stroke-width: 1.5; stroke-linecap: round"/>
+    </g>
+    <g id="text_18">
+     <!-- Within individual error -->
+     <g transform="translate(305.865313 71.722) scale(0.1 -0.1)">
+      <defs>
+       <path id="SuisseIntl-Light-76" d="M 1517 550 
+L 448 3443 
+L 0 3443 
+L 1318 0 
+L 1702 0 
+L 2982 3443 
+L 2554 3443 
+L 1517 550 
+z
+" transform="scale(0.015625)"/>
+       <path id="SuisseIntl-Light-6c" d="M 877 0 
+L 877 4640 
+L 480 4640 
+L 480 0 
+L 877 0 
+z
+" transform="scale(0.015625)"/>
+      </defs>
+      <use xlink:href="#SuisseIntl-Light-57"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="92.799988"/>
+      <use xlink:href="#SuisseIntl-Light-74" x="113.999985"/>
+      <use xlink:href="#SuisseIntl-Light-68" x="144.099976"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="199.699966"/>
+      <use xlink:href="#SuisseIntl-Light-6e" x="220.899963"/>
+      <use xlink:href="#SuisseIntl-Light-20" x="276.499954"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="300.199951"/>
+      <use xlink:href="#SuisseIntl-Light-6e" x="321.399948"/>
+      <use xlink:href="#SuisseIntl-Light-64" x="376.999939"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="434.59993"/>
+      <use xlink:href="#SuisseIntl-Light-76" x="455.799927"/>
+      <use xlink:href="#SuisseIntl-Light-69" x="502.399918"/>
+      <use xlink:href="#SuisseIntl-Light-64" x="523.599915"/>
+      <use xlink:href="#SuisseIntl-Light-75" x="581.199905"/>
+      <use xlink:href="#SuisseIntl-Light-61" x="635.599899"/>
+      <use xlink:href="#SuisseIntl-Light-6c" x="688.499893"/>
+      <use xlink:href="#SuisseIntl-Light-20" x="709.69989"/>
+      <use xlink:href="#SuisseIntl-Light-65" x="733.399887"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="789.199875"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="820.399872"/>
+      <use xlink:href="#SuisseIntl-Light-6f" x="851.599869"/>
+      <use xlink:href="#SuisseIntl-Light-72" x="906.899857"/>
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pe2756bfa62">
+   <rect x="57.6" y="41.472" width="357.12" height="266.112"/>
+  </clipPath>
+ </defs>
+</svg>
