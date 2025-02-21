@@ -3,7 +3,7 @@
 
 ## Purpose
 
-This repository contains a set of scripts for analyzing genetic and phenotypic data using G-P Atlas. These scripts generate various figures and analyses based on both real yeast cross-data and simulated datasets.
+This folder contains a set of scripts for analyzing genetic and phenotypic data using G-P Atlas. These scripts generate various figures and analyses based on both real yeast cross-data and simulated datasets.
 When run on G-P Atlas anaslysis of simulated data from 10.57844/arcadia-5953-995f and yeast data from 10.1038/nature11867, these scripts create the substantive figures presented in  10.57844/arcadia-d316-721f.
 
 ## Files in This Repository
