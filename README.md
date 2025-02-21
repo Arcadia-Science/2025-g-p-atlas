@@ -44,7 +44,7 @@ TODO: Add details about the description of input / output data and links to Zeno
 TODO: Add more detailed overview
 
 ### Description of the folder structure
-
+``` markdown
 2024-g-p-atlas/
 ├── envs
 │   ├── dev.yml                 # conda .yml for managing repository updates 
@@ -70,7 +70,7 @@ TODO: Add more detailed overview
         ├── __pycache__
         │   └── helper_functions.cpython-312.pyc
         └── README.md
-
+```
 
 
 .
