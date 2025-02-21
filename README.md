@@ -45,12 +45,12 @@ TODO: Add more detailed overview
 
 ### Description of the folder structure
 
-```markdown
+```bash
 2024-g-p-atlas/ \
 ├── **envs** \
-│   ├── dev.yml                  conda .yml for managing repository updates \ 
-│   ├── exact_environment.yml    conda .yml file for creating an environment to replicate the pub\
-│   └── requirements.txt         Requirements.txt file to facilitate installing dependencies with PIP\
+│   ├── dev.yml                  conda .yml for managing repository updates  
+│   ├── exact_environment.yml    conda .yml file for creating an environment to replicate the pub
+│   └── requirements.txt         requirements.txt file to install dependencies with PIP
 ├── LICENSE                     
 ├── Makefile
 ├── pyproject.toml
