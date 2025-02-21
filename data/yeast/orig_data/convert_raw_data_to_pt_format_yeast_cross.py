@@ -30,4 +30,4 @@ new_coding_dict = {'R':[0,1],'B':[1,0]}
 out_dict['genotypes'] = [[new_coding_dict[x] for x in [gens[y][n] for y in range(len(gens))[1:-1]]] for n in range(len(gens[0]))[1:]]
 
 
-pk.dump(out_dict, open('yeast_dat_cross_torch_format.pk','wb'))
+pk.dump(out_dict, open('full_yeast_data_torch_format.pk','wb'))
