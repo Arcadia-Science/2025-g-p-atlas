@@ -45,7 +45,7 @@ TODO: Add more detailed overview
 
 ### Description of the folder structure
 
-2024-g-p-atlas/
+2024-g-p-atlas/\
 ├── **envs**\
 │   ├── dev.yml                 # conda .yml for managing repository updates\ 
 │   ├── exact_environment.yml   # conda .yml file for creating an environment to replicate the pub\
