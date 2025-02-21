@@ -45,6 +45,7 @@ TODO: Add more detailed overview
 
 ### Description of the folder structure
 
+```markdown
 2024-g-p-atlas/ \
 ├── **envs** \
 │   ├── dev.yml                  conda .yml for managing repository updates \ 
