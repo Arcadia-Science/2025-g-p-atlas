@@ -44,7 +44,35 @@ TODO: Add details about the description of input / output data and links to Zeno
 TODO: Add more detailed overview
 
 ### Description of the folder structure
-```bash tree
+
+2024-g-p-atlas/
+├── envs
+│   ├── dev.yml                 # conda .yml for managing repository updates 
+│   ├── exact_environment.yml   # conda .yml file for creating an environment to replicate the pub
+│   └── requirements.txt        # Requirements.txt file to facilitate installing dependencies with PIP
+├── LICENSE                     
+├── Makefile
+├── pyproject.toml
+├── README.md
+└── src
+    ├── g-p_atlas_analysis_scripts   # Contains the main G-P Atlas script
+    │   ├── g_p_atlas_1_layer_g_p.py
+    │   ├── g_p_atlas_1_layer_p_p.py
+    │   └── g_p_atlas.py
+    └── plotting
+        ├── helper_functions.py
+        ├── matplotlibrc
+        ├── plot_compare_coef_det_two_runs.py
+        ├── plot_gp_simulated_linkage.py
+        ├── plot_gp_simulated_run.py
+        ├── plot_gp_yeast_linkage.py
+        ├── plot_gp_yeast_run.py
+        ├── __pycache__
+        │   └── helper_functions.cpython-312.pyc
+        └── README.md
+
+
+
 .
 ├──src # Contains all of the scripts and other code to produce the pub
 +--plotting # Contains all of the scripts used to create the plots in the pub
@@ -67,7 +95,6 @@ TODO: Add more detailed overview
  -Makefile # Makefile to controll the repository updates
  -pyproject.toml # .toml file to define the python module in this repository
  -LICENSE   # File containing the software liscence
-```
 
 ### Methods
 
