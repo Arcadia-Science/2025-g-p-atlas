@@ -45,30 +45,30 @@ TODO: Add more detailed overview
 
 ### Description of the folder structure
 
-```bash
-2024-g-p-atlas/ \
-├── **envs** \
-│   ├── dev.yml                  conda .yml for managing repository updates  
-│   ├── exact_environment.yml    conda .yml file for creating an environment to replicate the pub
-│   └── requirements.txt         requirements.txt file to install dependencies with PIP
+```
+2025-g-p-atlas
+├──envs 			# contains environement files
+│   ├── dev.yml                 # conda .yml for managing repository updates  
+│   ├── exact_environment.yml   # conda .yml file for creating an environment to replicate the pub
+│   └── requirements.txt        # requirements.txt file to install dependencies with PIP
 ├── LICENSE                     
 ├── Makefile
 ├── pyproject.toml
 ├── README.md
-└── src
-    ├── g-p_atlas_analysis_scripts   # Contains the main G-P Atlas script
-    │   ├── g_p_atlas_1_layer_g_p.py
-    │   ├── g_p_atlas_1_layer_p_p.py
-    │   └── g_p_atlas.py
-    └── plotting
-        ├── helper_functions.py
-        ├── matplotlibrc
-        ├── plot_compare_coef_det_two_runs.py
-        ├── plot_gp_simulated_linkage.py
-        ├── plot_gp_simulated_run.py
-        ├── plot_gp_yeast_linkage.py
-        ├── plot_gp_yeast_run.py
-        └── README.md
+└── src				# contains all of the source code for G-P Atlas
+    ├── g-p_atlas_analysis_scripts	# contains the main G-P Atlas script
+    │   ├── g_p_atlas_1_layer_g_p.py	# G-P Atlas with no hidden layer in genotype encoder
+    │   ├── g_p_atlas_1_layer_p_p.py	# G-P Atlas with no hidden layer in phenotype encoder
+    │   └── g_p_atlas.py		# the full G-P Atlas script
+    └── plotting			# contains scripts for plotting the output of G-P Atlas
+        ├── helper_functions.py		# helper functions used in more than one plotting script
+        ├── matplotlibrc		# default matplotlib format file used to create plots for the pub
+        ├── plot_compare_coef_det_two_runs.py	# compares the R-squared for multiple G-P Atlas runs
+        ├── plot_gp_simulated_linkage.py	# linkage analysis of simulated data
+        ├── plot_gp_simulated_run.py		# performance visualization for runs on simulated data
+        ├── plot_gp_yeast_linkage.py		# linkage analysis of yeast data
+        ├── plot_gp_yeast_run.py		# performance visualization for runs on yeast data
+        └── README.md				# readme discussing all of the plotting functions
 ```
 
 
