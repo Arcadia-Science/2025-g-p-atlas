@@ -47,6 +47,17 @@ TODO: Add more detailed overview
 
 ```
 2025-g-p-atlas
+├── data
+│   ├── g_p_atlas_format_simulated_data #contains test/train files for simulated data
+│   └── yeast_data			#contains folders with original and reformatted yeast data
+│       ├── g_p_atlas_format_data	#contains reformatted yeast data
+│       └── orig_data			#contains original format yeast data and scripts to reformat that data
+├── results				#contains the output of G-P Atlas and plotting scripts
+│   ├── full_g_p_run_simulated_data	#contains output for runs on simulated data
+│   └── yeast_data			#contains folders with output for rund on yeast data
+│       ├── full_g_p_atlas_all_yeast_data	#output for G-P Atlas runs on the full yeast dataset and plots
+│       ├── no_hidden_layer_genotype_all_yeast_data	#output for G-P Atlas(no genotype hidden layer) runs on the full yeast dataset and plots
+│       └── no_hidden_layer_phenotype_all_yeast_data	#output for G-P Atlas(no phenotype hidden layer) runs on the full yeast dataset and plots
 ├──envs 			# contains environement files
 │   ├── dev.yml                 # conda .yml for managing repository updates  
 │   ├── exact_environment.yml   # conda .yml file for creating an environment to replicate the pub
