@@ -37,7 +37,7 @@ Note: be sure to use an envionrment manager. This is only to install the necessa
 
 ## Data
 
-TODO: Add details about the description of input / output data and links to Zenodo depositions, if applicable.
+All data anlyzed in 10.57844/arcadia-d316-721f are contained in this repository. They are contained in `./data`. See the folder structure below. There are two dataset, one simulated dataset from 10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid population from 10.1038/nature11867.
 
 ## Overview
 
@@ -57,7 +57,8 @@ TODO: Add more detailed overview
 │   └── yeast_data			#contains folders with output for rund on yeast data
 │       ├── full_g_p_atlas_all_yeast_data	#output for G-P Atlas runs on the full yeast dataset and plots
 │       ├── no_hidden_layer_genotype_all_yeast_data	#output for G-P Atlas(no genotype hidden layer) runs on the full yeast dataset and plots
-│       └── no_hidden_layer_phenotype_all_yeast_data	#output for G-P Atlas(no phenotype hidden layer) runs on the full yeast dataset and plots
+│       ├── no_hidden_layer_phenotype_all_yeast_data	#output for G-P Atlas(no phenotype hidden layer) runs on the full yeast dataset and plots
+│       └── 41586_2013_BFnature11867_MOESM88_ESM_yeat_linkage_data.csv	#Linage data from 10.1038/nature11867. It is used in several plots.
 ├──envs 			# contains environement files
 │   ├── dev.yml                 # conda .yml for managing repository updates  
 │   ├── exact_environment.yml   # conda .yml file for creating an environment to replicate the pub
@@ -82,40 +83,18 @@ TODO: Add more detailed overview
         └── README.md				# readme discussing all of the plotting functions
 ```
 
-
-.
-├──src # Contains all of the scripts and other code to produce the pub
-+--plotting # Contains all of the scripts used to create the plots in the pub
-   -plot_gp_simulated_linkage.py # Linkage analysis of simulated data
-   -plot_gp_simulated_run.py     # Performance visualization for runs on simulated
-   -plot_gp_yeast_linkage.py     # Linkage analysis of yeast data
-   -plot_gp_yeast_run.py         # Performance visualization for runs on yeast data
-   -plot_compare_coef_det_two_runs.py # Compares the R-squared for multiple G-P Atlas runs
-   -helper_functions.py          # Contains helper functions used in more than one script
-   -README.md                    # Readme discussing all of the plotting functions
-   -matplotlibrc                 # Default matplotlib format file used to create plots for the pub
-  -g-p_atlas_analysis_scripts # Contains the main G-P Atlas scripts
-   -g_p_atlas.py                 # Main script for running G-P Atlas
-   -g_p_atlas_1_layer_g_p.py     # Version of G-P Atlas with no hidden layer in the genetic encoder
-   -g_p_atlas_1_layer_p_p.py     # Version of G-P Atlas with no hidden layer in the phenotype encoder
- -envs # Contains the conda .yml file and the requirements.txt for installing required software
-  -exact_environment.yml         # conda .yml file for creating an environment to replicate the pub
-  -requirements.txt              # Requirements.txt file to facilitate installing dependencies with PIP
- -README.md # This file
- -Makefile # Makefile to controll the repository updates
- -pyproject.toml # .toml file to define the python module in this repository
- -LICENSE   # File containing the software liscence
-
 ### Methods
 
-TODO: Include a brief, step-wise overview of analyses performed.
+If you have set up your environment and downloaded this repository, to recapitulate the primary analyses from the pub 10.57844/arcadia-d316-721f:
 
-> Example:
->
-> 1.  Download scripts using `download.ipynb`.
-> 2.  Preprocess using `./preprocessing.sh -a data/`
-> 3.  Run Snakemake pipeline `snakemake --snakefile Snakefile`
-> 4.  Generate figures using `pub/make_figures.ipynb`.
+1. De-compress all data:	`./gunzip -r ./data`
+2. Run G-P Atlas on simulated data:	`./src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path ./data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --test_suffix test.pk --train_suffix train.pk --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3`
+3. Run G-P Atlas on yeast data:	`./src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path ./data/yeast_data/g_p_atlas_format_data/ --n_epochs 1000 --n_epochs_gen 1000 --n_loci_measured 11623 --latent_dim 32 --e_hidden_dim 64 --d_hidden_dim 64 --ge_hidden_dim 2048 --n_phens_to_analyze 46 --n_phens_to_predict 46 --sd_noise 0.8 --gen_noise 0.8`
+4. Create run plots for simulated data: `./plotting/plot_gp_simulated_run.py ./results/full_g_p_run_simulated_data/`
+5. Create linkage plots for simulated data: `./plotting/plot_gp_simulated_linage.py ./results/full_g_p_run_simulated_data/`
+6. Create run plots for yeast data: `./plotting/plot_gp_simulated_run.py ./results/yeast_data/full_g_p_atlas_all_yeast_data/`
+7. Create linkage plots for yeast data: `./plotting/plot_gp_simulated_linage.py ./results/yeast_data/full_g_p_atlas_all_yeast_data/`
+
 
 ### Compute Specifications
 
@@ -126,7 +105,7 @@ Exact specifications used for the pub:
 - RAM: 128 GB
 - GPU: NVIDIA GeForce RTX 3070
 
-Note: It is very likely this will run efficiently with much less ram and fewer cores 
+Note: It is likely this will run efficiently with much less ram and fewer cores 
 
 ## Contributing
 
