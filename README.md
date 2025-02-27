@@ -32,7 +32,7 @@ Note: be sure to use an envionrment manager. This is only to install the necessa
 
 1. From the main repository folder:
    ```bash
-   pip3 install -c env/requirements.txt
+   pip3 install -c envs/requirements.txt
    ```
 
 ## Data
