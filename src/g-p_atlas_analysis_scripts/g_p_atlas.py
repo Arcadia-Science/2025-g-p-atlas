@@ -101,11 +101,11 @@ args.add_argument(
 args.add_argument(
     "--train_suffix",
     type=str,
-    default="dgrp_g_p_train_set.pk",
+    default="train.pk",
     help="name of the training data file, defaults to DGRP dataset",
 )
 args.add_argument(
-    "--test_suffix", type=str, default="dgrp_g_p_test_set.pk", help="name of the test data file"
+    "--test_suffix", type=str, default="test.pk", help="name of the test data file"
 )
 args.add_argument(
     "--hot_start",
