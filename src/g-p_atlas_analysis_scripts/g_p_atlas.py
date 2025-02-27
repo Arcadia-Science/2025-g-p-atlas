@@ -259,8 +259,15 @@ test_loader_geno = torch.utils.data.DataLoader(
 
 
 # model (encoders and decoders) classes
-# encoder
+# phenotype encoder
 class Q_net(nn.Module):
+    """
+    Encoder for creating embeddings of phenotypic data.
+    Parameters:
+        out_phen_dim (int): Number of output phenotypes.
+        N (int): Number of channels in hidden layers.
+    """
+    
     def __init__(self, phen_dim=None, N=None):
         super().__init__()
         if N is None:
@@ -284,7 +291,7 @@ class Q_net(nn.Module):
         return x
 
 
-# decoder
+# Phenotype decoder
 class P_net(nn.Module):
     """
     Decoder for predicting phenotypes from either genotypic or phenotypic data.
@@ -385,41 +392,46 @@ optim_P = torch.optim.Adam(P.parameters(), lr=reg_lr, betas=adam_b)
 optim_Q_enc = torch.optim.Adam(Q.parameters(), lr=reg_lr, betas=adam_b)
 optim_GQ_enc = torch.optim.Adam(GQ.parameters(), lr=reg_lr, betas=adam_b)
 
+# set the number of training epochs for the phenotype-phenotype autoencoder
 num_epochs = vabs.n_epochs
 
 torch.manual_seed(47)
 
-# train phenotype autoencoder
+# establish the number of phenotypes to predict and the number to use for prediction.
 n_phens = vabs.n_phens_to_analyze
 n_phens_pred = vabs.n_phens_to_predict
+
+# establish a variable to capture the reconstruction loss
 rcon_loss = []
 
+# establish a variable for the start of the run
 start_time = tm.time()
 
+# train the phenotype encoder and decoder
 for n in range(num_epochs):
     for _i, (phens) in enumerate(train_loader_pheno):
-        phens = phens[:, :n_phens]
+        phens = phens[:, :n_phens] # constrain the number of phenotypes to use for prediction
         phens = phens.to(device)  # move data to GPU if it is there
         batch_size = phens.shape[0]  # redefine batch size here to allow for incomplete batches
 
-        P.zero_grad()
+        P.zero_grad() # initialize gradiants for training
         Q.zero_grad()
 
-        noise_phens = phens + (vabs.sd_noise**0.5) * torch.randn(phens.shape).to(device)
+        noise_phens = phens + (vabs.sd_noise**0.5) * torch.randn(phens.shape).to(device) # add noise to phenotypes
 
-        z_sample = Q(noise_phens)
-        X_sample = P(z_sample)
+        z_sample = Q(noise_phens) # encode phenotypes
+        X_sample = P(z_sample) # decode encodings to produce predicted phenotypes
 
-        recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
+        recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS) # calculate the error of the phenotype predicitons
 
-        rcon_loss.append(float(recon_loss.detach()))
+        rcon_loss.append(float(recon_loss.detach())) # add the loss to the agregator
 
-        recon_loss.backward()
-        optim_P.step()
+        recon_loss.backward() # back propagate the reconstruction loss through the autoencoder
+        optim_P.step() # step the optimizers
         optim_Q_enc.step()
 
-    cur_time = tm.time() - start_time
-    start_time = tm.time()
+    cur_time = tm.time() - start_time # calculate the time it took for this batch
+    start_time = tm.time() # re-initialize the start time
     print(
         "Epoch num: "
         + str(n)
@@ -435,14 +447,14 @@ for n in range(num_epochs):
 # train genetic network
 
 P.requires_grad_(False)  # freeze weights in P (decoder)
-P.eval()
-num_epochs_gen = vabs.n_epochs_gen
+P.eval() # put P (phenotype decoder) into evaluation mode
+num_epochs_gen = vabs.n_epochs_gen # establish the number of training cycles for the genotype encoder
 
 gen_noise = 1 - vabs.gen_noise
 
-g_rcon_loss = []
+g_rcon_loss = [] # establish a variable to contain the reconstruction loss values
 
-start_time = tm.time()
+start_time = tm.time() # establish a variable that contains the start time
 
 for n in range(num_epochs_gen):
     for _i, (phens, gens) in enumerate(train_loader_geno):
