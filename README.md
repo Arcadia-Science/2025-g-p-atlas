@@ -87,7 +87,7 @@ TODO: Add more detailed overview
 
 If you have set up your environment and downloaded this repository, to recapitulate the primary analyses from the pub 10.57844/arcadia-d316-721f:
 
-1. De-compress all data:	`./gunzip -r ./data`
+1. De-compress all data:	`./gunzip -r ./`
 2. Run G-P Atlas on simulated data:	`./src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path ./data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --test_suffix test.pk --train_suffix train.pk --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3`
 3. Run G-P Atlas on yeast data:	`./src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path ./data/yeast_data/g_p_atlas_format_data/ --n_epochs 1000 --n_epochs_gen 1000 --n_loci_measured 11623 --latent_dim 32 --e_hidden_dim 64 --d_hidden_dim 64 --ge_hidden_dim 2048 --n_phens_to_analyze 46 --n_phens_to_predict 46 --sd_noise 0.8 --gen_noise 0.8`
 4. Create run plots for simulated data: `./plotting/plot_gp_simulated_run.py ./results/full_g_p_run_simulated_data/`
