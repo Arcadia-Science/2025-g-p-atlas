@@ -5,3 +5,4 @@ torchvision
 matplotlib>=3.6.3
 scikit-learn>=1.6.1
 seaborn>=0.13.2
+captum>=0.6.0

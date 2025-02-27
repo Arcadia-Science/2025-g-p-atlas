@@ -129,4 +129,4 @@ dependencies:
       - torch==2.2.2
       - torchvision==0.17.2
       - typing-extensions==4.12.2
-
+      - captum==0.6.0
