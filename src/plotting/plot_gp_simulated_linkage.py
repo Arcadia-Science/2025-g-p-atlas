@@ -74,33 +74,3 @@ plt.savefig(target_folder + "MSV_vs_additive_contribution.png")
 plt.close()
 
 
-# interactors and pleiotropy
-# replots the additive genetic contributions vs the allele atribution determined by G-P Atlas
-# and colors them by pleiotropy
-number_of_alleles = test_data["n_loci"] * test_data["n_as"]
-ints = np.zeros()
-for x in test_data["interact_matrix"]:
-    for y in x:
-        ints[y[0] * 3 + y[-1]] += 1
-        ints[y[1] * 3 + y[-1]] += 1
-
-influential_ints = [ints[n] for n in range(len(labels)) if labels[n] > 0]
-
-pleio = np.zeros(9000)
-for x in test_data["pleiotropy_matrix"]:
-    for y in x:
-        pleio[3 * y[-1]] += 1
-        pleio[3 * y[-1] + 1] += 1
-        pleio[3 * y[-1] + 2] += 1
-
-influential_pleio = [pleio[n] for n in range(len(labels)) if labels[n] > 0]
-
-plt.scatter(add_val, max_attr, c=influential_pleio, marker="o")
-plt.plot([-0.02, 10.02], [one_percent_fpr, one_percent_fpr], color="C1", linewidth=3)
-plt.legend("1% FPR", fontsize=14)
-plt.ylabel("Mean squared variable importance")
-plt.xlabel("Additive genetic influence (au)")
-plt.yticks(fontfamily="monospace")
-plt.xticks(fontfamily="monospace")
-plt.savefig(target_folder + "pleiotropy_plot_attribution_vs_weight.svg")
-plt.close()
