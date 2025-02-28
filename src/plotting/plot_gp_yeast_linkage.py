@@ -14,7 +14,7 @@ from sklearn import metrics
  python3 plot_gp_yeast_linkage.py [PATH TO G-P ATLAS OUTPUT]"""
 
 target_folder = sys.argv[1]  # folder containing the output of G-P Atlas when run on yeast data
-test_dataset_folder = sys.argv[2] # file containing test dataset
+test_dataset_folder = sys.argv[2]  # file containing test dataset
 
 # load phenotypes and phenotype predictions.  predictions based on genetic data
 with open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb") as data:
@@ -270,8 +270,10 @@ sns.jointplot(
     hue=0,
 )
 
-print('pearsons correlation between variance explained \
-and average variable importance per linked region')
+print(
+    "pearsons correlation between variance explained \
+and average variable importance per linked region"
+)
 
 print(
     sc.stats.pearsonr(
@@ -311,7 +313,7 @@ plt.close()
 
 # print the number of true loci identified in the top 10th percentile of feature attribution scores
 ninteith_percentile = np.percentile(max_attrs, 90)
-print('number of linked loci identified in the top 10th precentile of feature importance')
+print("number of linked loci identified in the top 10th precentile of feature importance")
 print(len([x for x in max_attr_per_locus if x > ninteith_percentile]))
 
 # feature importance vs variance explained
@@ -321,8 +323,10 @@ sns.jointplot(
     y=np.array(max_attr_per_linked_locus) / max(max_attr_per_linked_locus),
     hue=0,
 )
-print('pearsons correlation between variance explained and\
- the average feature importance per locus')
+print(
+    "pearsons correlation between variance explained and\
+ the average feature importance per locus"
+)
 print(
     sc.stats.pearsonr(
         np.array(sorted_variance_explained) / max(sorted_variance_explained),
