@@ -311,8 +311,6 @@ plt.close()
 ninteith_percentile = np.percentile(max_attrs, 90)
 print('number of linked loci identified in the top 10th precentile of feature importance')
 print(len([x for x in max_attr_per_locus if x > ninteith_percentile]))
-all_loci_captured_index = cumulative_fraction_reverse.index(0)
-print(list(reversed(list(np.array(range(0, 100)) / 100)))[22])
 
 # feature importance vs variance explained
 max_attr_per_linked_locus = [max_attrs[n] for n in sorted_linked_marker_index]
