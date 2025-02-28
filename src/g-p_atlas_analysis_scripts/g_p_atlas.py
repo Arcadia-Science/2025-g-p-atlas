@@ -432,6 +432,7 @@ for n in range(num_epochs):
 
     cur_time = tm.time() - start_time # calculate the time it took for this batch
     start_time = tm.time() # re-initialize the start time
+    # for each loop, print a set of useful information
     print(
         "Epoch num: "
         + str(n)
@@ -458,41 +459,41 @@ start_time = tm.time() # establish a variable that contains the start time
 
 for n in range(num_epochs_gen):
     for _i, (phens, gens) in enumerate(train_loader_geno):
-        phens = phens.to(device)
+        phens = phens.to(device) # move phenotypic data to the gpu if it is there
 
-        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles]
+        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles] # constrain the genetic data according to the desired number of alleles to examine
 
-        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
+        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape) # create vectors containing noise
 
-        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
+        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape) # create vectors containing noise
 
         noise_gens = torch.tensor(
             np.where((gens + pos_noise - neg_noise) > 0, 1, 0), dtype=torch.float32
-        )
+        ) # add noise to the genetic data
 
-        noise_gens = noise_gens.to(device)
+        noise_gens = noise_gens.to(device) # put genotypes plus noise on the gpu if it is there
 
-        batch_size = phens.shape[0]
+        batch_size = phens.shape[0] # establish the training batch size
 
-        GQ.zero_grad()
+        GQ.zero_grad() # zero the gradients
 
-        z_sample = GQ(noise_gens)
-        X_sample = P(z_sample)
+        z_sample = GQ(noise_gens) # encode the genetic data
+        X_sample = P(z_sample) # decode the encoded genetic data to phenotypes
 
-        g_recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
+        g_recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS) # calculate the reconstruction loss
 
-        g_rcon_loss.append(float(g_recon_loss.detach()))
+        g_rcon_loss.append(float(g_recon_loss.detach())) # add the reconstruction loss to the agregator to allow plotting later
 
-        l1_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 1)
-        l2_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 2)
-        g_recon_loss = g_recon_loss + l1_reg * vabs.l1_lambda + l2_reg * vabs.l2_lambda
+        l1_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 1) # calculate the L1 norm of the weights in the genetic encoder
+        l2_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 2) # calculate the L2 norm of the weights in the genetic encoder
+        g_recon_loss = g_recon_loss + l1_reg * vabs.l1_lambda + l2_reg * vabs.l2_lambda # add L1 and L2 regularizers to the cost function
 
-        g_recon_loss.backward()
+        g_recon_loss.backward() # backpropagate the loss
 
-        optim_GQ_enc.step()
+        optim_GQ_enc.step() # step the optimizer
 
-    cur_time = tm.time() - start_time
-    start_time = tm.time()
+    cur_time = tm.time() - start_time # set the current time variable to be equal to how long it took to run the epoch
+    start_time = tm.time() # set the original start time variable to the current time
     print(
         "Epoch num: "
         + str(n)
@@ -502,13 +503,13 @@ for n in range(num_epochs_gen):
         + str(g_rcon_loss[-1])
         + " epoch duration: "
         + str(cur_time)
-    )
+    ) # print useful things about the current training epoch
 
 # plot the reconstruction losses
 plt.plot(rcon_loss)  # reconstruction loss for the phenotype autoencoder
 plt.plot(g_rcon_loss)  # reconstruction loss for the genetic weights
-plt.savefig(dataset_path + "reconstruction_loss.svg")
-plt.close()
+plt.savefig(dataset_path + "reconstruction_loss.svg") # save a plot of the reconstruction loss
+plt.close() # cleanup matplot for later plotting
 
 
 # A function to evaluate the performance of each model, saving summaries of model performance
@@ -635,7 +636,7 @@ torch.save(Q.state_dict(), dataset_path + "phen_encoder_state.pt")
 torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")
 torch.save(GQ.state_dict(), dataset_path + "gen_encoder_state.pt")
 
-# G-P prediction
+# G-P prediction. Loop evaluating hte performace on the test data
 GQ.eval()
 phens, phen_encodings, phen_latent, fa_attr = [], [], [], []
 
@@ -658,7 +659,7 @@ stats_aggregator.extend(
     )
 )
 
-# P-P prediction
+# P-P prediction. Loop evaluating the performance on the test data
 Q.eval()
 phens, phen_encodings, phen_latent, fa_attr = [], [], [], []
 
