@@ -104,9 +104,7 @@ args.add_argument(
     default="train.pk",
     help="name of the training data file, defaults to DGRP dataset",
 )
-args.add_argument(
-    "--test_suffix", type=str, default="test.pk", help="name of the test data file"
-)
+args.add_argument("--test_suffix", type=str, default="test.pk", help="name of the test data file")
 args.add_argument(
     "--hot_start",
     type=bool,
@@ -263,7 +261,7 @@ class Q_net(nn.Module):
         out_phen_dim (int): Number of output phenotypes.
         N (int): Number of channels in hidden layers.
     """
-    
+
     def __init__(self, phen_dim=None, N=None):
         super().__init__()
         if N is None:
@@ -406,28 +404,30 @@ start_time = tm.time()
 # train the phenotype encoder and decoder
 for n in range(num_epochs):
     for _i, (phens) in enumerate(train_loader_pheno):
-        phens = phens[:, :n_phens] # constrain the number of phenotypes to use for prediction
+        phens = phens[:, :n_phens]  # constrain the number of phenotypes to use for prediction
         phens = phens.to(device)  # move data to GPU if it is there
         batch_size = phens.shape[0]  # redefine batch size here to allow for incomplete batches
 
-        P.zero_grad() # initialize gradiants for training
+        P.zero_grad()  # initialize gradiants for training
         Q.zero_grad()
 
-        noise_phens = phens + (vabs.sd_noise**0.5) * torch.randn(phens.shape).to(device) # add noise to phenotypes
+        noise_phens = phens + (vabs.sd_noise**0.5) * torch.randn(phens.shape).to(device)
+        # add noise to phenotypes
 
-        z_sample = Q(noise_phens) # encode phenotypes
-        X_sample = P(z_sample) # decode encodings to produce predicted phenotypes
+        z_sample = Q(noise_phens)  # encode phenotypes
+        X_sample = P(z_sample)  # decode encodings to produce predicted phenotypes
 
-        recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS) # calculate the error of the phenotype predicitons
+        recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
+        # calculate the error of the phenotype predicitons
 
-        rcon_loss.append(float(recon_loss.detach())) # add the loss to the agregator
+        rcon_loss.append(float(recon_loss.detach()))  # add the loss to the agregator
 
-        recon_loss.backward() # back propagate the reconstruction loss through the autoencoder
-        optim_P.step() # step the optimizers
+        recon_loss.backward()  # back propagate the reconstruction loss through the autoencoder
+        optim_P.step()  # step the optimizers
         optim_Q_enc.step()
 
-    cur_time = tm.time() - start_time # calculate the time it took for this batch
-    start_time = tm.time() # re-initialize the start time
+    cur_time = tm.time() - start_time  # calculate the time it took for this batch
+    start_time = tm.time()  # re-initialize the start time
     # for each loop, print a set of useful information
     print(
         "Epoch num: "
@@ -444,52 +444,56 @@ for n in range(num_epochs):
 # train genetic network
 
 P.requires_grad_(False)  # freeze weights in P (decoder)
-P.eval() # put P (phenotype decoder) into evaluation mode
-num_epochs_gen = vabs.n_epochs_gen # establish the number of training cycles for the genotype encoder
+P.eval()  # put P (phenotype decoder) into evaluation mode
+num_epochs_gen = vabs.n_epochs_gen
 
 gen_noise = 1 - vabs.gen_noise
 
-g_rcon_loss = [] # establish a variable to contain the reconstruction loss values
+g_rcon_loss = []  # establish a variable to contain the reconstruction loss values
 
-start_time = tm.time() # establish a variable that contains the start time
+start_time = tm.time()
 
 for n in range(num_epochs_gen):
     for _i, (phens, gens) in enumerate(train_loader_geno):
-        phens = phens.to(device) # move phenotypic data to the gpu if it is there
+        phens = phens.to(device)  # move phenotypic data to the gpu if it is there
 
-        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles] # constrain the genetic data according to the desired number of alleles to examine
+        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles]
 
-        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape) # create vectors containing noise
+        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
 
-        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape) # create vectors containing noise
+        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
 
         noise_gens = torch.tensor(
             np.where((gens + pos_noise - neg_noise) > 0, 1, 0), dtype=torch.float32
-        ) # add noise to the genetic data
+        )  # add noise to the genetic data
 
-        noise_gens = noise_gens.to(device) # put genotypes plus noise on the gpu if it is there
+        noise_gens = noise_gens.to(device)  # put genotypes plus noise on the gpu if it is there
 
-        batch_size = phens.shape[0] # establish the training batch size
+        batch_size = phens.shape[0]  # establish the training batch size
 
-        GQ.zero_grad() # zero the gradients
+        GQ.zero_grad()  # zero the gradients
 
-        z_sample = GQ(noise_gens) # encode the genetic data
-        X_sample = P(z_sample) # decode the encoded genetic data to phenotypes
+        z_sample = GQ(noise_gens)  # encode the genetic data
+        X_sample = P(z_sample)  # decode the encoded genetic data to phenotypes
 
-        g_recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS) # calculate the reconstruction loss
+        g_recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
 
-        g_rcon_loss.append(float(g_recon_loss.detach())) # add the reconstruction loss to the agregator to allow plotting later
+        g_rcon_loss.append(float(g_recon_loss.detach()))
 
-        l1_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 1) # calculate the L1 norm of the weights in the genetic encoder
-        l2_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 2) # calculate the L2 norm of the weights in the genetic encoder
-        g_recon_loss = g_recon_loss + l1_reg * vabs.l1_lambda + l2_reg * vabs.l2_lambda # add L1 and L2 regularizers to the cost function
+        # Calculate the L1 and L2 norms for the weights in the first layer of the
+        # genetic encoder and add them to the reconstruction loss
+        l1_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 1)
+        l2_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 2)
+        g_recon_loss = g_recon_loss + l1_reg * vabs.l1_lambda + l2_reg * vabs.l2_lambda
 
-        g_recon_loss.backward() # backpropagate the loss
+        g_recon_loss.backward()  # backpropagate the loss
 
-        optim_GQ_enc.step() # step the optimizer
+        optim_GQ_enc.step()  # step the optimizer
 
-    cur_time = tm.time() - start_time # set the current time variable to be equal to how long it took to run the epoch
-    start_time = tm.time() # set the original start time variable to the current time
+    cur_time = tm.time() - start_time  # set a variable for the epoch time
+    start_time = tm.time()  # set the original start time variable to the current time
+
+    # print useful things about the current training epoch
     print(
         "Epoch num: "
         + str(n)
@@ -499,13 +503,13 @@ for n in range(num_epochs_gen):
         + str(g_rcon_loss[-1])
         + " epoch duration: "
         + str(cur_time)
-    ) # print useful things about the current training epoch
+    )
 
 # plot the reconstruction losses
 plt.plot(rcon_loss)  # reconstruction loss for the phenotype autoencoder
 plt.plot(g_rcon_loss)  # reconstruction loss for the genetic weights
-plt.savefig(dataset_path + "reconstruction_loss.svg") # save a plot of the reconstruction loss
-plt.close() # cleanup matplot for later plotting
+plt.savefig(dataset_path + "reconstruction_loss.svg")
+plt.close()
 
 
 # A function to evaluate the performance of each model, saving summaries of model performance
@@ -550,7 +554,7 @@ def analyze_predictions(
     plt.hist(fa_attr, bins=20)
     plt.savefig(dataset_path + f"{model_type}_attr.svg")
     plt.close()
-    if fa_attr !=[]:
+    if fa_attr != []:
         pk.dump(fa_attr, open(dataset_path + f"{model_type}_attr.pk", "wb"))
 
     # Convert and transpose data
