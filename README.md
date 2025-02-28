@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This repository contains scripts for running and analyzing the output of **G-P Atlas**, a method for creating holistic genotype-to-phenotype mappings that capture all phenotypic and genetic data in a single model. These models can be used for phenotype prediction from genetic or phenotypic data, linkage analysis and so on. The method is explained and demonstrated in [this publication](https://doi.org/10.57844/arcadia-d316-721f)
+This repository contains scripts for running and analyzing the output of **G-P Atlas**, a method for creating holistic genotype-to-phenotype mappings that capture all phenotypic and genetic data in a single model. These models can be used for phenotype prediction from genetic or phenotypic data, linkage analysis and so on. The method is explained and demonstrated in [this publication](https://doi.org/10.57844/arcadia-d316-721f). All data, results and code used for that publication are contained in this repository.
 
 Key functionalities include:
 
@@ -83,17 +83,19 @@ All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in 
         └── README.md				# readme discussing all of the plotting functions
 ```
 
-### Methods
+### Usage
+####For guidance on data formatting for and usage of G-P Atlas see `src/g-p_atlas_analysis_scripts/README.md`
 
-If you have set up your environment and downloaded this repository, to recapitulate the primary analyses from the pub https://doi.org/10.57844/arcadia-d316-721f:
+####To recapitulate the primary analyses from the pub https://doi.org/10.57844/arcadia-d316-721f:
 
-1. De-compress all data:	`gunzip -r ./`
-2. Run G-P Atlas on simulated data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3`
-3. Run G-P Atlas on yeast data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/yeast_data/g_p_atlas_format_data/ --n_epochs 1000 --n_epochs_gen 1000 --n_loci_measured 11623 --latent_dim 32 --e_hidden_dim 64 --d_hidden_dim 64 --ge_hidden_dim 2048 --n_phens_to_analyze 46 --n_phens_to_predict 46 --sd_noise 0.8 --gen_noise 0.8`
-4. Create run plots for simulated data: `python3 src/plotting/plot_gp_simulated_run.py results/full_g_p_run_simulated_data/`
-5. Create linkage plots for simulated data: `python3 src/plotting/plot_gp_simulated_linkage.py results/full_g_p_run_simulated_data/ data/g_p_atlas_format_simulated_data/test.pk`
-6. Create run plots for yeast data: `python3 src/plotting/plot_gp_simulated_run.py results/yeast_data/full_g_p_atlas_all_yeast_data/`
-7. Create linkage plots for yeast data: `python3 src/plotting/plot_gp_yeast_linkage.py results/yeast_data/full_g_p_atlas_all_yeast_data/ data/yeast_data/g_p_atlas_format_data/test.pk`
+1. Clone this repository and set up an invronment with the apropriate dependencies (see above)
+2. De-compress all data:	`gunzip -r ./`
+3. Run G-P Atlas on simulated data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3`
+4. Run G-P Atlas on yeast data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/yeast_data/g_p_atlas_format_data/ --n_epochs 1000 --n_epochs_gen 1000 --n_loci_measured 11623 --latent_dim 32 --e_hidden_dim 64 --d_hidden_dim 64 --ge_hidden_dim 2048 --n_phens_to_analyze 46 --n_phens_to_predict 46 --sd_noise 0.8 --gen_noise 0.8`
+5. Create run plots for simulated data: `python3 src/plotting/plot_gp_simulated_run.py results/full_g_p_run_simulated_data/`
+6. Create linkage plots for simulated data: `python3 src/plotting/plot_gp_simulated_linkage.py results/full_g_p_run_simulated_data/ data/g_p_atlas_format_simulated_data/test.pk`
+7. Create run plots for yeast data: `python3 src/plotting/plot_gp_simulated_run.py results/yeast_data/full_g_p_atlas_all_yeast_data/`
+8. Create linkage plots for yeast data: `python3 src/plotting/plot_gp_yeast_linkage.py results/yeast_data/full_g_p_atlas_all_yeast_data/ data/yeast_data/g_p_atlas_format_data/test.pk`
 
 
 ### Compute Specifications
