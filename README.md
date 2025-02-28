@@ -4,14 +4,17 @@
 
 ## Purpose
 
-This repository contains scripts for running and analyzing the output of **G-P Atlas**, a method for creating holistic genotype-to-phenotype mappings that capture all phenotypic and genetic data in a single model. These models can be used for phenotype prediction from genetic or phenotypic data, linkage analysis and so on. The method is explained and demonstrated in 10.57844/arcadia-d316-721f
+This repository contains scripts for running and analyzing the output of **G-P Atlas**, a method for creating holistic genotype-to-phenotype mappings that capture all phenotypic and genetic data in a single model. These models can be used for phenotype prediction from genetic or phenotypic data, linkage analysis and so on. The method is explained and demonstrated in [this publication](https://doi.org/10.57844/arcadia-d316-721f)
 
 Key functionalities include:
 
-- Running the **G-P Atlas** model to infer genetic contributions to phenotypes
+- Fitting the **G-P Atlas** model that creates a genotype-to-phenotype map for many phenotypes and genetic locations
 - Computing model performance metrics such as **mean squared error (MSE), mean absolute percentage error (MAPE), and coefficient of determination (R²)**
 - Visualizing and comparing the results of different **G-P Atlas runs**
-- Generating **ROC curves** and evaluating variable importance
+- Generating **ROC curves** for classifying loci contributing to phenotypes
+- Calculating the importance (variable importance) of loci, alleles, and phenotypes in predicting other phenotypes
+- Predicting phenotypes from genotypes
+- Predicting phenotypes from other phenotypes
 
 ## Installation and Setup
 
