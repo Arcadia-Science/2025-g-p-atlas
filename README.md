@@ -18,8 +18,7 @@ Key functionalities include:
 
 ## Installation and Setup
 
-To directly replicate the environment used to produce the pub use conda in the following way:
-Note: this environemnt is linux or mac specific.
+To directly replicate the environment used to produce the pub use conda in the following way (Note: this environemnt is linux or mac specific):
 
 1. If you haven't already installed some form of conda, install miniconda:
    [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) and [Mamba](https://mamba.readthedocs.io/en/latest/).
@@ -30,7 +29,8 @@ Note: this environemnt is linux or mac specific.
    mamba env create -n gp_atlas_env --file envs/exact_environment.yml
    conda activate gp_atlas_env
    ```
-To use PIP to install the necessary files for application to other datasets:
+If you would prefer to use PIP and do not need to exactly replicate the environment used in the pub you can install dependencies in this way:
+
 Note: be sure to use an envionrment manager. This is only to install the necessary dependencies once you have a virtual environement.
 
 1. From the main repository folder:
@@ -40,7 +40,7 @@ Note: be sure to use an envionrment manager. This is only to install the necessa
 
 ## Data
 
-All data anlyzed in 10.57844/arcadia-d316-721f are contained in this repository. They are contained in `./data`. See the folder structure below. There are two dataset, one simulated dataset from 10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid population from 10.1038/nature11867.
+All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in this repository. They are contained in `./data`. See the folder structure below. There are two dataset, one simulated dataset from https://doi.org/10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid population from https://doi.org/10.1038/nature11867.
 
 ### Description of the folder structure
 
@@ -85,7 +85,7 @@ All data anlyzed in 10.57844/arcadia-d316-721f are contained in this repository.
 
 ### Methods
 
-If you have set up your environment and downloaded this repository, to recapitulate the primary analyses from the pub 10.57844/arcadia-d316-721f:
+If you have set up your environment and downloaded this repository, to recapitulate the primary analyses from the pub https://doi.org/10.57844/arcadia-d316-721f:
 
 1. De-compress all data:	`gunzip -r ./`
 2. Run G-P Atlas on simulated data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3`
@@ -105,7 +105,7 @@ Exact specifications used for the pub:
 - RAM: 128 GB
 - GPU: NVIDIA GeForce RTX 3070
 
-Note: It is likely this will run efficiently with much less ram and fewer cores 
+Note: It is likely this will run efficiently with less ram and fewer cores but a GPU is advised
 
 ## Contributing
 
