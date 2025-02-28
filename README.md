@@ -94,7 +94,7 @@ All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in 
 4. Run G-P Atlas on yeast data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/yeast_data/g_p_atlas_format_data/ --n_epochs 1000 --n_epochs_gen 1000 --n_loci_measured 11623 --latent_dim 32 --e_hidden_dim 64 --d_hidden_dim 64 --ge_hidden_dim 2048 --n_phens_to_analyze 46 --n_phens_to_predict 46 --sd_noise 0.8 --gen_noise 0.8`
 5. Create run plots for simulated data: `python3 src/plotting/plot_gp_simulated_run.py results/full_g_p_run_simulated_data/`
 6. Create linkage plots for simulated data: `python3 src/plotting/plot_gp_simulated_linkage.py results/full_g_p_run_simulated_data/ data/g_p_atlas_format_simulated_data/test.pk`
-7. Create run plots for yeast data: `python3 src/plotting/plot_gp_simulated_run.py results/yeast_data/full_g_p_atlas_all_yeast_data/`
+7. Create run plots for yeast data: `python3 src/plotting/plot_gp_yeast_run.py results/yeast_data/full_g_p_atlas_all_yeast_data/`
 8. Create linkage plots for yeast data: `python3 src/plotting/plot_gp_yeast_linkage.py results/yeast_data/full_g_p_atlas_all_yeast_data/ data/yeast_data/g_p_atlas_format_data/test.pk`
 
 
