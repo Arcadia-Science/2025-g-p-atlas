@@ -253,7 +253,7 @@ test_loader_geno = torch.utils.data.DataLoader(
 
 
 # model (encoders and decoders) classes
-# phenotype encoder
+# phenotype encoder class
 class Q_net(nn.Module):
     """
     Encoder for creating embeddings of phenotypic data.
@@ -285,7 +285,7 @@ class Q_net(nn.Module):
         return x
 
 
-# Phenotype decoder
+# Phenotype decoder class
 class P_net(nn.Module):
     """
     Decoder for predicting phenotypes from either genotypic or phenotypic data.
@@ -316,7 +316,7 @@ class P_net(nn.Module):
         return x
 
 
-# gencoder
+# genetic encoder class
 class GQ_net(nn.Module):
     """
     Genetic encoder to produce latent embedding of genotypic data for predicting
