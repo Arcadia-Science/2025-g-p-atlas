@@ -550,7 +550,8 @@ def analyze_predictions(
     plt.hist(fa_attr, bins=20)
     plt.savefig(dataset_path + f"{model_type}_attr.svg")
     plt.close()
-    pk.dump(fa_attr, open(dataset_path + f"{model_type}_attr.pk", "wb"))
+    if fa_attr !=[]:
+        pk.dump(fa_attr, open(dataset_path + f"{model_type}_attr.pk", "wb"))
 
     # Convert and transpose data
     phens = np.array(phens).T
@@ -585,7 +586,6 @@ def analyze_predictions(
     cors = [
         sc.stats.pearsonr(phens[n], phen_encodings[n])[0] for n in range(len(phens[:n_phens_pred]))
     ]
-    print(cors)
     stats_aggregator.append(cors)
     plt.hist(cors, bins=20)
     plt.savefig(dataset_path + f"phen_real_pred_pearsonsr_dng_attr{suffix}.svg")
@@ -595,7 +595,6 @@ def analyze_predictions(
     errs = [
         mean_squared_error(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))
     ]
-    print(errs)
     stats_aggregator.append(errs)
     plt.hist(errs, bins=20)
     plt.savefig(dataset_path + f"phen_real_pred_mse_dng_attr{suffix}.svg")
@@ -606,7 +605,6 @@ def analyze_predictions(
         mean_absolute_percentage_error(phens[n], phen_encodings[n])
         for n in range(len(phens[:n_phens_pred]))
     ]
-    print(errs)
     stats_aggregator.append(errs)
     plt.hist(errs, bins=20)
     plt.savefig(dataset_path + f"phen_real_pred_mape_dng_attr{suffix}.svg")
@@ -614,7 +612,6 @@ def analyze_predictions(
 
     # R2
     errs = [r2_score(phens[n], phen_encodings[n]) for n in range(len(phens[:n_phens_pred]))]
-    print(errs)
     stats_aggregator.append(errs)
     plt.hist(errs, bins=20)
     plt.savefig(dataset_path + f"phen_real_pred_r2_dng_attr{suffix}.svg")
