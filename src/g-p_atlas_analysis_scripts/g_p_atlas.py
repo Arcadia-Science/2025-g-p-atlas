@@ -131,7 +131,6 @@ args.add_argument(
     default=None,
     help="path to the genotype encoder weights to use at initialization",
 )
-)
 args.add_argument(
     "--calculate_importance",
     type=str,
