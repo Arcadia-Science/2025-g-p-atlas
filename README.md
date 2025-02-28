@@ -39,10 +39,6 @@ Note: be sure to use an envionrment manager. This is only to install the necessa
 
 All data anlyzed in 10.57844/arcadia-d316-721f are contained in this repository. They are contained in `./data`. See the folder structure below. There are two dataset, one simulated dataset from 10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid population from 10.1038/nature11867.
 
-## Overview
-
-TODO: Add more detailed overview
-
 ### Description of the folder structure
 
 ```
@@ -51,7 +47,7 @@ TODO: Add more detailed overview
 │   ├── g_p_atlas_format_simulated_data #contains test/train files for simulated data
 │   └── yeast_data			#contains folders with original and reformatted yeast data
 │       ├── g_p_atlas_format_data	#contains reformatted yeast data
-│       └── orig_data			#contains original format yeast data and scripts to reformat that data
+│       └── orig_data			#contains original format yeast data, scripts to reformat that data and a README about script usage
 ├── results				#contains the output of G-P Atlas and plotting scripts
 │   ├── full_g_p_run_simulated_data	#contains output for runs on simulated data
 │   └── yeast_data			#contains folders with output for rund on yeast data
@@ -71,7 +67,8 @@ TODO: Add more detailed overview
     ├── g-p_atlas_analysis_scripts	# contains the main G-P Atlas script
     │   ├── g_p_atlas_1_layer_g_p.py	# G-P Atlas with no hidden layer in genotype encoder
     │   ├── g_p_atlas_1_layer_p_p.py	# G-P Atlas with no hidden layer in phenotype encoder
-    │   └── g_p_atlas.py		# the full G-P Atlas script
+    │   ├── g_p_atlas.py		# the full G-P Atlas script
+    │   └── README.me         # readme covering the use, data formatting, and output of g_p_atlas.py
     └── plotting			# contains scripts for plotting the output of G-P Atlas
         ├── helper_functions.py		# helper functions used in more than one plotting script
         ├── matplotlibrc		# default matplotlib format file used to create plots for the pub
