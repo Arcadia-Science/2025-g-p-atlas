@@ -269,6 +269,8 @@ sns.jointplot(
     y=np.array(max_attr_per_locus) / max(max_attr_per_locus),
     hue=0,
 )
+
+print('pearsons correlation between variance explained and average variable importance per linked region')
 print(
     sc.stats.pearsonr(
         np.array(sorted_variance_explained) / max(sorted_variance_explained),
@@ -319,16 +321,13 @@ sns.jointplot(
     y=np.array(max_attr_per_linked_locus) / max(max_attr_per_linked_locus),
     hue=0,
 )
+print('pearsons correlation between variance explained and the average feature importance per locus')
 print(
     sc.stats.pearsonr(
         np.array(sorted_variance_explained) / max(sorted_variance_explained),
         np.array(max_attr_per_linked_locus) / max(max_attr_per_linked_locus),
     )
 )
-print(len(sorted_absolute_marker_position))
-print(len(max_attrs))
-print(len(sorted_linked_marker_index))
-print(len(sorted_variance_explained))
 plt.xlim(0, 1.01)
 plt.ylim(0, 1.01)
 plt.xlabel("Scaled variance explained per linked locus")
