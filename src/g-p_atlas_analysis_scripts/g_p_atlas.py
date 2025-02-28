@@ -131,7 +131,13 @@ args.add_argument(
     default=None,
     help="path to the genotype encoder weights to use at initialization",
 )
-
+)
+args.add_argument(
+    "--calculate_importance",
+    type=str,
+    default="no",
+    help="flag whether to calculate variable importance",
+)
 
 vabs = args.parse_args()
 
@@ -642,7 +648,8 @@ for dat in test_loader_geno:
     phens += list(ph.detach().cpu().numpy())
     phen_encodings += list(X_sample.detach().cpu().numpy())
     phen_latent += list(z_sample.detach().cpu().numpy())
-    fa_attr.append(list(fa.attribute(inputs=(gt, ph))[0].squeeze().detach().cpu().numpy()))
+    if vabs.calculate_importance == True:
+        fa_attr.append(list(fa.attribute(inputs=(gt, ph))[0].squeeze().detach().cpu().numpy()))
 
 stats_aggregator.extend(
     analyze_predictions(
@@ -663,7 +670,8 @@ for dat in test_loader_pheno:
     phens += list(ph.detach().cpu().numpy())
     phen_encodings += list(X_sample.detach().cpu().numpy())
     phen_latent += list(z_sample.detach().cpu().numpy())
-    fa_attr.append(list(fa_p.attribute(inputs=(ph, ph))[0].squeeze().detach().cpu().numpy()))
+    if vabs.calculate_importance == True:
+        fa_attr.append(list(fa_p.attribute(inputs=(ph, ph))[0].squeeze().detach().cpu().numpy()))
 
 stats_aggregator.extend(
     analyze_predictions(
