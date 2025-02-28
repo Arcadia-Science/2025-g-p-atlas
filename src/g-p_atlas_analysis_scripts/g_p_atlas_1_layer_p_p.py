@@ -15,9 +15,9 @@ from torch.utils.data.dataset import Dataset
 
 """This is an implementation of the G-P Atlas method for mapping genotype
 to phenotype described in https://doi.org/10.57844/arcadia-d316-721f.
-This version has no hidden layer in the phenotype to phenotype autoencoder.
+This version has no hidden layer in the phenotype encoder.
 For help type:
-python3 g_p_atlas.py --help"""
+python3 g_p_atlas_1_layer_p_p.py --help"""
 
 # parse commandline arguments
 args = ArgumentParser()
@@ -102,14 +102,11 @@ args.add_argument(
 args.add_argument(
     "--train_suffix",
     type=str,
-    default="dgrp_g_p_train_set.pk",
+    default="train.pk",
     help="name of the training data file, defaults to DGRP dataset",
 )
 args.add_argument(
-    "--test_suffix",
-    type=str,
-    default="dgrp_g_p_test_set.pk",
-    help="name of the test data file, defaults to DGRP dataset",
+    "--test_suffix", type=str, default="test.pk", help="name of the test data file"
 )
 args.add_argument(
     "--hot_start",
@@ -142,15 +139,10 @@ vabs = args.parse_args()
 
 # define a torch dataset object
 class dataset_pheno(Dataset):
-    """a class for importing simulated genotype-phenotype data.
-    It expects a pickled object that is organized as a list of tensors:
-    genotypes[n_animals, n_loci, n_alleles] (one hot at allelic state)
-    gen_locs[n_animals, n_loci] (index of allelic state)
-    weights[n_phens, n_loci, n_alleles] float weight for allelic contribution to phen
-    phens[n_animals,n_phens] float value for phenotype
-    indexes_of_loci_influencing_phen[n_phens,n_loci_ip] integer indices of
-    loci that influence a phenotype interaction_matrix
-    pleiotropy_matrix[n_phens, n_phens, gen_index]"""
+    """a class for importing simulated phenotype data.
+    It expects a pickled object that is organized as a dictionary of tensors:
+    phenotypes[n_animals,n_phens] float value for phenotype
+    """
 
     def __init__(self, data_file, n_phens):
         self.datset = pk.load(open(data_file, "rb"))
@@ -167,15 +159,11 @@ class dataset_pheno(Dataset):
 
 
 class dataset_geno(Dataset):
-    """a class for importing simulated genotype-phenotype data.
-    It expects a pickled object that is organized as a list of tensors:
+    """a class for importing simulated genotype and phenotype data.
+    It expects a pickled object that is organized as a dictionary of tensors:
     genotypes[n_animals, n_loci, n_alleles] (one hot at allelic state)
-    gen_locs[n_animals, n_loci] (index of allelic state)
-    weights[n_phens, n_loci, n_alleles] float weight for allelic contribution to phen
-    phens[n_animals,n_phens] float value for phenotype
-    indexes_of_loci_influencing_phen[n_phens,n_loci_ip] integer indicies of loci that
-    influence a phenotype interaction_matrix[FILL THIS IN]
-    pleiotropy_matrix[n_phens, n_phens, gen_index]"""
+    phenotypes[n_animals,n_phens] float value for phenotype
+    """
 
     def __init__(self, data_file, n_geno, n_phens):
         self.datset = pk.load(open(data_file, "rb"))
@@ -263,26 +251,17 @@ test_loader_geno = torch.utils.data.DataLoader(
 
 
 # model (encoders and decoders) classes
-# encoder
+# phenotype encoder
 class Q_net(nn.Module):
     """
-    Encoder for either genotypic or phenotypic data.
+    Encoder for creating embeddings of phenotypic data.
     Parameters:
-        phen_dim (int): Number of input phenotypes.
+        out_phen_dim (int): Number of output phenotypes.
         N (int): Number of channels in hidden layers.
     """
-
-    """
-    Encoder for either genotypic or phenotypic data.
-    Parameters:
-        phen_dim (int): Number of input phenotypes.
-        N (int): Number of channels in hidden layers.
-    """
-
-    def __init__(self, phen_dim=None, N=None):
+    
+    def __init__(self, phen_dim=None):
         super().__init__()
-        if N is None:
-            N = vabs.e_hidden_dim
         if phen_dim is None:
             phen_dim = vabs.n_phens_to_analyze
 
@@ -299,21 +278,31 @@ class Q_net(nn.Module):
         return x
 
 
-# decoder
+# Phenotype decoder
 class P_net(nn.Module):
     """
-    Single-layer decoder for predicting phenotypes from either genotypic or phenotypic data.
+    Decoder for predicting phenotypes from either genotypic or phenotypic data.
     Parameters:
         out_phen_dim (int): Number of output phenotypes.
+        N (int): Number of channels in hidden layers.
     """
 
-    def __init__(self, out_phen_dim=None):
+    def __init__(self, out_phen_dim=None, N=None):
+        if N is None:
+            N = vabs.d_hidden_dim
         if out_phen_dim is None:
             out_phen_dim = vabs.n_phens_to_predict
 
         latent_dim = vabs.latent_dim
+        batchnorm_momentum = vabs.batchnorm_momentum
+
         super().__init__()
-        self.decoder = nn.Sequential(nn.Linear(in_features=latent_dim, out_features=out_phen_dim))
+        self.decoder = nn.Sequential(
+            nn.Linear(in_features=latent_dim, out_features=N),
+            nn.BatchNorm1d(N, momentum=batchnorm_momentum),
+            nn.LeakyReLU(0.01),
+            nn.Linear(in_features=N, out_features=out_phen_dim),
+        )
 
     def forward(self, x):
         x = self.decoder(x)
@@ -322,15 +311,6 @@ class P_net(nn.Module):
 
 # gencoder
 class GQ_net(nn.Module):
-    """
-    Genetic encoder to produce latent embedding of genotypic data for predicting
-    either phenotypes or genotypes.
-
-    Parameters:
-        n_loci (int): number of input measured loci * number of segregating alleles
-        N (int): Number of channels in hidden layers.
-    """
-
     """
     Genetic encoder to produce latent embedding of genotypic data for predicting
     either phenotypes or genotypes.
@@ -369,7 +349,7 @@ EPS = 1e-15  # define a minimum value for variables to avoid divide by zero and 
 
 # define encoders and decoders
 Q = Q_net()  # phenotype encoder
-P = P_net()  # phenotype deocoder
+P = P_net()  # phenotype decoder
 GQ = GQ_net()  # genotype encoder
 
 # load precomputed weights
@@ -399,41 +379,47 @@ optim_P = torch.optim.Adam(P.parameters(), lr=reg_lr, betas=adam_b)
 optim_Q_enc = torch.optim.Adam(Q.parameters(), lr=reg_lr, betas=adam_b)
 optim_GQ_enc = torch.optim.Adam(GQ.parameters(), lr=reg_lr, betas=adam_b)
 
+# set the number of training epochs for the phenotype-phenotype autoencoder
 num_epochs = vabs.n_epochs
 
 torch.manual_seed(47)
 
-# train phenotype autoencoder
+# establish the number of phenotypes to predict and the number to use for prediction.
 n_phens = vabs.n_phens_to_analyze
 n_phens_pred = vabs.n_phens_to_predict
+
+# establish a variable to capture the reconstruction loss
 rcon_loss = []
 
+# establish a variable for the start of the run
 start_time = tm.time()
 
+# train the phenotype encoder and decoder
 for n in range(num_epochs):
     for _i, (phens) in enumerate(train_loader_pheno):
-        phens = phens[:, :n_phens]
+        phens = phens[:, :n_phens] # constrain the number of phenotypes to use for prediction
         phens = phens.to(device)  # move data to GPU if it is there
         batch_size = phens.shape[0]  # redefine batch size here to allow for incomplete batches
 
-        P.zero_grad()
+        P.zero_grad() # initialize gradiants for training
         Q.zero_grad()
 
-        noise_phens = phens + (vabs.sd_noise**0.5) * torch.randn(phens.shape).to(device)
+        noise_phens = phens + (vabs.sd_noise**0.5) * torch.randn(phens.shape).to(device) # add noise to phenotypes
 
-        z_sample = Q(noise_phens)
-        X_sample = P(z_sample)
+        z_sample = Q(noise_phens) # encode phenotypes
+        X_sample = P(z_sample) # decode encodings to produce predicted phenotypes
 
-        recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
+        recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS) # calculate the error of the phenotype predicitons
 
-        rcon_loss.append(float(recon_loss.detach()))
+        rcon_loss.append(float(recon_loss.detach())) # add the loss to the agregator
 
-        recon_loss.backward()
-        optim_P.step()
+        recon_loss.backward() # back propagate the reconstruction loss through the autoencoder
+        optim_P.step() # step the optimizers
         optim_Q_enc.step()
 
-    cur_time = tm.time() - start_time
-    start_time = tm.time()
+    cur_time = tm.time() - start_time # calculate the time it took for this batch
+    start_time = tm.time() # re-initialize the start time
+    # for each loop, print a set of useful information
     print(
         "Epoch num: "
         + str(n)
@@ -449,52 +435,52 @@ for n in range(num_epochs):
 # train genetic network
 
 P.requires_grad_(False)  # freeze weights in P (decoder)
-P.eval()
-num_epochs_gen = vabs.n_epochs_gen
+P.eval() # put P (phenotype decoder) into evaluation mode
+num_epochs_gen = vabs.n_epochs_gen # establish the number of training cycles for the genotype encoder
 
 gen_noise = 1 - vabs.gen_noise
 
-g_rcon_loss = []
+g_rcon_loss = [] # establish a variable to contain the reconstruction loss values
 
-start_time = tm.time()
+start_time = tm.time() # establish a variable that contains the start time
 
 for n in range(num_epochs_gen):
     for _i, (phens, gens) in enumerate(train_loader_geno):
-        phens = phens.to(device)
+        phens = phens.to(device) # move phenotypic data to the gpu if it is there
 
-        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles]
+        gens = gens[:, : vabs.n_loci_measured * vabs.n_alleles] # constrain the genetic data according to the desired number of alleles to examine
 
-        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
+        pos_noise = np.random.binomial(1, gen_noise / 2, gens.shape) # create vectors containing noise
 
-        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape)
+        neg_noise = np.random.binomial(1, gen_noise / 2, gens.shape) # create vectors containing noise
 
         noise_gens = torch.tensor(
             np.where((gens + pos_noise - neg_noise) > 0, 1, 0), dtype=torch.float32
-        )
+        ) # add noise to the genetic data
 
-        noise_gens = noise_gens.to(device)
+        noise_gens = noise_gens.to(device) # put genotypes plus noise on the gpu if it is there
 
-        batch_size = phens.shape[0]
+        batch_size = phens.shape[0] # establish the training batch size
 
-        GQ.zero_grad()
+        GQ.zero_grad() # zero the gradients
 
-        z_sample = GQ(noise_gens)
-        X_sample = P(z_sample)
+        z_sample = GQ(noise_gens) # encode the genetic data
+        X_sample = P(z_sample) # decode the encoded genetic data to phenotypes
 
-        g_recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
+        g_recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS) # calculate the reconstruction loss
 
-        g_rcon_loss.append(float(g_recon_loss.detach()))
+        g_rcon_loss.append(float(g_recon_loss.detach())) # add the reconstruction loss to the agregator to allow plotting later
 
-        l1_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 1)
-        l2_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 2)
-        g_recon_loss = g_recon_loss + l1_reg * vabs.l1_lambda + l2_reg * vabs.l2_lambda
+        l1_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 1) # calculate the L1 norm of the weights in the genetic encoder
+        l2_reg = torch.linalg.norm(torch.sum(GQ.encoder[0].weight, axis=0), 2) # calculate the L2 norm of the weights in the genetic encoder
+        g_recon_loss = g_recon_loss + l1_reg * vabs.l1_lambda + l2_reg * vabs.l2_lambda # add L1 and L2 regularizers to the cost function
 
-        g_recon_loss.backward()
+        g_recon_loss.backward() # backpropagate the loss
 
-        optim_GQ_enc.step()
+        optim_GQ_enc.step() # step the optimizer
 
-    cur_time = tm.time() - start_time
-    start_time = tm.time()
+    cur_time = tm.time() - start_time # set the current time variable to be equal to how long it took to run the epoch
+    start_time = tm.time() # set the original start time variable to the current time
     print(
         "Epoch num: "
         + str(n)
@@ -504,13 +490,13 @@ for n in range(num_epochs_gen):
         + str(g_rcon_loss[-1])
         + " epoch duration: "
         + str(cur_time)
-    )
+    ) # print useful things about the current training epoch
 
 # plot the reconstruction losses
 plt.plot(rcon_loss)  # reconstruction loss for the phenotype autoencoder
 plt.plot(g_rcon_loss)  # reconstruction loss for the genetic weights
-plt.savefig(dataset_path + "reconstruction_loss.svg")
-plt.close()
+plt.savefig(dataset_path + "reconstruction_loss.svg") # save a plot of the reconstruction loss
+plt.close() # cleanup matplot for later plotting
 
 
 # A function to evaluate the performance of each model, saving summaries of model performance
@@ -637,7 +623,7 @@ torch.save(Q.state_dict(), dataset_path + "phen_encoder_state.pt")
 torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")
 torch.save(GQ.state_dict(), dataset_path + "gen_encoder_state.pt")
 
-# G-P prediction
+# G-P prediction. Loop evaluating hte performace on the test data
 GQ.eval()
 phens, phen_encodings, phen_latent, fa_attr = [], [], [], []
 
@@ -660,7 +646,7 @@ stats_aggregator.extend(
     )
 )
 
-# P-P prediction
+# P-P prediction. Loop evaluating the performance on the test data
 Q.eval()
 phens, phen_encodings, phen_latent, fa_attr = [], [], [], []
 
