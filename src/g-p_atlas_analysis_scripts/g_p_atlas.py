@@ -138,15 +138,10 @@ vabs = args.parse_args()
 
 # define a torch dataset object
 class dataset_pheno(Dataset):
-    """a class for importing simulated genotype-phenotype data.
-    It expects a pickled object that is organized as a list of tensors:
-    genotypes[n_animals, n_loci, n_alleles] (one hot at allelic state)
-    gen_locs[n_animals, n_loci] (index of allelic state)
-    weights[n_phens, n_loci, n_alleles] float weight for allelic contribution to phen
-    phens[n_animals,n_phens] float value for phenotype
-    indexes_of_loci_influencing_phen[n_phens,n_loci_ip] integer indices of
-    loci that influence a phenotype interaction_matrix
-    pleiotropy_matrix[n_phens, n_phens, gen_index]"""
+    """a class for importing simulated phenotype data.
+    It expects a pickled object that is organized as a dictionary of tensors:
+    phenotypes[n_animals,n_phens] float value for phenotype
+    """
 
     def __init__(self, data_file, n_phens):
         self.datset = pk.load(open(data_file, "rb"))
@@ -163,15 +158,11 @@ class dataset_pheno(Dataset):
 
 
 class dataset_geno(Dataset):
-    """a class for importing simulated genotype-phenotype data.
-    It expects a pickled object that is organized as a list of tensors:
+    """a class for importing simulated genotype and phenotype data.
+    It expects a pickled object that is organized as a dictionary of tensors:
     genotypes[n_animals, n_loci, n_alleles] (one hot at allelic state)
-    gen_locs[n_animals, n_loci] (index of allelic state)
-    weights[n_phens, n_loci, n_alleles] float weight for allelic contribution to phen
-    phens[n_animals,n_phens] float value for phenotype
-    indexes_of_loci_influencing_phen[n_phens,n_loci_ip] integer indicies of loci that
-    influence a phenotype interaction_matrix[FILL THIS IN]
-    pleiotropy_matrix[n_phens, n_phens, gen_index]"""
+    phenotypes[n_animals,n_phens] float value for phenotype
+    """
 
     def __init__(self, data_file, n_geno, n_phens):
         self.datset = pk.load(open(data_file, "rb"))
