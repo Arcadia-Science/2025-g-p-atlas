@@ -49,8 +49,11 @@ plt.close()
 max_attr = max_attr[labels > 0]
 add_val = max_weights[labels > 0]
 one_percent_fpr = hf.calculate_fpr_threshold(fpr, thresholds)
+print('number of alleles above the 1% false positive rate threhold')
 print(len([x for x in max_attr if x > one_percent_fpr]))
+print('total number of allels influencing phenotypes')
 print(len(max_attr))
+print('number of loci incluencing phenotypes above the 1% false positive rate')
 print(
     len(
         [
@@ -60,7 +63,8 @@ print(
         ]
     )
 )
-print(len(max_attr) / 3)
+print('total number of loci influencing phenotypes')
+print(int(len(max_attr) / 3))
 
 plt.scatter(add_val, max_attr, marker="o")
 plt.plot([-0.02, 10.02], [one_percent_fpr, one_percent_fpr], color="C1", linewidth=1)
