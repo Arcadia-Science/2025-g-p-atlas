@@ -14,6 +14,7 @@ from sklearn import metrics
  python3 plot_gp_yeast_linkage.py [PATH TO G-P ATLAS OUTPUT]"""
 
 target_folder = sys.argv[1]  # folder containing the output of G-P Atlas when run on yeast data
+test_dataset_folder = sys.argv[2] # file containing test dataset
 
 # load phenotypes and phenotype predictions.  predictions based on genetic data
 with open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb") as data:
@@ -24,7 +25,7 @@ with open(target_folder + "g_p_attr.pk", "rb") as data:
     gp_attr = pk.load(data)
 
 # load data for the published analysis of the yeast data
-with open(target_folder + "../yeast_cross_test.pk", "rb") as data:
+with open(test_dataset_folder, "rb") as data:
     yeast_chr_dat = pk.load(data)
 
 # load previously created yeast linkage data and create some useful transformations of those data
