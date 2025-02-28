@@ -14,13 +14,14 @@ from sklearn import metrics
 
 # folder containing output of g-p atlas when run on simulated data
 target_folder = sys.argv[1]
+test_dataset_file = sys.argv[2]
 
 # load the variable imporance measures for genes
 with open(target_folder + "g_p_attr.pk", "rb") as data:
     gene_attributions = pk.load(data)
 
 # load the test data dictionary for the analysis
-with open(target_folder + "../test.pk", "rb") as data:
+with open(test_dataset_file, "rb") as data:
     test_data = pk.load(data)
 
 # plot ROC curve for alleles determining the utility of allele attributions in
