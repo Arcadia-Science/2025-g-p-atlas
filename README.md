@@ -40,7 +40,7 @@ Note: be sure to use an envionrment manager. This is only to install the necessa
 
 ## Data
 
-All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in this repository. They are contained in `./data`. See the folder structure below. There are two dataset, one simulated dataset from https://doi.org/10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid population from https://doi.org/10.1038/nature11867.
+All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in the `data` folder of this repository. See the folder structure below. There are two dataset, one simulated dataset from https://doi.org/10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid, population from https://doi.org/10.1038/nature11867.
 
 ### Description of the folder structure
 
