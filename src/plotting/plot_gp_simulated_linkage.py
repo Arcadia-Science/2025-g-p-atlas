@@ -14,13 +14,14 @@ from sklearn import metrics
 
 # folder containing output of g-p atlas when run on simulated data
 target_folder = sys.argv[1]
+test_dataset_file = sys.argv[2]
 
 # load the variable imporance measures for genes
 with open(target_folder + "g_p_attr.pk", "rb") as data:
     gene_attributions = pk.load(data)
 
 # load the test data dictionary for the analysis
-with open(target_folder + "../test.pk", "rb") as data:
+with open(test_dataset_file, "rb") as data:
     test_data = pk.load(data)
 
 # plot ROC curve for alleles determining the utility of allele attributions in
@@ -48,8 +49,11 @@ plt.close()
 max_attr = max_attr[labels > 0]
 add_val = max_weights[labels > 0]
 one_percent_fpr = hf.calculate_fpr_threshold(fpr, thresholds)
+print("number of alleles above the 1% false positive rate threshold")
 print(len([x for x in max_attr if x > one_percent_fpr]))
+print("total number of alleles influencing phenotypes")
 print(len(max_attr))
+print("number of loci influencing phenotypes above the 1% false positive rate")
 print(
     len(
         [
@@ -59,7 +63,8 @@ print(
         ]
     )
 )
-print(len(max_attr) / 3)
+print("total number of loci influencing phenotypes")
+print(int(len(max_attr) / 3))
 
 plt.scatter(add_val, max_attr, marker="o")
 plt.plot([-0.02, 10.02], [one_percent_fpr, one_percent_fpr], color="C1", linewidth=1)
@@ -70,36 +75,4 @@ plt.yticks(fontfamily="monospace")
 plt.xticks(fontfamily="monospace")
 plt.savefig(target_folder + "MSV_vs_additive_contribution.svg")
 plt.savefig(target_folder + "MSV_vs_additive_contribution.png")
-plt.close()
-
-
-# interactors and pleiotropy
-# replots the additive genetic contributions vs the allele atribution determined by G-P Atlas
-# and colors them by pleiotropy
-number_of_alleles = test_data["n_loci"] * test_data["n_as"]
-ints = np.zeros()
-for x in test_data["interact_matrix"]:
-    for y in x:
-        ints[y[0] * 3 + y[-1]] += 1
-        ints[y[1] * 3 + y[-1]] += 1
-
-influential_ints = [ints[n] for n in range(len(labels)) if labels[n] > 0]
-
-pleio = np.zeros(9000)
-for x in test_data["pleiotropy_matrix"]:
-    for y in x:
-        pleio[3 * y[-1]] += 1
-        pleio[3 * y[-1] + 1] += 1
-        pleio[3 * y[-1] + 2] += 1
-
-influential_pleio = [pleio[n] for n in range(len(labels)) if labels[n] > 0]
-
-plt.scatter(add_val, max_attr, c=influential_pleio, marker="o")
-plt.plot([-0.02, 10.02], [one_percent_fpr, one_percent_fpr], color="C1", linewidth=3)
-plt.legend("1% FPR", fontsize=14)
-plt.ylabel("Mean squared variable importance")
-plt.xlabel("Additive genetic influence (au)")
-plt.yticks(fontfamily="monospace")
-plt.xticks(fontfamily="monospace")
-plt.savefig(target_folder + "pleiotropy_plot_attribution_vs_weight.svg")
 plt.close()

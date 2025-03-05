@@ -4,19 +4,21 @@
 
 ## Purpose
 
-This repository contains scripts for running and analyzing the output of **G-P Atlas**, a method for creating holistic genotype-to-phenotype mappings that capture all phenotypic and genetic data in a single model. These models can be used for phenotype prediction from genetic or phenotypic data, linkage analysis and so on. The method is explained and demonstrated in 10.57844/arcadia-d316-721f
+This repository contains scripts for running and analyzing the output of **G-P Atlas**, a method for creating holistic genotype-to-phenotype mappings that capture all phenotypic and genetic data in a single model. These models can be used for phenotype prediction from genetic or phenotypic data, linkage analysis and so on. The method is explained and demonstrated in [this publication](https://doi.org/10.57844/arcadia-d316-721f). All data, results and code used for that publication are contained in this repository.
 
 Key functionalities include:
 
-- Running the **G-P Atlas** model to infer genetic contributions to phenotypes
+- Fitting the **G-P Atlas** model that creates a genotype-to-phenotype map for many phenotypes and genetic locations
 - Computing model performance metrics such as **mean squared error (MSE), mean absolute percentage error (MAPE), and coefficient of determination (R²)**
 - Visualizing and comparing the results of different **G-P Atlas runs**
-- Generating **ROC curves** and evaluating variable importance
+- Generating **ROC curves** for classifying loci contributing to phenotypes
+- Calculating the importance (variable importance) of loci, alleles, and phenotypes in predicting other phenotypes
+- Predicting phenotypes from genotypes
+- Predicting phenotypes from other phenotypes
 
 ## Installation and Setup
 
-To directly replicate the environment used to produce the pub use conda in the following way:
-Note: this environemnt is linux or mac specific.
+To directly replicate the environment used to produce the pub use conda in the following way (Note: this environemnt is linux or mac specific):
 
 1. If you haven't already installed some form of conda, install miniconda:
    [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) and [Mamba](https://mamba.readthedocs.io/en/latest/).
@@ -27,21 +29,18 @@ Note: this environemnt is linux or mac specific.
    mamba env create -n gp_atlas_env --file envs/exact_environment.yml
    conda activate gp_atlas_env
    ```
-To use PIP to install the necessary files for application to other datasets:
+If you would prefer to use PIP and do not need to exactly replicate the environment used in the pub you can install dependencies in this way:
+
 Note: be sure to use an envionrment manager. This is only to install the necessary dependencies once you have a virtual environement.
 
 1. From the main repository folder:
    ```bash
-   pip3 install -c env/requirements.txt
+   pip3 install -c envs/requirements.txt
    ```
 
 ## Data
 
-All data anlyzed in 10.57844/arcadia-d316-721f are contained in this repository. They are contained in `./data`. See the folder structure below. There are two dataset, one simulated dataset from 10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid population from 10.1038/nature11867.
-
-## Overview
-
-TODO: Add more detailed overview
+All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in the `data` folder of this repository. See the folder structure below. There are two dataset, one simulated dataset from https://doi.org/10.57844/arcadia-5953-995f and one emperical, F1 yeast hybrid, population from https://doi.org/10.1038/nature11867.
 
 ### Description of the folder structure
 
@@ -51,7 +50,7 @@ TODO: Add more detailed overview
 │   ├── g_p_atlas_format_simulated_data #contains test/train files for simulated data
 │   └── yeast_data			#contains folders with original and reformatted yeast data
 │       ├── g_p_atlas_format_data	#contains reformatted yeast data
-│       └── orig_data			#contains original format yeast data and scripts to reformat that data
+│       └── orig_data			#contains original format yeast data, scripts to reformat that data and a README about script usage
 ├── results				#contains the output of G-P Atlas and plotting scripts
 │   ├── full_g_p_run_simulated_data	#contains output for runs on simulated data
 │   └── yeast_data			#contains folders with output for rund on yeast data
@@ -71,7 +70,8 @@ TODO: Add more detailed overview
     ├── g-p_atlas_analysis_scripts	# contains the main G-P Atlas script
     │   ├── g_p_atlas_1_layer_g_p.py	# G-P Atlas with no hidden layer in genotype encoder
     │   ├── g_p_atlas_1_layer_p_p.py	# G-P Atlas with no hidden layer in phenotype encoder
-    │   └── g_p_atlas.py		# the full G-P Atlas script
+    │   ├── g_p_atlas.py		# the full G-P Atlas script
+    │   └── README.me         # readme covering the use, data formatting, and output of g_p_atlas.py
     └── plotting			# contains scripts for plotting the output of G-P Atlas
         ├── helper_functions.py		# helper functions used in more than one plotting script
         ├── matplotlibrc		# default matplotlib format file used to create plots for the pub
@@ -83,17 +83,19 @@ TODO: Add more detailed overview
         └── README.md				# readme discussing all of the plotting functions
 ```
 
-### Methods
+### Usage
+####For guidance on data formatting for and usage of G-P Atlas see `src/g-p_atlas_analysis_scripts/README.md`
 
-If you have set up your environment and downloaded this repository, to recapitulate the primary analyses from the pub 10.57844/arcadia-d316-721f:
+####To recapitulate the primary analyses from the pub https://doi.org/10.57844/arcadia-d316-721f:
 
-1. De-compress all data:	`./gunzip -r ./data`
-2. Run G-P Atlas on simulated data:	`./src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path ./data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --test_suffix test.pk --train_suffix train.pk --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3`
-3. Run G-P Atlas on yeast data:	`./src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path ./data/yeast_data/g_p_atlas_format_data/ --n_epochs 1000 --n_epochs_gen 1000 --n_loci_measured 11623 --latent_dim 32 --e_hidden_dim 64 --d_hidden_dim 64 --ge_hidden_dim 2048 --n_phens_to_analyze 46 --n_phens_to_predict 46 --sd_noise 0.8 --gen_noise 0.8`
-4. Create run plots for simulated data: `./plotting/plot_gp_simulated_run.py ./results/full_g_p_run_simulated_data/`
-5. Create linkage plots for simulated data: `./plotting/plot_gp_simulated_linage.py ./results/full_g_p_run_simulated_data/`
-6. Create run plots for yeast data: `./plotting/plot_gp_simulated_run.py ./results/yeast_data/full_g_p_atlas_all_yeast_data/`
-7. Create linkage plots for yeast data: `./plotting/plot_gp_simulated_linage.py ./results/yeast_data/full_g_p_atlas_all_yeast_data/`
+1. Clone this repository and set up an invronment with the apropriate dependencies (see above)
+2. De-compress all data:	`gunzip -r ./`
+3. Run G-P Atlas on simulated data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3`
+4. Run G-P Atlas on yeast data:	`python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/yeast_data/g_p_atlas_format_data/ --n_epochs 1000 --n_epochs_gen 1000 --n_loci_measured 11623 --latent_dim 32 --e_hidden_dim 64 --d_hidden_dim 64 --ge_hidden_dim 2048 --n_phens_to_analyze 46 --n_phens_to_predict 46 --sd_noise 0.8 --gen_noise 0.8`
+5. Create run plots for simulated data: `python3 src/plotting/plot_gp_simulated_run.py results/full_g_p_run_simulated_data/`
+6. Create linkage plots for simulated data: `python3 src/plotting/plot_gp_simulated_linkage.py results/full_g_p_run_simulated_data/ data/g_p_atlas_format_simulated_data/test.pk`
+7. Create run plots for yeast data: `python3 src/plotting/plot_gp_yeast_run.py results/yeast_data/full_g_p_atlas_all_yeast_data/`
+8. Create linkage plots for yeast data: `python3 src/plotting/plot_gp_yeast_linkage.py results/yeast_data/full_g_p_atlas_all_yeast_data/ data/yeast_data/g_p_atlas_format_data/test.pk`
 
 
 ### Compute Specifications
@@ -105,7 +107,7 @@ Exact specifications used for the pub:
 - RAM: 128 GB
 - GPU: NVIDIA GeForce RTX 3070
 
-Note: It is likely this will run efficiently with much less ram and fewer cores 
+Note: It is likely this will run efficiently with less ram and fewer cores but a GPU is advised
 
 ## Contributing
 

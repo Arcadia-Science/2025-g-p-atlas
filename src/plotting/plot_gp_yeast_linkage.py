@@ -14,6 +14,7 @@ from sklearn import metrics
  python3 plot_gp_yeast_linkage.py [PATH TO G-P ATLAS OUTPUT]"""
 
 target_folder = sys.argv[1]  # folder containing the output of G-P Atlas when run on yeast data
+test_dataset_folder = sys.argv[2]  # file containing test dataset
 
 # load phenotypes and phenotype predictions.  predictions based on genetic data
 with open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb") as data:
@@ -24,7 +25,7 @@ with open(target_folder + "g_p_attr.pk", "rb") as data:
     gp_attr = pk.load(data)
 
 # load data for the published analysis of the yeast data
-with open(target_folder + "../yeast_cross_test.pk", "rb") as data:
+with open(test_dataset_folder, "rb") as data:
     yeast_chr_dat = pk.load(data)
 
 # load previously created yeast linkage data and create some useful transformations of those data
@@ -268,6 +269,12 @@ sns.jointplot(
     y=np.array(max_attr_per_locus) / max(max_attr_per_locus),
     hue=0,
 )
+
+print(
+    "pearsons correlation between variance explained \
+and average variable importance per linked region"
+)
+
 print(
     sc.stats.pearsonr(
         np.array(sorted_variance_explained) / max(sorted_variance_explained),
@@ -306,10 +313,8 @@ plt.close()
 
 # print the number of true loci identified in the top 10th percentile of feature attribution scores
 ninteith_percentile = np.percentile(max_attrs, 90)
-print(ninteith_percentile)
+print("number of linked loci identified in the top 10th precentile of feature importance")
 print(len([x for x in max_attr_per_locus if x > ninteith_percentile]))
-all_loci_captured_index = cumulative_fraction_reverse.index(0)
-print(list(reversed(list(np.array(range(0, 100)) / 100)))[22])
 
 # feature importance vs variance explained
 max_attr_per_linked_locus = [max_attrs[n] for n in sorted_linked_marker_index]
@@ -319,15 +324,15 @@ sns.jointplot(
     hue=0,
 )
 print(
+    "pearsons correlation between variance explained and\
+ the average feature importance per locus"
+)
+print(
     sc.stats.pearsonr(
         np.array(sorted_variance_explained) / max(sorted_variance_explained),
         np.array(max_attr_per_linked_locus) / max(max_attr_per_linked_locus),
     )
 )
-print(len(sorted_absolute_marker_position))
-print(len(max_attrs))
-print(len(sorted_linked_marker_index))
-print(len(sorted_variance_explained))
 plt.xlim(0, 1.01)
 plt.ylim(0, 1.01)
 plt.xlabel("Scaled variance explained per linked locus")
