@@ -109,7 +109,7 @@ python3 g_p_atlas.py --hot_start True --hot_start_path_e /path/to/encoder.pt --h
   - `p_p_attr.pk` (Attributions to individual phenotypes for phenotype prediction)
 - **Prediction Statistics**: `test_stats.pk`
 - **Paired real and predicted phenotype files**:
-  These are pickled list of lists organized like this: `[[phenotypes],[predicted phenotypes']`
+  These are a pickled list of lists organized like this: `[[phenotypes],[predicted phenotypes']`
  - `phens_phen_encodings_dng_attr.pk` (Real and predicted phenotypes from the genotype-phenotype map)
  - `phens_phen_encodings_dng_attr_p.pk` (real and predicted phenotypes from the phenotype-phenotype map)
 
