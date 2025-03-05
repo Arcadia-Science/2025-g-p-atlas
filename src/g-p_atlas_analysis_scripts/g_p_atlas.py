@@ -633,7 +633,7 @@ torch.save(Q.state_dict(), dataset_path + "phen_encoder_state.pt")
 torch.save(P.state_dict(), dataset_path + "phen_decoder_state.pt")
 torch.save(GQ.state_dict(), dataset_path + "gen_encoder_state.pt")
 
-# G-P prediction. Loop evaluating hte performace on the test data
+# G-P prediction. Loop evaluating the performance on the test data
 GQ.eval()
 phens, phen_encodings, phen_latent, fa_attr = [], [], [], []
 
