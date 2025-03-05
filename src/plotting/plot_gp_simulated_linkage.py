@@ -49,7 +49,7 @@ plt.close()
 max_attr = max_attr[labels > 0]
 add_val = max_weights[labels > 0]
 one_percent_fpr = hf.calculate_fpr_threshold(fpr, thresholds)
-print("number of alleles above the 1% false positive rate threhold")
+print("number of alleles above the 1% false positive rate threshold")
 print(len([x for x in max_attr if x > one_percent_fpr]))
 print("total number of alleles influencing phenotypes")
 print(len(max_attr))
