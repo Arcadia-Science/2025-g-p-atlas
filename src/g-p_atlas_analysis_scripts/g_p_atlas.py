@@ -420,7 +420,7 @@ for n in range(num_epochs):
         recon_loss = F.mse_loss(X_sample + EPS, phens[:, :n_phens_pred] + EPS)
         # calculate the error of the phenotype predicitons
 
-        rcon_loss.append(float(recon_loss.detach()))  # add the loss to the agregator
+        rcon_loss.append(float(recon_loss.detach()))  # add the loss to the aggregator
 
         recon_loss.backward()  # back propagate the reconstruction loss through the autoencoder
         optim_P.step()  # step the optimizers
