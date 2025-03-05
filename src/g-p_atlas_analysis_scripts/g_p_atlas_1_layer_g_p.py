@@ -286,7 +286,7 @@ class Q_net(nn.Module):
         return x
 
 
-# Phenotype decoder
+# phenotype decoder
 class P_net(nn.Module):
     """
     Decoder for predicting phenotypes from either genotypic or phenotypic data.
