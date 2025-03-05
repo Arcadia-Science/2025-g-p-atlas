@@ -53,7 +53,7 @@ print("number of alleles above the 1% false positive rate threhold")
 print(len([x for x in max_attr if x > one_percent_fpr]))
 print("total number of alleles influencing phenotypes")
 print(len(max_attr))
-print("number of loci incluencing phenotypes above the 1% false positive rate")
+print("number of loci influencing phenotypes above the 1% false positive rate")
 print(
     len(
         [
