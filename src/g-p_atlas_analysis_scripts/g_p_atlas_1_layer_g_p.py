@@ -404,7 +404,7 @@ for n in range(num_epochs):
         phens = phens.to(device)  # move data to GPU if it is there
         batch_size = phens.shape[0]  # redefine batch size here to allow for incomplete batches
 
-        P.zero_grad()  # initialize gradiants for training
+        P.zero_grad()  # initialize gradients for training
         Q.zero_grad()
 
         noise_phens = phens + (vabs.sd_noise**0.5) * torch.randn(phens.shape).to(device)
