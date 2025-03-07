@@ -648,7 +648,7 @@ for dat in test_loader_geno:
     phens += list(ph.detach().cpu().numpy())
     phen_encodings += list(X_sample.detach().cpu().numpy())
     phen_latent += list(z_sample.detach().cpu().numpy())
-    if vabs.calculate_importance:
+    if vabs.calculate_importance == 'yes':
         fa_attr.append(list(fa.attribute(inputs=(gt, ph))[0].squeeze().detach().cpu().numpy()))
 
 stats_aggregator.extend(
@@ -670,7 +670,7 @@ for dat in test_loader_pheno:
     phens += list(ph.detach().cpu().numpy())
     phen_encodings += list(X_sample.detach().cpu().numpy())
     phen_latent += list(z_sample.detach().cpu().numpy())
-    if vabs.calculate_importance:
+    if vabs.calculate_importance == yes:
         fa_attr.append(list(fa_p.attribute(inputs=(ph, ph))[0].squeeze().detach().cpu().numpy()))
 
 stats_aggregator.extend(
