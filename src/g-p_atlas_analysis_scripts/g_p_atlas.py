@@ -133,7 +133,7 @@ args.add_argument(
     "--calculate_importance",
     type=str,
     default="no",
-    help="flag whether to calculate variable importance",
+    help="flag whether to calculate variable importance. Expects 'no' or 'yes.' ",
 )
 
 vabs = args.parse_args()
