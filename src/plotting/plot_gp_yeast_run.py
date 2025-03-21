@@ -195,8 +195,9 @@ ax = plt.gca()
 ax.set_aspect("equal", adjustable="box")
 plt.ylim(0, 1)
 plt.xlim(0, 1)
-plt.savefig(target_folder + "coef_det_vs_h2_g_p.svg")
-plt.savefig(target_folder + "coef_det_vs_h2_g_p.png")
+# the abbreviation "nsh" stands for "narrow sense heritability".
+plt.savefig(target_folder + "coef_det_vs_nsh_g_p.svg")
+plt.savefig(target_folder + "coef_det_vs_nsh_g_p.png")
 plt.close()
 
 # plot the additive variance explained by genomic prediction vs the
@@ -332,6 +333,7 @@ ax = plt.gca()
 ax.set_aspect("equal", adjustable="box")
 plt.ylim(0, 1)
 plt.xlim(0, 1)
-plt.savefig(target_folder + "coef_det_vs_H2_g_p.svg")
-plt.savefig(target_folder + "coef_det_vs_H2_g_p.png")
+# The abbreviation "bsh" stands for "broad sense heritability".
+plt.savefig(target_folder + "coef_det_vs_bsh_g_p.svg")
+plt.savefig(target_folder + "coef_det_vs_bsh_g_p.png")
 plt.close()
