@@ -84,9 +84,8 @@ All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in 
 ```
 
 ### Usage
-####For guidance on data formatting for and usage of G-P Atlas see `src/g-p_atlas_analysis_scripts/README.md`
-
-####To recapitulate the primary analyses from the pub https://doi.org/10.57844/arcadia-d316-721f:
+#### For guidance on data formatting for and usage of G-P Atlas see `src/g-p_atlas_analysis_scripts/README.md`
+#### To recapitulate the primary analyses from the pub https://doi.org/10.57844/arcadia-d316-721f:
 
 1. Clone this repository and set up an invronment with the apropriate dependencies (see above)
 2. De-compress all data:	`gunzip -r ./`
