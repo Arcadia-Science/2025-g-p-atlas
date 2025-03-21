@@ -82,6 +82,7 @@ All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in 
 
 ### Usage
 
+
 For guidance on data formatting for, and usage of, the G-P Atlas models, see [src/g-p_atlas_analysis_scripts/README.md](src/g-p_atlas_analysis_scripts/README.md).
 
 To recapitulate the primary analyses from [the pub](https://doi.org/10.57844/arcadia-d316-721f), follow these steps:
