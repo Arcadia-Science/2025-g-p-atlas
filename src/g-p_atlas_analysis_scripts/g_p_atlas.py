@@ -443,18 +443,39 @@ def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
     dataset_path : str
         Path to save results
     """
-    # Collect all test data
+    print("Loading test data for interaction analysis...")
+    
+    # Use a more efficient approach to collect test data
+    # This reduces memory usage and potential file handle issues
+    device = next(model.parameters()).device
+    
+    # Collect all test data more efficiently
+    # Process in smaller batches to avoid memory issues
     all_genotypes = []
     all_phenotypes = []
     
-    for dat in test_loader:
-        ph, gt = dat
-        gt = gt[:, : vabs.n_loci_measured * vabs.n_alleles]
-        all_genotypes.append(gt)
-        all_phenotypes.append(ph)
+    # Create a loader with no multiprocessing for this specific step
+    # This avoids file descriptor issues
+    single_worker_loader = torch.utils.data.DataLoader(
+        dataset=test_loader.dataset, 
+        batch_size=16,  # Use a manageable batch size
+        num_workers=0,  # No multiprocessing to avoid file handle issues
+        shuffle=False
+    )
     
+    with torch.no_grad():  # Save memory by not tracking gradients
+        for dat in single_worker_loader:
+            ph, gt = dat
+            gt = gt[:, : vabs.n_loci_measured * vabs.n_alleles]
+            # Move to CPU to avoid GPU memory issues
+            all_genotypes.append(gt.cpu())
+            all_phenotypes.append(ph.cpu())
+    
+    # Concatenate once at the end to save memory
     all_genotypes = torch.cat(all_genotypes, dim=0)
     all_phenotypes = torch.cat(all_phenotypes, dim=0)
+    
+    print(f"Processed {len(all_genotypes)} test samples for interaction analysis")
     
     # Find interactions for each phenotype
     n_phenotypes = min(3, all_phenotypes.shape[1])  # Limit to first 3 phenotypes for computation
@@ -511,6 +532,10 @@ def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
     
     print(f"Saved interaction analysis results to {dataset_path}")
     
+    # Clean up to release memory
+    del all_genotypes
+    del all_phenotypes
+    
     return all_interaction_data
 
 
@@ -540,21 +565,25 @@ print("Using device:", device)
 
 # how many samples per batch to load
 batch_size = vabs.batch_size
-num_workers = vabs.n_cpu
+# Reduce number of workers to avoid too many open files
+# For training we can use more workers as it's more CPU intensive
+train_num_workers = min(vabs.n_cpu, 8)  # Limit to 8 workers
+# For testing, use fewer workers to avoid file descriptor issues
+test_num_workers = 2
 
 # prepare data loaders
 train_loader_pheno = torch.utils.data.DataLoader(
-    dataset=train_data_pheno, batch_size=batch_size, num_workers=num_workers, shuffle=True
+    dataset=train_data_pheno, batch_size=batch_size, num_workers=train_num_workers, shuffle=True
 )
 test_loader_pheno = torch.utils.data.DataLoader(
-    dataset=test_data_pheno, batch_size=1, num_workers=num_workers, shuffle=True
+    dataset=test_data_pheno, batch_size=1, num_workers=test_num_workers, shuffle=True
 )
 
 train_loader_geno = torch.utils.data.DataLoader(
-    dataset=train_data_geno, batch_size=batch_size, num_workers=num_workers, shuffle=True
+    dataset=train_data_geno, batch_size=batch_size, num_workers=train_num_workers, shuffle=True
 )
 test_loader_geno = torch.utils.data.DataLoader(
-    dataset=test_data_geno, batch_size=1, num_workers=num_workers, shuffle=True
+    dataset=test_data_geno, batch_size=1, num_workers=test_num_workers, shuffle=True
 )
 
 
