@@ -12,6 +12,9 @@ import torch.nn.functional as F
 from captum.attr import FeatureAblation
 from sklearn.metrics import mean_squared_error, r2_score
 from torch.utils.data.dataset import Dataset
+import networkx as nx
+from matplotlib.cm import ScalarMappable
+from matplotlib.colors import Normalize
 
 """This is an implementation of the G-P Atlas method for mapping genotype
 to phenotype described in https://doi.org/10.57844/arcadia-d316-721f.
@@ -134,6 +137,24 @@ args.add_argument(
     type=str,
     default="no",
     help="flag whether to calculate variable importance. Expects 'no' or 'yes.' ",
+)
+args.add_argument(
+    "--detect_interactions",
+    type=str,
+    default="no",
+    help="flag whether to detect gene-gene interactions. Expects 'no' or 'yes.' ",
+)
+args.add_argument(
+    "--interaction_threshold",
+    type=float,
+    default=0.05,
+    help="threshold for considering a gene-gene interaction significant",
+)
+args.add_argument(
+    "--max_loci_interactions",
+    type=int,
+    default=100,
+    help="maximum number of loci to test for interactions (to limit computation)",
 )
 
 vabs = args.parse_args()
@@ -679,6 +700,294 @@ stats_aggregator.extend(
     )
 )
 
+# Detection of gene-gene interactions
+if vabs.detect_interactions == "yes":
+    print("Detecting gene-gene interactions...")
+    
+    # Use the comprehensive analysis function
+    analyze_gene_interaction_network(GQ, P, test_loader_geno, dataset_path)
+
 # Save and close stats
 pk.dump(stats_aggregator, out_stats)
 out_stats.close()
+
+def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
+    """
+    Perform final analysis of gene-gene interactions and save results.
+    
+    Parameters:
+    -----------
+    model : GQ_net
+        Trained genotype encoder model
+    P : P_net
+        Trained phenotype decoder model
+    test_loader : DataLoader
+        Loader for test dataset
+    dataset_path : str
+        Path to save results
+    """
+    # Collect all test data
+    all_genotypes = []
+    all_phenotypes = []
+    
+    for dat in test_loader:
+        ph, gt = dat
+        gt = gt[:, : vabs.n_loci_measured * vabs.n_alleles]
+        all_genotypes.append(gt)
+        all_phenotypes.append(ph)
+    
+    all_genotypes = torch.cat(all_genotypes, dim=0)
+    all_phenotypes = torch.cat(all_phenotypes, dim=0)
+    
+    # Find interactions for each phenotype
+    n_phenotypes = min(3, all_phenotypes.shape[1])  # Limit to first 3 phenotypes for computation
+    all_interaction_data = {}
+    
+    for phen_idx in range(n_phenotypes):
+        print(f"Analyzing interactions for phenotype {phen_idx+1}/{n_phenotypes}")
+        
+        # Calculate interactions for this phenotype
+        interactions = detect_pairwise_interactions(
+            model, P, all_genotypes, all_phenotypes, 
+            phenotype_idx=phen_idx, threshold=vabs.interaction_threshold)
+        
+        # Convert to dictionary format for compatibility
+        interaction_dict = {(i, j): strength for i, j, strength in interactions}
+        
+        # Plot network
+        plt.figure(figsize=(12, 10))
+        fig = plot_interaction_network(
+            interactions, phenotype_name=f"Phenotype {phen_idx}", threshold=vabs.interaction_threshold)
+        
+        # Save plot
+        plt.savefig(dataset_path + f"interaction_network_phenotype_{phen_idx}.svg")
+        plt.savefig(dataset_path + f"interaction_network_phenotype_{phen_idx}.png")
+        plt.close()
+        
+        # Store data
+        all_interaction_data[phen_idx] = interaction_dict
+    
+    # Save all interaction data
+    with open(dataset_path + "gene_gene_interactions.pk", "wb") as f:
+        pk.dump(all_interaction_data, f)
+    
+    # Create a summary of the most significant interactions across phenotypes
+    interaction_summary = {}
+    
+    for phen_idx, interactions in all_interaction_data.items():
+        for (i, j), importance in interactions.items():
+            if (i, j) not in interaction_summary:
+                interaction_summary[(i, j)] = []
+            interaction_summary[(i, j)].append((phen_idx, importance))
+    
+    # Find interactions affecting multiple phenotypes
+    multi_phenotype_interactions = {k: v for k, v in interaction_summary.items() if len(v) > 1}
+    
+    # Sort by total importance across phenotypes
+    sorted_multi = sorted(multi_phenotype_interactions.items(), 
+                        key=lambda x: sum(imp for _, imp in x[1]), 
+                        reverse=True)
+    
+    # Save top multi-phenotype interactions
+    with open(dataset_path + "multi_phenotype_interactions.pk", "wb") as f:
+        pk.dump(sorted_multi, f)
+    
+    print(f"Saved interaction analysis results to {dataset_path}")
+    
+    return all_interaction_data
+
+def detect_pairwise_interactions(model, P, genotypes, phenotypes, phenotype_idx=0, threshold=0.05):
+    """
+    Detects pairwise interactions between genetic loci by measuring the non-additive 
+    effects on phenotype predictions.
+    
+    This method works by calculating the difference between the expected additive effect
+    of modifying two loci independently and the actual effect of modifying them together.
+    A non-zero difference indicates a gene-gene interaction (epistasis).
+    
+    Parameters:
+    -----------
+    model : GQ_net
+        Trained genotype encoder model
+    P : P_net
+        Trained phenotype decoder model
+    genotypes : torch.Tensor
+        Genotype data
+    phenotypes : torch.Tensor
+        Ground truth phenotype data
+    phenotype_idx : int
+        Index of the phenotype to analyze
+    threshold : float
+        Threshold for considering an interaction significant
+        
+    Returns:
+    --------
+    interactions : list of tuples
+        List of (locus1, locus2, interaction_strength) tuples
+    """
+    n_loci = genotypes.shape[1] // vabs.n_alleles
+    
+    # Move models to evaluation mode
+    model.eval()
+    P.eval()
+    
+    # Store the device
+    device = next(model.parameters()).device
+    
+    # Initialize interactions list
+    interactions = []
+    
+    # Limit the number of loci to test for interactions if needed
+    max_loci = min(n_loci, vabs.max_loci_interactions)
+    if max_loci < n_loci:
+        print(f"Testing interactions for first {max_loci} loci out of {n_loci} total")
+    
+    # For each pair of loci
+    for i in range(max_loci - 1):
+        for j in range(i + 1, max_loci):
+            # Get the indices for the alleles at these loci
+            i_start = i * vabs.n_alleles
+            i_end = i_start + vabs.n_alleles
+            j_start = j * vabs.n_alleles
+            j_end = j_start + vabs.n_alleles
+            
+            # Create modified genotypes for measuring individual effects
+            genotypes_i_modified = genotypes.clone()
+            genotypes_i_modified[:, i_start:i_end] = 0.5  # Set to average value
+            
+            genotypes_j_modified = genotypes.clone()
+            genotypes_j_modified[:, j_start:j_end] = 0.5  # Set to average value
+            
+            genotypes_both_modified = genotypes.clone()
+            genotypes_both_modified[:, i_start:i_end] = 0.5
+            genotypes_both_modified[:, j_start:j_end] = 0.5
+            
+            # Get predictions
+            with torch.no_grad():
+                pred_baseline = P(model(genotypes.to(device)))[:, phenotype_idx]
+                pred_i_modified = P(model(genotypes_i_modified.to(device)))[:, phenotype_idx]
+                pred_j_modified = P(model(genotypes_j_modified.to(device)))[:, phenotype_idx]
+                pred_both_modified = P(model(genotypes_both_modified.to(device)))[:, phenotype_idx]
+            
+            # Calculate effects
+            effect_i = pred_baseline - pred_i_modified
+            effect_j = pred_baseline - pred_j_modified
+            
+            # Expected additive effect
+            expected_both_effect = effect_i + effect_j
+            
+            # Actual effect
+            actual_both_effect = pred_baseline - pred_both_modified
+            
+            # Interaction strength - the difference between actual and expected effects
+            # Normalized by the standard deviation of phenotype values for better comparability
+            pheno_std = phenotypes[:, phenotype_idx].std().item()
+            interaction_strength = torch.abs(actual_both_effect - expected_both_effect).mean().item()
+            normalized_strength = interaction_strength / (pheno_std + EPS)
+            
+            # If interaction is significant, add to list
+            if normalized_strength > threshold:
+                interactions.append((i, j, normalized_strength))
+    
+    # Sort by interaction strength
+    interactions.sort(key=lambda x: x[2], reverse=True)
+    
+    return interactions
+
+def plot_interaction_network(interaction_importance, locus_names=None, phenotype_name=None,
+                             threshold=0.05, max_nodes=50):
+    """
+    Visualize gene-gene interactions as a network.
+    
+    Parameters:
+    -----------
+    interaction_importance : list of tuples
+        List of (locus1, locus2, interaction_strength) tuples
+    locus_names : list, optional
+        List of names for each locus
+    phenotype_name : str, optional
+        Name of the phenotype being analyzed
+    threshold : float
+        Minimum importance score to include in the visualization
+    max_nodes : int
+        Maximum number of nodes to include in the visualization
+    """
+    # Filter interactions by threshold
+    filtered_interactions = [(i, j, strength) for i, j, strength in interaction_importance if strength > threshold]
+    
+    # Create graph
+    G = nx.Graph()
+    
+    # Add nodes and edges
+    all_loci = set()
+    for i, j, importance in filtered_interactions:
+        all_loci.add(i)
+        all_loci.add(j)
+    
+    # Limit number of nodes if necessary
+    if len(all_loci) > max_nodes:
+        # Find the max_nodes most important loci
+        locus_importance = {}
+        for i, j, importance in filtered_interactions:
+            locus_importance[i] = locus_importance.get(i, 0) + importance
+            locus_importance[j] = locus_importance.get(j, 0) + importance
+        
+        top_loci = sorted(locus_importance.items(), key=lambda x: x[1], reverse=True)[:max_nodes]
+        top_loci = set(x[0] for x in top_loci)
+        filtered_interactions = [(i, j, v) for i, j, v in filtered_interactions 
+                                if i in top_loci and j in top_loci]
+    
+    # Add nodes
+    for i, j, importance in filtered_interactions:
+        if locus_names is not None:
+            G.add_node(i, name=locus_names[i])
+            G.add_node(j, name=locus_names[j])
+        else:
+            G.add_node(i, name=f'Locus {i}')
+            G.add_node(j, name=f'Locus {j}')
+        G.add_edge(i, j, weight=importance)
+    
+    # Set up plot
+    plt.figure(figsize=(12, 12))
+    
+    # Layout
+    pos = nx.spring_layout(G, seed=42)
+    
+    # Get edge weights for colors
+    edge_weights = [G[u][v]['weight'] for u, v in G.edges()]
+    
+    if not edge_weights:
+        plt.title(f"No significant interactions found for {phenotype_name}")
+        return plt.gcf()
+    
+    # Normalize weights for colormap
+    norm = Normalize(vmin=min(edge_weights), vmax=max(edge_weights))
+    
+    # Draw nodes
+    nx.draw_networkx_nodes(G, pos, node_size=500, alpha=0.8)
+    
+    # Draw edges with color based on weight
+    edges = nx.draw_networkx_edges(G, pos, width=2, edge_color=edge_weights, 
+                                  edge_cmap=plt.cm.viridis, edge_vmin=min(edge_weights), 
+                                  edge_vmax=max(edge_weights))
+    
+    # Draw labels
+    nx.draw_networkx_labels(G, pos, labels={n: G.nodes[n]['name'] for n in G.nodes()}, 
+                            font_size=10, font_family='sans-serif')
+    
+    # Add colorbar
+    sm = ScalarMappable(cmap=plt.cm.viridis, norm=norm)
+    sm.set_array([])
+    cbar = plt.colorbar(sm)
+    cbar.set_label('Interaction Importance')
+    
+    # Set title
+    if phenotype_name is not None:
+        plt.title(f'Gene-Gene Interaction Network for {phenotype_name}', fontsize=16)
+    else:
+        plt.title('Gene-Gene Interaction Network', fontsize=16)
+    
+    plt.axis('off')
+    plt.tight_layout()
+    
+    return plt.gcf()
