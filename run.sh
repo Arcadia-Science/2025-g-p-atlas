@@ -1,0 +1,15 @@
+python src/g-p_atlas_analysis_scripts/g_p_atlas.py \
+--dataset_path data/yeast_data/g_p_atlas_format_data/ \
+--n_epochs 100 \
+--n_epochs_gen 100 \
+--n_loci_measured 11623 \
+--latent_dim 32 \
+--e_hidden_dim 64 \
+--d_hidden_dim 64 \
+--ge_hidden_dim 2048 \
+--n_phens_to_analyze 46 \
+--n_phens_to_predict 46 \
+--sd_noise 0.8 \
+--gen_noise 0.8 \
+--train_suffix train.pk \
+--test_suffix test.pk

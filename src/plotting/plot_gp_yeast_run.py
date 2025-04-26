@@ -320,19 +320,23 @@ herit_b = [
     0.90,
 ]
 plt.plot(herit_b, coef_det, "o")
+
 print("gp vs. H")
 print(sc.stats.wilcoxon(herit_b, coef_det))
 print(sc.stats.pearsonr(herit_b, coef_det))
 print(sc.stats.linregress(herit_b, coef_det))
+
 plt.plot([0, 1], [0, 1], ":k", linewidth=0.75)
 plt.xticks(fontfamily="monospace")
 plt.yticks(fontfamily="monospace")
 plt.xlabel("Broad sense heritability (H)")
 plt.ylabel("Variance explained by G-P atlas")
+
 ax = plt.gca()
 ax.set_aspect("equal", adjustable="box")
 plt.ylim(0, 1)
 plt.xlim(0, 1)
+
 # The abbreviation "bsh" stands for "broad sense heritability".
 plt.savefig(target_folder + "coef_det_vs_bsh_g_p.svg")
 plt.savefig(target_folder + "coef_det_vs_bsh_g_p.png")

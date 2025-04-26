@@ -26,28 +26,12 @@ args.add_argument(
     default=2,
     help="number of segregating causal alleles at any given causal locus",
 )
-args.add_argument(
-    "--n_locs",
-    type=int,
-    default=900,
-    help="number of causal loci to model.  This is the same as the number of genes",
-)
-args.add_argument(
-    "--n_env", type=int, default=3, help="number of influential continuous components"
-)
-args.add_argument("--n_phens", type=int, default=30, help="number of phenotypes")
-args.add_argument(
-    "--gen_lw", type=float, default=1, help="weight for the loss attributed to genetic features"
-)
-args.add_argument(
-    "--eng_lw", type=float, default=0.1, help="weight for the loss attributed to env features"
-)
 args.add_argument("--n_epochs", type=int, default=100, help="number of epochs of training")
 args.add_argument("--batch_size", type=int, default=16, help="batch size")
 args.add_argument("--lr_r", type=float, default=0.001, help="reconstruction learning rate")
 args.add_argument("--b1", type=float, default=0.5, help="adam: gradient decay variables")
 args.add_argument("--b2", type=float, default=0.999, help="adam: gradient decay variables")
-args.add_argument("--n_cpu", type=int, default=14, help="number of cpus")
+args.add_argument("--n_cpu", type=int, default=0, help="number of cpus")
 args.add_argument(
     "--e_hidden_dim", type=int, default=32, help="number of neurons in the hidden layers of encoder"
 )
