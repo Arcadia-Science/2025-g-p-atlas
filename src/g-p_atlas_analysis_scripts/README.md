@@ -64,7 +64,13 @@ The script accepts various arguments to configure model parameters. Below is a c
 | `--hot_start_path_e` | Path to phenotype encoder weights | `None` |
 | `--hot_start_path_d` | Path to phenotype decoder weights | `None` |
 | `--hot_start_path_ge` | Path to genotype encoder weights | `None` |
-| `--calculate_importance` | Flag whether to calculate variable importance. Calculating variable importance takes a lot of time and isn't necessary during hyperparameter tuning. Expects "True" or "False" | `False` |
+| `--calculate_importance` | Flag whether to calculate variable importance. Calculating variable importance takes a lot of time and isn't necessary during hyperparameter tuning. Expects "yes" or "no" | `no` |
+| `--detect_interactions` | Flag whether to detect allele-allele interactions. Expects "yes" or "no" | `no` |
+| `--interaction_threshold` | Threshold for considering an allele-allele interaction significant | `0.05` |
+| `--max_loci_interactions` | Maximum number of loci to test for allele interactions | `100` |
+| `--loci_interaction_indices` | Comma-separated list of loci indices or ranges (e.g., '1,2,3' or '10-20,30-40' or '1,5-10') to include in interaction analysis | `""` |
+| `--max_phenotypes_for_interactions` | Maximum number of phenotypes to analyze for interactions | `3` |
+| `--phenotype_interaction_indices` | Comma-separated list of phenotype indices to analyze for interactions (e.g., '0,2,5') | `""` |
 
 To see all options, run:
 ```sh
@@ -112,4 +118,11 @@ python3 g_p_atlas.py --hot_start True --hot_start_path_e /path/to/encoder.pt --h
   These are a pickled list of lists organized like this: `[[phenotypes],[predicted phenotypes']`
  - `phens_phen_encodings_dng_attr.pk` (Real and predicted phenotypes from the genotype-phenotype map)
  - `phens_phen_encodings_dng_attr_p.pk` (real and predicted phenotypes from the phenotype-phenotype map)
+
+- **Interaction Analysis Files** (when `--detect_interactions=yes`):
+  - `allele_allele_interactions.pk` (Significant allele-allele interactions)
+  - `allele_multi_phenotype_interactions.pk` (Interactions affecting multiple phenotypes)
+  - `allele_interaction_report.txt` (Human-readable report of significant interactions)
+  - `allele_interactions.csv` (CSV format of all interactions for analysis in spreadsheets/R)
+  - `allele_interaction_network_phenotype_*.svg/.png` (Visualizations of interaction networks)
 

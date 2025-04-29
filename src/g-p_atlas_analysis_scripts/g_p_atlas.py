@@ -156,6 +156,24 @@ args.add_argument(
     default=100,
     help="maximum number of loci to test for allele interactions (to limit computation)",
 )
+args.add_argument(
+    "--loci_interaction_indices",
+    type=str,
+    default="",
+    help="comma-separated list of loci indices or ranges (e.g., '1,2,3' or '10-20,30-40' or '1,5-10') to include in interaction analysis",
+)
+args.add_argument(
+    "--max_phenotypes_for_interactions",
+    type=int,
+    default=3,
+    help="maximum number of phenotypes to analyze for interactions",
+)
+args.add_argument(
+    "--phenotype_interaction_indices",
+    type=str,
+    default="",
+    help="comma-separated list of phenotype indices to analyze for interactions (e.g., '0,2,5'). If not provided, the first 'max_phenotypes_for_interactions' phenotypes will be used.",
+)
 
 vabs = args.parse_args()
 
@@ -275,19 +293,49 @@ def detect_pairwise_interactions(model, P, genotypes, phenotypes, phenotype_idx=
     # Initialize interactions list
     interactions = []
     
-    # Limit the number of loci to test for interactions if needed
-    max_loci = min(n_loci, vabs.max_loci_interactions)
-    if max_loci < n_loci:
-        print(f"Testing interactions for alleles at first {max_loci} loci out of {n_loci} total")
+    # Parse the loci indices string if provided
+    loci_to_test = []
+    if vabs.loci_interaction_indices:
+        # Parse the comma-separated list of indices and ranges
+        for part in vabs.loci_interaction_indices.split(','):
+            if '-' in part:
+                # Handle range (e.g., "10-20")
+                start, end = map(int, part.split('-'))
+                loci_to_test.extend(range(start, end + 1))
+            else:
+                # Handle single index
+                loci_to_test.append(int(part))
+        
+        # Remove duplicates and sort
+        loci_to_test = sorted(set(loci_to_test))
+        
+        # Filter out invalid indices
+        loci_to_test = [i for i in loci_to_test if 0 <= i < n_loci]
+        
+        print(f"Testing interactions for {len(loci_to_test)} specified loci indices out of {n_loci} total")
+    else:
+        # Limit the number of loci to test for interactions if no specific indices provided
+        max_loci = min(n_loci, vabs.max_loci_interactions)
+        loci_to_test = list(range(max_loci))
+        if max_loci < n_loci:
+            print(f"Testing interactions for first {max_loci} loci out of {n_loci} total")
     
     # For each pair of alleles (across different loci)
-    for i in range(max_loci):
+    total_pairs = (len(loci_to_test) * (len(loci_to_test) - 1)) // 2
+    pair_count = 0
+    
+    for idx1, i in enumerate(loci_to_test):
         i_start = i * vabs.n_alleles
         i_end = i_start + vabs.n_alleles
         
-        for j in range(i + 1, max_loci):
+        for idx2, j in enumerate(loci_to_test[idx1 + 1:], idx1 + 1):
             j_start = j * vabs.n_alleles
             j_end = j_start + vabs.n_alleles
+            
+            # Print progress periodically
+            pair_count += 1
+            if pair_count % 1000 == 0 or pair_count == total_pairs:
+                print(f"Testing locus pair {pair_count}/{total_pairs} ({(pair_count/total_pairs)*100:.1f}%)")
             
             # For each specific allele at locus i
             for i_allele in range(i_start, i_end):
@@ -559,15 +607,36 @@ def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
     
     print(f"Processed {len(all_genotypes)} test samples for allele interaction analysis")
     
-    # Find interactions for each phenotype
-    n_phenotypes = min(3, all_phenotypes.shape[1])  # Limit to first 3 phenotypes for computation
+    # Determine which phenotypes to analyze
+    phenotypes_to_analyze = []
+    if vabs.phenotype_interaction_indices:
+        # Parse the comma-separated list of indices
+        try:
+            phenotype_indices = [int(idx.strip()) for idx in vabs.phenotype_interaction_indices.split(',')]
+            # Filter out invalid indices
+            total_phenotypes = all_phenotypes.shape[1]
+            phenotypes_to_analyze = [idx for idx in phenotype_indices if 0 <= idx < total_phenotypes]
+            
+            if not phenotypes_to_analyze:
+                print(f"Warning: No valid phenotype indices provided. Using default.")
+                phenotypes_to_analyze = list(range(min(vabs.max_phenotypes_for_interactions, total_phenotypes)))
+            else:
+                print(f"Analyzing interactions for {len(phenotypes_to_analyze)} specified phenotypes: {phenotypes_to_analyze}")
+        except ValueError:
+            print(f"Error parsing phenotype indices. Using default.")
+            phenotypes_to_analyze = list(range(min(vabs.max_phenotypes_for_interactions, all_phenotypes.shape[1])))
+    else:
+        # Use default sequential phenotypes up to the maximum
+        phenotypes_to_analyze = list(range(min(vabs.max_phenotypes_for_interactions, all_phenotypes.shape[1])))
+        print(f"Analyzing interactions for the first {len(phenotypes_to_analyze)} phenotypes")
+    
     all_interaction_data = {}
     
     # Also collect main effects of alleles across all phenotypes
     allele_main_effects = {}
     
-    for phen_idx in range(n_phenotypes):
-        print(f"Analyzing allele interactions for phenotype {phen_idx+1}/{n_phenotypes}")
+    for i, phen_idx in enumerate(phenotypes_to_analyze):
+        print(f"Analyzing allele interactions for phenotype {phen_idx} ({i+1}/{len(phenotypes_to_analyze)})")
         
         # Calculate interactions for this phenotype
         interactions = detect_pairwise_interactions(
@@ -624,6 +693,9 @@ def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
         
         # Store data
         all_interaction_data[phen_idx] = interaction_dict
+        
+        # Report the number of significant interactions found
+        print(f"Found {len(interactions)} significant interactions for phenotype {phen_idx} (threshold: {vabs.interaction_threshold})")
     
     # Save all interaction data
     with open(dataset_path + "allele_allele_interactions.pk", "wb") as f:
