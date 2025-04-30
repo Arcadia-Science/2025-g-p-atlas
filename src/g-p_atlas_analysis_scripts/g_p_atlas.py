@@ -165,7 +165,7 @@ args.add_argument(
 args.add_argument(
     "--max_phenotypes_for_interactions",
     type=int,
-    default=3,
+    default=500,
     help="maximum number of phenotypes to analyze for interactions",
 )
 args.add_argument(
