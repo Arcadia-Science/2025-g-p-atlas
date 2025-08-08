@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: If you use this software, please cite the associated publication.
+title: "G\u2013P Atlas: A neural network framework for capturing nonlinear genotype\u2013\
+  phenotype relationships"
+doi: 10.57844/arcadia-d316-721f
+authors:
+- family-names: Bell
+  given-names: Audrey
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0009-0008-2270-1613
+- family-names: Cheveralls
+  given-names: Keith
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-4157-6087
+- family-names: Lane
+  given-names: Ryan
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-5887-2069
+- family-names: Mets
+  given-names: David G.
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-0803-0912
+- family-names: Patton
+  given-names: Austin H.
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0003-1286-9005
+- family-names: York
+  given-names: Ryan
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-1073-1494
+preferred-citation:
+  title: "G\u2013P Atlas: A neural network framework for capturing nonlinear genotype\u2013\
+    phenotype relationships"
+  type: article
+  doi: 10.57844/arcadia-d316-721f
+  authors:
+  - family-names: Mets
+    given-names: David G.
+    affiliation: Arcadia Science
+    orcid: https://orcid.org/0000-0002-0803-0912
+  - family-names: York
+    given-names: Ryan
+    affiliation: Arcadia Science
+    orcid: https://orcid.org/0000-0002-1073-1494
+  year: 2025
