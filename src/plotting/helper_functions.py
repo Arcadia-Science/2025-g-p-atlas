@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.stats import spearmanr
 
 """This script contains a set of helper functions that are used
  in the plotting scripts for the pub DOI_FROM_PUB"""
@@ -139,10 +138,8 @@ def plot_kurtosis_results(bootstrap_results, save_path=None, dpi=300):
     fig : matplotlib.figure.Figure
         The complete figure object with all subplots
     """
-    import numpy as np
-    import matplotlib.pyplot as plt
     import matplotlib.gridspec as gridspec
-    from matplotlib.patches import Rectangle
+    import matplotlib.pyplot as plt
     import seaborn as sns
 
     # Extract data from results
@@ -210,19 +207,14 @@ def plot_kurtosis_results(bootstrap_results, save_path=None, dpi=300):
         boot_results["confidence_interval"][0],
         color="red",
         linestyle="--",
-        label=f"95% CI: [{boot_results['confidence_interval'][0]:.3f}, {boot_results['confidence_interval'][1]:.3f}]",
+        label=f"95% CI: [{boot_results['confidence_interval'][0]:.3f}, \
+        {boot_results['confidence_interval'][1]:.3f}]",
     )
     ax2.axvline(boot_results["confidence_interval"][1], color="red", linestyle="--")
     ax2.axvline(0, color="gray", linestyle=":")
     ax2.set_xlabel("Kurtosis Difference (Interacting - Non-interacting)")
     ax2.set_ylabel("Frequency")
     ax2.legend(loc="upper right")
-
-    # Format p-value with scientific notation if very small
-    if boot_results["p_value"] < 0.001:
-        p_val_text = f"{boot_results['p_value']:.2e}"
-    else:
-        p_val_text = f"{boot_results['p_value']:.4f}"
 
     return fig
 
@@ -279,7 +271,7 @@ def plot_bootstrap_distribution(bootstrap_results):
 
     # Add p-value if available
     p_value = bootstrap_results.get("p_values", {}).get("best_estimate", 0.00002)
-    if isinstance(p_value, (int, float)) and p_value < 0.001:
+    if isinstance(p_value, int | float) and p_value < 0.001:
         p_value_text = (
             f"p < {1 / len(bootstrap_diffs):.1e}" if p_value == 0 else f"p = {p_value:.1e}"
         )
@@ -361,14 +353,8 @@ def plot_qq_with_bands(vi_matrix, interaction_loci_indices, non_interaction_loci
     max_val = max(np.max(x_values), np.max(y_values))
     ax.plot([min_val, max_val], [min_val, max_val], "--", color="#DA9085")
 
-    # Add confidence bands
-    # Calculate standard error for binomial proportion
-    n = min(n_inter, n_non_inter)
-    p = np.arange(1, n + 1) / (n + 1)
-    se = np.sqrt(p * (1 - p) / n)
 
     # Create confidence bands (95%)
-    z = 1.96
     lower_band = np.zeros_like(x_values)
     upper_band = np.zeros_like(x_values)
 

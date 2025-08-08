@@ -2,9 +2,9 @@ import pickle as pk
 import sys
 
 import helper_functions as hf
-import vida as v
 import matplotlib.pyplot as plt
 import numpy as np
+import vida as v
 from sklearn import metrics
 
 """This script runs an analysis of the variable importance measures provided by
