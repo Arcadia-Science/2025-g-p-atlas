@@ -1,9 +1,11 @@
+from itertools import product
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import stats
-from sklearn.metrics import roc_auc_score, roc_curve
-import matplotlib.pyplot as plt
-from itertools import product
+from scipy.stats import hypergeom
+from sklearn.metrics import auc, roc_auc_score, roc_curve
 
 
 def calculate_optimized_hybrid_vida_scores(
@@ -165,7 +167,11 @@ def calculate_optimized_hybrid_vida_scores(
                 continue
 
             # Get non-partners
-            non_partners = [l for l in all_loci_indices if l != locus and l not in partners]
+            non_partners = [
+                second_locus
+                for second_locus in all_loci_indices
+                if second_locus != locus and second_locus not in partners
+            ]
 
             # Extract z-scores for this sample
             partner_z = z_matrix[i, partners]
@@ -252,20 +258,31 @@ def optimize_vida_parameters(
     all_loci_indices,
     allele_interaction_indices,
     allele_direct_indices,
-    z_thresholds=[1.5, 2.0, 2.5, 3.0],
-    clumpiness_percentiles=[5, 10, 15, 20],
-    clumpiness_methods=["concentration", "gini", "entropy", "adaptive"],
+    z_thresholds=None,
+    clumpiness_percentiles=None,
+    clumpiness_methods=None,
 ):
     """
     Systematically optimize vida parameters
     """
+    if z_thresholds is None:
+        z_thresholds = [1.5, 2.0, 2.5, 3.0]
+
+    if clumpiness_percentiles is None:
+        clumpiness_percentiles = [5, 10, 15, 20]
+
+    if clumpiness_methods is None:
+        clumpiness_methods = ["concentration", "gini", "entropy", "adaptive"]
 
     print("=== vida PARAMETER OPTIMIZATION ===")
     print(
-        f"Testing {len(z_thresholds)} z-thresholds × {len(clumpiness_percentiles)} percentiles × {len(clumpiness_methods)} methods"
+        f"Testing {len(z_thresholds)} z-thresholds × {len(clumpiness_percentiles)} \
+percentiles × {len(clumpiness_methods)} methods"
     )
     print(
-        f"Total combinations: {len(z_thresholds) * len(clumpiness_percentiles) * len(clumpiness_methods)}"
+        f"Total combinations: {
+            len(z_thresholds) * len(clumpiness_percentiles) * len(clumpiness_methods)
+        }"
     )
     print("-" * 60)
 
@@ -277,7 +294,8 @@ def optimize_vida_parameters(
     ):
         try:
             print(
-                f"Testing: z_threshold={z_thresh}, clumpiness_pct={clump_pct}, method={clump_method}"
+                f"Testing: z_threshold={z_thresh}, clumpiness_pct={clump_pct}, \
+method={clump_method}"
             )
 
             # Calculate metrics with current parameters
@@ -290,7 +308,7 @@ def optimize_vida_parameters(
             )
 
             if len(metrics_df) == 0:
-                print(f"  No results - skipping")
+                print("  No results - skipping")
                 continue
 
             # Add labels for evaluation
@@ -309,7 +327,7 @@ def optimize_vida_parameters(
             labeled_df = labeled_df[known_loci_mask]
 
             if len(labeled_df) < 10:
-                print(f"  Too few labeled loci - skipping")
+                print("  Too few labeled loci - skipping")
                 continue
 
             # Evaluate performance for each metric
@@ -338,7 +356,7 @@ def optimize_vida_parameters(
                         }
                     )
 
-            print(f"  Completed successfully")
+            print("  Completed successfully")
 
         except Exception as e:
             print(f"  Error: {e}")
@@ -372,7 +390,7 @@ def optimize_vida_parameters(
 
     # Find overall best configuration
     overall_best = results_df.loc[results_df["auc"].idxmax()]
-    print(f"\n*** OVERALL BEST CONFIGURATION ***")
+    print("\n*** OVERALL BEST CONFIGURATION ***")
     print(f"Metric: {overall_best['metric']}")
     print(f"AUC: {overall_best['auc']:.4f}")
     print(
@@ -475,14 +493,9 @@ print("Starting vida parameter optimization...")
 optimization_results, best_configurations = optimize_vida_parameters(
     np.array(tst_dat),
     all_loci_indices,
-    allele_interaction_indices, 
+    allele_interaction_indices,
     allele_direct_indices
 )"""
-
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
-import pandas as pd
 
 
 def plot_vida_performance(
@@ -584,7 +597,6 @@ def plot_vida_performance(
     ax1.set_ylim([0.0, 1.05])
     ax1.set_xlabel("False Positive Rate")
     ax1.set_ylabel("True Positive Rate")
-    # ax1.set_title(f'ROC Curve - {metric_name.replace("_", " ").title()}{title_suffix}')
     ax1.legend(loc="lower right")
     ax1.grid(True, alpha=0.3)
 
@@ -611,9 +623,9 @@ def plot_vida_performance(
 
     percentiles = np.arange(1, 101)  # 1% to 100%
     enrichment_values = []
-    interacting_loci_values = [
-        sorted_df[metric_name][n] for n in range(n_total) if sorted_df["is_interaction"][n] == 1
-    ]
+    #interacting_loci_values = [
+    #    sorted_df[metric_name][n] for n in range(n_total) if sorted_df["is_interaction"][n] == 1
+    #]
 
     for percentile in percentiles:
         """percentile_threshold = np.percentile(sorted_df[metric_name], percentile)
@@ -622,6 +634,7 @@ def plot_vida_performance(
         # Number of loci in top percentile
         n_top = int(np.ceil(percentile / 100 * n_total))
         print(percentile)
+
         # Number of interacting loci in top percentile
         n_interacting_top = np.sum(sorted_df.head(n_top)["is_interaction"])
 
@@ -660,7 +673,8 @@ def plot_vida_performance(
     ax2.text(
         60,
         80,
-        f"Top 10%: {top_10_pct:.1f}% ({enrichment_10:.1f}x)\nTop 5%: {top_5_pct:.1f}% ({enrichment_5:.1f}x)",
+        f"Top 10%: {top_10_pct:.1f}% ({enrichment_10:.1f}x)\nTop 5%:\
+        {top_5_pct:.1f}% ({enrichment_5:.1f}x)",
         bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
     )
 
@@ -668,19 +682,16 @@ def plot_vida_performance(
     plt.show()
 
     # Calculate VIDA stats for known interacting and known non-interacting loci
-    vida_int = [
-        vida_metrics["vida_score"][n]
-        for n in range(len(vida_metrics["vida_score"]))
-        if vida_metrics["locus"][n] in allele_interaction_indices
+    '''vida_int = [
+        metrics_df["vida_score"][n]
+        for n in range(len(metrics_df["vida_score"]))
+        if metrics_df["locus"][n] in allele_interaction_indices
     ]
     vida_non_int = [
-        vida_metrics["vida_score"][n]
-        for n in range(len(vida_metrics["vida_score"]))
-        if vida_metrics["locus"][n] in allele_direct_only_indices
-    ]
-    mwu_results = sc.stats.mannwhitneyu(vida_int, vida_non_int)
-    median_int_vida = np.median(vida_int)
-    median_non_int_vida = np.median(vida_non_int)
+        metrics_df["vida_score"][n]
+        for n in range(len(metrics_df["vida_score"]))
+        if metrics_df["locus"][n] in allele_direct_indices
+    ]'''
 
     # Print summary statistics
     print(f"\n=== PERFORMANCE SUMMARY for {metric_name} ===")
@@ -705,19 +716,12 @@ def plot_vida_performance(
         "direction": direction,
     }
 
-
-import numpy as np
-from scipy.stats import hypergeom
-import pandas as pd
-import matplotlib.pyplot as plt
-
-
 def hypergeometric_enrichment_test(
     vida_results,
     allele_interaction_indices,
     allele_direct_indices,
     metric_name="VIDA_score",
-    top_percentiles=[5, 10, 20],
+    top_percentiles=None,
 ):
     """
     Conduct hypergeometric enrichment test for VIDA results
@@ -740,6 +744,8 @@ def hypergeometric_enrichment_test(
     enrichment_results : pandas.DataFrame
         Results of enrichment tests for each percentile
     """
+    if top_percentiles is None:
+       top_percentiles=[5, 10, 20]
 
     print("=== HYPERGEOMETRIC ENRICHMENT TEST ===")
     print(f"Testing enrichment for metric: {metric_name}")
@@ -788,7 +794,7 @@ def hypergeometric_enrichment_test(
     N = len(sorted_df)  # Total population size
     K = np.sum(sorted_df["is_interaction"])  # Total number of interactions in population
 
-    print(f"Population parameters:")
+    print("Population parameters:")
     print(f"  Total loci (N): {N}")
     print(f"  Total interactions (K): {K}")
     print(f"  Total non-interactions: {N - K}")
@@ -853,7 +859,8 @@ def hypergeometric_enrichment_test(
         print(f"  Observed interactions: {k}")
         print(f"  Expected interactions: {expected:.1f}")
         print(
-            f"  Enrichment factor: {enrichment:.2f}x (95% CI: {enrichment_ci_lower:.2f}-{enrichment_ci_upper:.2f})"
+            f"  Enrichment factor: {enrichment:.2f}x (95% CI: {enrichment_ci_lower:.2f}\
+        -{enrichment_ci_upper:.2f})"
         )
         print(f"  P-value: {p_value:.2e} {significance}")
         print()
@@ -919,13 +926,15 @@ def hypergeometric_enrichment_test(
     significant_tests = enrichment_df[enrichment_df["significant"]]
     if len(significant_tests) > 0:
         best_enrichment = significant_tests.loc[significant_tests["enrichment_factor"].idxmax()]
-        print(f"Best significant enrichment:")
+        print("Best significant enrichment:")
         print(
-            f"  Top {best_enrichment['percentile']}%: {best_enrichment['enrichment_factor']:.2f}x enrichment"
+            f"  Top {best_enrichment['percentile']}%: {best_enrichment['enrichment_factor']:.2f}x\
+        enrichment"
         )
         print(f"  P-value: {best_enrichment['p_value']:.2e}")
         print(
-            f"  95% CI: {best_enrichment['enrichment_ci_lower']:.2f}-{best_enrichment['enrichment_ci_upper']:.2f}"
+            f"  95% CI: {best_enrichment['enrichment_ci_lower']:.2f}-{best_enrichment\
+        ['enrichment_ci_upper']:.2f}"
         )
     else:
         print("No significant enrichment found at tested percentiles")
@@ -956,10 +965,12 @@ def example_enrichment_test():
     # You can also test individual components
     print("\n# Test individual components:")
     print(
-        "clumpiness_enrichment = hypergeometric_enrichment_test(..., metric_name='avg_clumpiness_diff')"
+        "clumpiness_enrichment = hypergeometric_enrichment_test(..., metric_name=\
+    'avg_clumpiness_diff')"
     )
     print(
-        "extreme_ratio_enrichment = hypergeometric_enrichment_test(..., metric_name='avg_extreme_ratio_diff')"
+        "extreme_ratio_enrichment = hypergeometric_enrichment_test(..., metric_name=\
+    'avg_extreme_ratio_diff')"
     )
 
 
@@ -968,11 +979,13 @@ def multiple_metric_enrichment_test(
     vida_results,
     allele_interaction_indices,
     allele_direct_indices,
-    metrics=["VIDA_score", "avg_clumpiness_diff", "avg_extreme_ratio_diff"],
+    metrics=None,
 ):
     """
     Test enrichment for multiple metrics simultaneously
     """
+    if metrics is None:
+        metrics=["VIDA_score", "avg_clumpiness_diff", "avg_extreme_ratio_diff"]
 
     print("=== MULTIPLE METRIC ENRICHMENT TEST ===")
     print("-" * 50)
@@ -1000,7 +1013,8 @@ def multiple_metric_enrichment_test(
         if results is not None:
             best = results.loc[results["enrichment_factor"].idxmax()]
             print(
-                f"{metric}: {best['enrichment_factor']:.2f}x at top {best['percentile']}% (p={best['p_value']:.2e})"
+                f"{metric}: {best['enrichment_factor']:.2f}x at top \
+                {best['percentile']}% (p={best['p_value']:.2e})"
             )
 
     return all_results
