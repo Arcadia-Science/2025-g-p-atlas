@@ -54,7 +54,7 @@ All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in 
 ├── results				#contains the output of G-P Atlas and plotting scripts
 │   ├── full_g_p_run_simulated_data	#contains output for runs on simulated data
 │   └── yeast_data			#contains folders with output for rund on yeast data
-│       ├── full_g_p_atlas_all_yeast_data	#output for G-P Atlas runs on the full yeast dataset and plots
+│       ├── g_p_atlas_format_data	#output for G-P Atlas runs on the full yeast dataset and plots
 │       ├── no_hidden_layer_genotype_all_yeast_data	#output for G-P Atlas(no genotype hidden layer) runs on the full yeast dataset and plots
 │       ├── no_hidden_layer_phenotype_all_yeast_data	#output for G-P Atlas(no phenotype hidden layer) runs on the full yeast dataset and plots
 │       └── 41586_2013_BFnature11867_MOESM88_ESM_yeat_linkage_data.csv	#Linage data from 10.1038/nature11867. It is used in several plots.
