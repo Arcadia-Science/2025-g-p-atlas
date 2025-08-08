@@ -1,7 +1,6 @@
 cff-version: 1.2.0
 message: If you use this software, please cite the associated publication.
-title: "G\u2013P Atlas: A neural network framework for capturing nonlinear genotype\u2013\
-  phenotype relationships"
+title: "G\u2013P Atlas: A neural network framework for mapping genotypes to many phenotypes"
 doi: 10.57844/arcadia-d316-721f
 authors:
 - family-names: Bell
@@ -29,8 +28,7 @@ authors:
   affiliation: Arcadia Science
   orcid: https://orcid.org/0000-0002-1073-1494
 preferred-citation:
-  title: "G\u2013P Atlas: A neural network framework for capturing nonlinear genotype\u2013\
-    phenotype relationships"
+  title: "G\u2013P Atlas: A neural network framework for mapping genotypes to many phenotypes"
   type: article
   doi: 10.57844/arcadia-d316-721f
   authors:
