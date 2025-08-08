@@ -1,0 +1,1 @@
+src/g-p_atlas_analysis_scripts/g_p_atlas.py --dataset_path data/g_p_atlas_format_simulated_data/ --n_epochs 250 --n_epochs_gen 250 --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3

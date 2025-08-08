@@ -77,11 +77,11 @@ All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in 
         ├── plot_gp_simulated_run.py		# performance visualization for runs on simulated data
         ├── plot_gp_yeast_linkage.py		# linkage analysis of yeast data
         ├── plot_gp_yeast_run.py		# performance visualization for runs on yeast data
+        ├── vida.py				# implementation of the VIDA statistic calculations and optimizations
         └── README.md				# readme discussing all of the plotting functions
 ```
 
 ### Usage
-
 
 For guidance on data formatting for, and usage of, the G-P Atlas models, see [src/g-p_atlas_analysis_scripts/README.md](src/g-p_atlas_analysis_scripts/README.md).
 
@@ -146,7 +146,6 @@ To recapitulate the primary analyses from [the pub](https://doi.org/10.57844/arc
       results/yeast_data/full_g_p_atlas_all_yeast_data/ \
       data/yeast_data/g_p_atlas_format_data/test.pk
    ```
-
 
 ### Compute Specifications
 

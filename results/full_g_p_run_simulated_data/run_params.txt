@@ -1,1 +1,0 @@
-g_p_atlas.py --dataset_path ../../data/g_p_atlas_format_simulated_data/ --n_epochs 1000 --n_epochs_gen 1000 --test_suffix test.pk --train_suffix train.pk --sd_noise 0.8 --gen_noise 0.8 --n_alleles 3
