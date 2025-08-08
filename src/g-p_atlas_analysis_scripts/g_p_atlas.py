@@ -250,13 +250,13 @@ def mean_absolute_percentage_error(y_true, y_pred):
 # Helper functions for gene-gene interactions
 def detect_pairwise_interactions(model, P, genotypes, phenotypes, phenotype_idx=0, threshold=0.05):
     """
-    Detects pairwise interactions between allelic states by measuring the non-additive 
+    Detects pairwise interactions between allelic states by measuring the non-additive
     effects on phenotype predictions.
-    
+
     This method works by calculating the difference between the expected additive effect
     of modifying two alleles independently and the actual effect of modifying them together.
     A non-zero difference indicates an allele-allele interaction (epistasis).
-    
+
     Parameters:
     -----------
     model : GQ_net
@@ -271,7 +271,7 @@ def detect_pairwise_interactions(model, P, genotypes, phenotypes, phenotype_idx=
         Index of the phenotype to analyze
     threshold : float
         Threshold for considering an interaction significant
-        
+
     Returns:
     --------
     interactions : list of tuples
@@ -282,61 +282,65 @@ def detect_pairwise_interactions(model, P, genotypes, phenotypes, phenotype_idx=
     # Determine the total number of allelic states
     total_alleles = genotypes.shape[1]
     n_loci = total_alleles // vabs.n_alleles
-    
+
     # Move models to evaluation mode
     model.eval()
     P.eval()
-    
+
     # Store the device
     device = next(model.parameters()).device
-    
+
     # Initialize interactions list
     interactions = []
-    
+
     # Parse the loci indices string if provided
     loci_to_test = []
     if vabs.loci_interaction_indices:
         # Parse the comma-separated list of indices and ranges
-        for part in vabs.loci_interaction_indices.split(','):
-            if '-' in part:
+        for part in vabs.loci_interaction_indices.split(","):
+            if "-" in part:
                 # Handle range (e.g., "10-20")
-                start, end = map(int, part.split('-'))
+                start, end = map(int, part.split("-"))
                 loci_to_test.extend(range(start, end + 1))
             else:
                 # Handle single index
                 loci_to_test.append(int(part))
-        
+
         # Remove duplicates and sort
         loci_to_test = sorted(set(loci_to_test))
-        
+
         # Filter out invalid indices
         loci_to_test = [i for i in loci_to_test if 0 <= i < n_loci]
-        
-        print(f"Testing interactions for {len(loci_to_test)} specified loci indices out of {n_loci} total")
+
+        print(
+            f"Testing interactions for {len(loci_to_test)} specified loci indices out of {n_loci} total"
+        )
     else:
         # Limit the number of loci to test for interactions if no specific indices provided
         max_loci = min(n_loci, vabs.max_loci_interactions)
         loci_to_test = list(range(max_loci))
         if max_loci < n_loci:
             print(f"Testing interactions for first {max_loci} loci out of {n_loci} total")
-    
+
     # For each pair of alleles (across different loci)
     total_pairs = (len(loci_to_test) * (len(loci_to_test) - 1)) // 2
     pair_count = 0
-    
+
     for idx1, i in enumerate(loci_to_test):
         i_start = i * vabs.n_alleles
         i_end = i_start + vabs.n_alleles
-        
-        for idx2, j in enumerate(loci_to_test[idx1 + 1:], idx1 + 1):
+
+        for idx2, j in enumerate(loci_to_test[idx1 + 1 :], idx1 + 1):
             j_start = j * vabs.n_alleles
             j_end = j_start + vabs.n_alleles
-            
+
             # Print progress periodically
             pair_count += 1
             if pair_count % 1000 == 0 or pair_count == total_pairs:
-                print(f"Testing locus pair {pair_count}/{total_pairs} ({(pair_count/total_pairs)*100:.1f}%)")
-            
+                print(
+                    f"Testing locus pair {pair_count}/{total_pairs} ({(pair_count / total_pairs) * 100:.1f}%)"
+                )
+
             # For each specific allele at locus i
             for i_allele in range(i_start, i_end):
                 # For each specific allele at locus j
@@ -345,85 +349,99 @@ def detect_pairwise_interactions(model, P, genotypes, phenotypes, phenotype_idx=
                     genotypes_i_modified = genotypes.clone()
                     genotypes_j_modified = genotypes.clone()
                     genotypes_both_modified = genotypes.clone()
-                    
+
                     # Set specific allele to 0 (absent) to test its effect
                     # We're turning off a specific allele rather than the whole locus
                     genotypes_i_modified[:, i_allele] = 0
                     genotypes_j_modified[:, j_allele] = 0
                     genotypes_both_modified[:, i_allele] = 0
                     genotypes_both_modified[:, j_allele] = 0
-                    
+
                     # Get predictions
                     with torch.no_grad():
                         pred_baseline = P(model(genotypes.to(device)))[:, phenotype_idx]
-                        pred_i_modified = P(model(genotypes_i_modified.to(device)))[:, phenotype_idx]
-                        pred_j_modified = P(model(genotypes_j_modified.to(device)))[:, phenotype_idx]
-                        pred_both_modified = P(model(genotypes_both_modified.to(device)))[:, phenotype_idx]
-                    
+                        pred_i_modified = P(model(genotypes_i_modified.to(device)))[
+                            :, phenotype_idx
+                        ]
+                        pred_j_modified = P(model(genotypes_j_modified.to(device)))[
+                            :, phenotype_idx
+                        ]
+                        pred_both_modified = P(model(genotypes_both_modified.to(device)))[
+                            :, phenotype_idx
+                        ]
+
                     # Calculate effects of removing each allele (main effects)
                     effect_i = pred_baseline - pred_i_modified
                     effect_j = pred_baseline - pred_j_modified
-                    
+
                     # Store mean effects as scalars for easier analysis
                     effect_i_mean = effect_i.mean().item()
                     effect_j_mean = effect_j.mean().item()
-                    
+
                     # Expected additive effect
                     expected_both_effect = effect_i + effect_j
-                    
+
                     # Actual effect of removing both alleles
                     actual_both_effect = pred_baseline - pred_both_modified
-                    
+
                     # Interaction strength - the difference between actual and expected effects
                     interaction_raw = actual_both_effect - expected_both_effect
-                    
+
                     # Calculate mean of raw interaction strength
                     interaction_raw_mean = interaction_raw.mean().item()
-                    
+
                     # Calculate absolute value of mean interaction (for significance testing)
                     interaction_abs_mean = torch.abs(interaction_raw).mean().item()
-                    
+
                     # Normalize by the standard deviation of phenotype values for better comparability
                     pheno_std = phenotypes[:, phenotype_idx].std().item()
                     normalized_strength = interaction_abs_mean / (pheno_std + EPS)
-                    
+
                     # If interaction is significant, add to list
                     if normalized_strength > threshold:
                         # Prepare interaction data object
                         interaction_data = {
                             # Normalized strength (for significance testing and sorting)
-                            'normalized_strength': normalized_strength,
-                            
+                            "normalized_strength": normalized_strength,
                             # Raw interaction values
-                            'raw_interaction_mean': interaction_raw_mean,
-                            'raw_interaction_abs_mean': interaction_abs_mean,
-                            
+                            "raw_interaction_mean": interaction_raw_mean,
+                            "raw_interaction_abs_mean": interaction_abs_mean,
                             # Main effects for each allele
-                            'allele1_main_effect': effect_i_mean,
-                            'allele2_main_effect': effect_j_mean,
-                            
+                            "allele1_main_effect": effect_i_mean,
+                            "allele2_main_effect": effect_j_mean,
                             # Phenotype standard deviation (for reference)
-                            'phenotype_std': pheno_std
+                            "phenotype_std": pheno_std,
                         }
-                        
+
                         # Store allele indices and their loci for better interpretability
-                        interactions.append((
-                            (i, i_allele - i_start, i_allele),  # (locus, allele_idx_within_locus, absolute_idx)
-                            (j, j_allele - j_start, j_allele),  # (locus, allele_idx_within_locus, absolute_idx)
-                            interaction_data
-                        ))
-    
+                        interactions.append(
+                            (
+                                (
+                                    i,
+                                    i_allele - i_start,
+                                    i_allele,
+                                ),  # (locus, allele_idx_within_locus, absolute_idx)
+                                (
+                                    j,
+                                    j_allele - j_start,
+                                    j_allele,
+                                ),  # (locus, allele_idx_within_locus, absolute_idx)
+                                interaction_data,
+                            )
+                        )
+
     # Sort by normalized interaction strength
-    interactions.sort(key=lambda x: x[2]['normalized_strength'], reverse=True)
-    
+    interactions.sort(key=lambda x: x[2]["normalized_strength"], reverse=True)
+
     return interactions
 
 
-def plot_interaction_network(interaction_importance, locus_names=None, phenotype_name=None,
-                         threshold=0.05, max_nodes=50):
+def plot_interaction_network(
+    interaction_importance, locus_names=None, phenotype_name=None, threshold=0.05, max_nodes=50
+):
     """
     Visualize allele-allele interactions as a network.
-    
+
     Parameters:
     -----------
     interaction_importance : list of tuples
@@ -441,12 +459,15 @@ def plot_interaction_network(interaction_importance, locus_names=None, phenotype
         Maximum number of nodes to include in the visualization
     """
     # Filter interactions by threshold
-    filtered_interactions = [(a1, a2, data) for a1, a2, data in interaction_importance 
-                             if data['normalized_strength'] > threshold]
-    
+    filtered_interactions = [
+        (a1, a2, data)
+        for a1, a2, data in interaction_importance
+        if data["normalized_strength"] > threshold
+    ]
+
     # Create graph
     G = nx.Graph()
-    
+
     # Add nodes and edges
     all_alleles = set()
     for allele1, allele2, interaction_data in filtered_interactions:
@@ -455,7 +476,7 @@ def plot_interaction_network(interaction_importance, locus_names=None, phenotype
         a2_id = allele2[2]  # absolute_idx
         all_alleles.add(a1_id)
         all_alleles.add(a2_id)
-    
+
     # Limit number of nodes if necessary
     if len(all_alleles) > max_nodes:
         # Find the max_nodes most important alleles
@@ -463,20 +484,25 @@ def plot_interaction_network(interaction_importance, locus_names=None, phenotype
         for allele1, allele2, interaction_data in filtered_interactions:
             a1_id = allele1[2]
             a2_id = allele2[2]
-            importance = interaction_data['normalized_strength']
+            importance = interaction_data["normalized_strength"]
             allele_importance[a1_id] = allele_importance.get(a1_id, 0) + importance
             allele_importance[a2_id] = allele_importance.get(a2_id, 0) + importance
-        
-        top_alleles = sorted(allele_importance.items(), key=lambda x: x[1], reverse=True)[:max_nodes]
+
+        top_alleles = sorted(allele_importance.items(), key=lambda x: x[1], reverse=True)[
+            :max_nodes
+        ]
         top_alleles = set(x[0] for x in top_alleles)
-        filtered_interactions = [(a1, a2, data) for a1, a2, data in filtered_interactions 
-                            if a1[2] in top_alleles and a2[2] in top_alleles]
-    
+        filtered_interactions = [
+            (a1, a2, data)
+            for a1, a2, data in filtered_interactions
+            if a1[2] in top_alleles and a2[2] in top_alleles
+        ]
+
     # Add nodes and edges
     for allele1, allele2, interaction_data in filtered_interactions:
         a1_id = allele1[2]  # absolute_idx
         a2_id = allele2[2]  # absolute_idx
-        
+
         # Create more descriptive node names
         if locus_names is not None:
             a1_name = f"{locus_names[allele1[0]]}_Allele{allele1[1]}"
@@ -484,84 +510,106 @@ def plot_interaction_network(interaction_importance, locus_names=None, phenotype
         else:
             a1_name = f"Locus{allele1[0]}_Allele{allele1[1]}"
             a2_name = f"Locus{allele2[0]}_Allele{allele2[1]}"
-        
+
         # Add node if not already present
         if not G.has_node(a1_id):
-            G.add_node(a1_id, name=a1_name, locus=allele1[0], allele=allele1[1],
-                       main_effect=interaction_data['allele1_main_effect'])
-        
+            G.add_node(
+                a1_id,
+                name=a1_name,
+                locus=allele1[0],
+                allele=allele1[1],
+                main_effect=interaction_data["allele1_main_effect"],
+            )
+
         if not G.has_node(a2_id):
-            G.add_node(a2_id, name=a2_name, locus=allele2[0], allele=allele2[1],
-                       main_effect=interaction_data['allele2_main_effect'])
-        
+            G.add_node(
+                a2_id,
+                name=a2_name,
+                locus=allele2[0],
+                allele=allele2[1],
+                main_effect=interaction_data["allele2_main_effect"],
+            )
+
         # Add edge with full interaction data
-        G.add_edge(a1_id, a2_id, 
-                   weight=interaction_data['normalized_strength'],
-                   raw_interaction=interaction_data['raw_interaction_mean'])
-    
+        G.add_edge(
+            a1_id,
+            a2_id,
+            weight=interaction_data["normalized_strength"],
+            raw_interaction=interaction_data["raw_interaction_mean"],
+        )
+
     # Set up plot
     plt.figure(figsize=(14, 14))
-    
+
     # Layout
     pos = nx.spring_layout(G, seed=42)
-    
+
     # Get edge weights for colors
-    edge_weights = [G[u][v]['weight'] for u, v in G.edges()]
-    
+    edge_weights = [G[u][v]["weight"] for u, v in G.edges()]
+
     if not edge_weights:
         plt.title(f"No significant allele-allele interactions found for {phenotype_name}")
         return plt.gcf()
-    
+
     # Normalize weights for colormap
     norm = Normalize(vmin=min(edge_weights), vmax=max(edge_weights))
-    
+
     # Size nodes by their main effect (absolute value)
-    node_sizes = [300 + 1000 * abs(G.nodes[n]['main_effect']) for n in G.nodes()]
-    
+    node_sizes = [300 + 1000 * abs(G.nodes[n]["main_effect"]) for n in G.nodes()]
+
     # Color nodes by locus
-    node_colors = [G.nodes[n]['locus'] % 20 for n in G.nodes()]  # Cycle through 20 colors
-    
+    node_colors = [G.nodes[n]["locus"] % 20 for n in G.nodes()]  # Cycle through 20 colors
+
     # Draw nodes
-    nx.draw_networkx_nodes(G, pos, 
-                           node_size=node_sizes, 
-                           alpha=0.8, 
-                           node_color=node_colors, 
-                           cmap=plt.cm.tab20)
-    
+    nx.draw_networkx_nodes(
+        G, pos, node_size=node_sizes, alpha=0.8, node_color=node_colors, cmap=plt.cm.tab20
+    )
+
     # Draw edges with color based on weight
-    edges = nx.draw_networkx_edges(G, pos, width=2, edge_color=edge_weights, 
-                                  edge_cmap=plt.cm.viridis, edge_vmin=min(edge_weights), 
-                                  edge_vmax=max(edge_weights))
-    
+    edges = nx.draw_networkx_edges(
+        G,
+        pos,
+        width=2,
+        edge_color=edge_weights,
+        edge_cmap=plt.cm.viridis,
+        edge_vmin=min(edge_weights),
+        edge_vmax=max(edge_weights),
+    )
+
     # Draw labels
-    nx.draw_networkx_labels(G, pos, labels={n: G.nodes[n]['name'] for n in G.nodes()}, 
-                        font_size=9, font_family='sans-serif')
-    
+    nx.draw_networkx_labels(
+        G,
+        pos,
+        labels={n: G.nodes[n]["name"] for n in G.nodes()},
+        font_size=9,
+        font_family="sans-serif",
+    )
+
     # Add colorbar
     sm = ScalarMappable(cmap=plt.cm.viridis, norm=norm)
     sm.set_array([])
     cbar = plt.colorbar(sm)
-    cbar.set_label('Normalized Interaction Strength')
-    
+    cbar.set_label("Normalized Interaction Strength")
+
     # Set title
     if phenotype_name is not None:
-        plt.title(f'Allele-Allele Interaction Network for {phenotype_name}', fontsize=16)
+        plt.title(f"Allele-Allele Interaction Network for {phenotype_name}", fontsize=16)
     else:
-        plt.title('Allele-Allele Interaction Network', fontsize=16)
-    
+        plt.title("Allele-Allele Interaction Network", fontsize=16)
+
     # Add legend for node size
     plt.figtext(0.02, 0.02, "Node size = Main effect magnitude", fontsize=10)
-    
-    plt.axis('off')
+
+    plt.axis("off")
     plt.tight_layout()
-    
+
     return plt.gcf()
 
 
 def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
     """
     Perform final analysis of allele-allele interactions and save results.
-    
+
     Parameters:
     -----------
     model : GQ_net
@@ -574,25 +622,25 @@ def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
         Path to save results
     """
     print("Loading test data for allele interaction analysis...")
-    
+
     # Use a more efficient approach to collect test data
     # This reduces memory usage and potential file handle issues
     device = next(model.parameters()).device
-    
+
     # Collect all test data more efficiently
     # Process in smaller batches to avoid memory issues
     all_genotypes = []
     all_phenotypes = []
-    
+
     # Create a loader with no multiprocessing for this specific step
     # This avoids file descriptor issues
     single_worker_loader = torch.utils.data.DataLoader(
-        dataset=test_loader.dataset, 
+        dataset=test_loader.dataset,
         batch_size=16,  # Use a manageable batch size
         num_workers=0,  # No multiprocessing to avoid file handle issues
-        shuffle=False
+        shuffle=False,
     )
-    
+
     with torch.no_grad():  # Save memory by not tracking gradients
         for dat in single_worker_loader:
             ph, gt = dat
@@ -600,225 +648,266 @@ def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
             # Move to CPU to avoid GPU memory issues
             all_genotypes.append(gt.cpu())
             all_phenotypes.append(ph.cpu())
-    
+
     # Concatenate once at the end to save memory
     all_genotypes = torch.cat(all_genotypes, dim=0)
     all_phenotypes = torch.cat(all_phenotypes, dim=0)
-    
+
     print(f"Processed {len(all_genotypes)} test samples for allele interaction analysis")
-    
+
     # Determine which phenotypes to analyze
     phenotypes_to_analyze = []
     if vabs.phenotype_interaction_indices:
         # Parse the comma-separated list of indices
         try:
-            phenotype_indices = [int(idx.strip()) for idx in vabs.phenotype_interaction_indices.split(',')]
+            phenotype_indices = [
+                int(idx.strip()) for idx in vabs.phenotype_interaction_indices.split(",")
+            ]
             # Filter out invalid indices
             total_phenotypes = all_phenotypes.shape[1]
-            phenotypes_to_analyze = [idx for idx in phenotype_indices if 0 <= idx < total_phenotypes]
-            
+            phenotypes_to_analyze = [
+                idx for idx in phenotype_indices if 0 <= idx < total_phenotypes
+            ]
+
             if not phenotypes_to_analyze:
                 print(f"Warning: No valid phenotype indices provided. Using default.")
-                phenotypes_to_analyze = list(range(min(vabs.max_phenotypes_for_interactions, total_phenotypes)))
+                phenotypes_to_analyze = list(
+                    range(min(vabs.max_phenotypes_for_interactions, total_phenotypes))
+                )
             else:
-                print(f"Analyzing interactions for {len(phenotypes_to_analyze)} specified phenotypes: {phenotypes_to_analyze}")
+                print(
+                    f"Analyzing interactions for {len(phenotypes_to_analyze)} specified phenotypes: {phenotypes_to_analyze}"
+                )
         except ValueError:
             print(f"Error parsing phenotype indices. Using default.")
-            phenotypes_to_analyze = list(range(min(vabs.max_phenotypes_for_interactions, all_phenotypes.shape[1])))
+            phenotypes_to_analyze = list(
+                range(min(vabs.max_phenotypes_for_interactions, all_phenotypes.shape[1]))
+            )
     else:
         # Use default sequential phenotypes up to the maximum
-        phenotypes_to_analyze = list(range(min(vabs.max_phenotypes_for_interactions, all_phenotypes.shape[1])))
+        phenotypes_to_analyze = list(
+            range(min(vabs.max_phenotypes_for_interactions, all_phenotypes.shape[1]))
+        )
         print(f"Analyzing interactions for the first {len(phenotypes_to_analyze)} phenotypes")
-    
+
     all_interaction_data = {}
-    
+
     # Also collect main effects of alleles across all phenotypes
     allele_main_effects = {}
-    
+
     for i, phen_idx in enumerate(phenotypes_to_analyze):
-        print(f"Analyzing allele interactions for phenotype {phen_idx} ({i+1}/{len(phenotypes_to_analyze)})")
-        
+        print(
+            f"Analyzing allele interactions for phenotype {phen_idx} ({i + 1}/{len(phenotypes_to_analyze)})"
+        )
+
         # Calculate interactions for this phenotype
         interactions = detect_pairwise_interactions(
-            model, P, all_genotypes, all_phenotypes, 
-            phenotype_idx=phen_idx, threshold=vabs.interaction_threshold)
-        
+            model,
+            P,
+            all_genotypes,
+            all_phenotypes,
+            phenotype_idx=phen_idx,
+            threshold=vabs.interaction_threshold,
+        )
+
         # Convert to dictionary format for compatibility
         # Create a unique key for each allele pair
         interaction_dict = {}
-        
+
         # Track allele main effects for this phenotype
         this_phenotype_main_effects = {}
-        
+
         for a1, a2, interaction_data in interactions:
             # Use the absolute indices as the key
             key = (a1[2], a2[2])
-            
+
             # Store the full information including detailed allele info and interaction data
             interaction_dict[key] = {
-                'allele1': a1,
-                'allele2': a2,
-                'interaction_data': interaction_data
+                "allele1": a1,
+                "allele2": a2,
+                "interaction_data": interaction_data,
             }
-            
+
             # Track main effects for each allele
             a1_id = a1[2]  # absolute index
             a2_id = a2[2]
-            
+
             # Update main effects for this phenotype
             if a1_id not in this_phenotype_main_effects:
                 this_phenotype_main_effects[a1_id] = {
-                    'allele_info': a1,
-                    'main_effect': interaction_data['allele1_main_effect']
+                    "allele_info": a1,
+                    "main_effect": interaction_data["allele1_main_effect"],
                 }
-            
+
             if a2_id not in this_phenotype_main_effects:
                 this_phenotype_main_effects[a2_id] = {
-                    'allele_info': a2,
-                    'main_effect': interaction_data['allele2_main_effect']
+                    "allele_info": a2,
+                    "main_effect": interaction_data["allele2_main_effect"],
                 }
-        
+
         # Add main effects to global tracking
         allele_main_effects[phen_idx] = this_phenotype_main_effects
-        
+
         # Plot network
         plt.figure(figsize=(14, 12))
         fig = plot_interaction_network(
-            interactions, phenotype_name=f"Phenotype {phen_idx}", threshold=vabs.interaction_threshold)
-        
+            interactions,
+            phenotype_name=f"Phenotype {phen_idx}",
+            threshold=vabs.interaction_threshold,
+        )
+
         # Save plot
         plt.savefig(dataset_path + f"allele_interaction_network_phenotype_{phen_idx}.svg")
         plt.savefig(dataset_path + f"allele_interaction_network_phenotype_{phen_idx}.png")
         plt.close()
-        
+
         # Store data
         all_interaction_data[phen_idx] = interaction_dict
-        
+
         # Report the number of significant interactions found
-        print(f"Found {len(interactions)} significant interactions for phenotype {phen_idx} (threshold: {vabs.interaction_threshold})")
-    
+        print(
+            f"Found {len(interactions)} significant interactions for phenotype {phen_idx} (threshold: {vabs.interaction_threshold})"
+        )
+
     # Save all interaction data
     with open(dataset_path + "allele_allele_interactions.pk", "wb") as f:
-        output_data = {
-            'interactions': all_interaction_data,
-            'main_effects': allele_main_effects
-        }
+        output_data = {"interactions": all_interaction_data, "main_effects": allele_main_effects}
         pk.dump(output_data, f)
-    
+
     # Create a summary of the most significant interactions across phenotypes
     interaction_summary = {}
-    
+
     for phen_idx, interactions in all_interaction_data.items():
         for key, data in interactions.items():
             if key not in interaction_summary:
                 interaction_summary[key] = []
-            
+
             # Include normalized strength for summary
             interaction_summary[key].append(
-                (phen_idx, data['interaction_data']['normalized_strength'])
+                (phen_idx, data["interaction_data"]["normalized_strength"])
             )
-    
+
     # Find interactions affecting multiple phenotypes
     multi_phenotype_interactions = {k: v for k, v in interaction_summary.items() if len(v) > 1}
-    
+
     # Sort by total importance across phenotypes
-    sorted_multi = sorted(multi_phenotype_interactions.items(), 
-                        key=lambda x: sum(imp for _, imp in x[1]), 
-                        reverse=True)
-    
+    sorted_multi = sorted(
+        multi_phenotype_interactions.items(),
+        key=lambda x: sum(imp for _, imp in x[1]),
+        reverse=True,
+    )
+
     # Save top multi-phenotype interactions
     with open(dataset_path + "allele_multi_phenotype_interactions.pk", "wb") as f:
         pk.dump(sorted_multi, f)
-    
+
     # Create a human-readable report of the most significant allele interactions
     with open(dataset_path + "allele_interaction_report.txt", "w") as f:
         f.write("Allele-Allele Interaction Analysis Report\n")
         f.write("=======================================\n\n")
-        
+
         # Report per phenotype
         for phen_idx, interactions in all_interaction_data.items():
             f.write(f"Phenotype {phen_idx}:\n")
             f.write("--------------\n")
-            
+
             # Sort interactions by normalized strength
-            sorted_interactions = sorted(interactions.items(), 
-                                         key=lambda x: x[1]['interaction_data']['normalized_strength'], 
-                                         reverse=True)
-            
+            sorted_interactions = sorted(
+                interactions.items(),
+                key=lambda x: x[1]["interaction_data"]["normalized_strength"],
+                reverse=True,
+            )
+
             # Report top interactions (limit to 20 for readability)
             for i, (key, data) in enumerate(sorted_interactions[:20]):
-                allele1 = data['allele1']
-                allele2 = data['allele2']
-                interaction_data = data['interaction_data']
-                
+                allele1 = data["allele1"]
+                allele2 = data["allele2"]
+                interaction_data = data["interaction_data"]
+
                 # Create detailed interaction report
-                f.write(f"{i+1}. Locus{allele1[0]}_Allele{allele1[1]} × Locus{allele2[0]}_Allele{allele2[1]}:\n")
+                f.write(
+                    f"{i + 1}. Locus{allele1[0]}_Allele{allele1[1]} × Locus{allele2[0]}_Allele{allele2[1]}:\n"
+                )
                 f.write(f"   Normalized strength: {interaction_data['normalized_strength']:.4f}\n")
                 f.write(f"   Raw interaction: {interaction_data['raw_interaction_mean']:.4f}\n")
-                f.write(f"   Main effects: {interaction_data['allele1_main_effect']:.4f}, {interaction_data['allele2_main_effect']:.4f}\n")
+                f.write(
+                    f"   Main effects: {interaction_data['allele1_main_effect']:.4f}, {interaction_data['allele2_main_effect']:.4f}\n"
+                )
                 f.write("\n")
-            
+
             f.write("\n")
-        
+
         # Report multi-phenotype interactions
         f.write("Multi-Phenotype Interactions:\n")
         f.write("---------------------------\n")
-        
+
         for i, (key, phenotypes) in enumerate(sorted_multi[:20]):
             a1_idx, a2_idx = key
-            
+
             # Find any interaction data to get the allele info
             for phen_idx, interactions in all_interaction_data.items():
                 if key in interactions:
                     data = interactions[key]
-                    allele1 = data['allele1']
-                    allele2 = data['allele2']
-                    interaction_data = data['interaction_data']
-                    
-                    f.write(f"{i+1}. Locus{allele1[0]}_Allele{allele1[1]} × Locus{allele2[0]}_Allele{allele2[1]}:\n")
-                    f.write(f"   Total normalized importance: {sum(imp for _, imp in phenotypes):.4f}\n")
-                    f.write(f"   Raw interaction (phenotype {phen_idx}): {interaction_data['raw_interaction_mean']:.4f}\n")
-                    f.write(f"   Main effects (phenotype {phen_idx}): {interaction_data['allele1_main_effect']:.4f}, {interaction_data['allele2_main_effect']:.4f}\n")
-                    f.write(f"   Affects phenotypes: {', '.join(f'{p}({imp:.4f})' for p, imp in phenotypes)}\n")
+                    allele1 = data["allele1"]
+                    allele2 = data["allele2"]
+                    interaction_data = data["interaction_data"]
+
+                    f.write(
+                        f"{i + 1}. Locus{allele1[0]}_Allele{allele1[1]} × Locus{allele2[0]}_Allele{allele2[1]}:\n"
+                    )
+                    f.write(
+                        f"   Total normalized importance: {sum(imp for _, imp in phenotypes):.4f}\n"
+                    )
+                    f.write(
+                        f"   Raw interaction (phenotype {phen_idx}): {interaction_data['raw_interaction_mean']:.4f}\n"
+                    )
+                    f.write(
+                        f"   Main effects (phenotype {phen_idx}): {interaction_data['allele1_main_effect']:.4f}, {interaction_data['allele2_main_effect']:.4f}\n"
+                    )
+                    f.write(
+                        f"   Affects phenotypes: {', '.join(f'{p}({imp:.4f})' for p, imp in phenotypes)}\n"
+                    )
                     f.write("\n")
                     break
-        
+
         # Create a section for main effects
         f.write("\nAllele Main Effects:\n")
         f.write("==================\n\n")
-        
+
         for phen_idx, effects in allele_main_effects.items():
             f.write(f"Phenotype {phen_idx}:\n")
             f.write("--------------\n")
-            
+
             # Get top alleles by absolute effect
-            sorted_effects = sorted(effects.items(), 
-                                    key=lambda x: abs(x[1]['main_effect']), 
-                                    reverse=True)
-            
+            sorted_effects = sorted(
+                effects.items(), key=lambda x: abs(x[1]["main_effect"]), reverse=True
+            )
+
             # Report top alleles (limit to 20 for readability)
             for i, (allele_id, effect_data) in enumerate(sorted_effects[:20]):
-                allele_info = effect_data['allele_info']
-                main_effect = effect_data['main_effect']
-                
-                f.write(f"{i+1}. Locus{allele_info[0]}_Allele{allele_info[1]}: {main_effect:.4f}\n")
-            
+                allele_info = effect_data["allele_info"]
+                main_effect = effect_data["main_effect"]
+
+                f.write(
+                    f"{i + 1}. Locus{allele_info[0]}_Allele{allele_info[1]}: {main_effect:.4f}\n"
+                )
+
             f.write("\n")
-    
+
     # Create a csv file for easier data analysis in spreadsheets/R/etc.
     with open(dataset_path + "allele_interactions.csv", "w") as f:
         # Write header
         f.write("phenotype,locus1,allele1_idx,allele1_abs_idx,locus2,allele2_idx,allele2_abs_idx,")
         f.write("normalized_strength,raw_interaction_mean,raw_interaction_abs_mean,")
         f.write("allele1_main_effect,allele2_main_effect,phenotype_std\n")
-        
+
         # Write data for each interaction
         for phen_idx, interactions in all_interaction_data.items():
             for key, data in interactions.items():
-                allele1 = data['allele1']
-                allele2 = data['allele2']
-                idata = data['interaction_data']
-                
+                allele1 = data["allele1"]
+                allele2 = data["allele2"]
+                idata = data["interaction_data"]
+
                 # Write one row per interaction
                 f.write(f"{phen_idx},")
                 f.write(f"{allele1[0]},{allele1[1]},{allele1[2]},")
@@ -829,13 +918,13 @@ def analyze_gene_interaction_network(model, P, test_loader, dataset_path):
                 f.write(f"{idata['allele1_main_effect']},")
                 f.write(f"{idata['allele2_main_effect']},")
                 f.write(f"{idata['phenotype_std']}\n")
-    
+
     print(f"Saved allele interaction analysis results to {dataset_path}")
-    
+
     # Clean up to release memory
     del all_genotypes
     del all_phenotypes
-    
+
     return all_interaction_data
 
 
@@ -1317,7 +1406,7 @@ stats_aggregator.extend(
 # Detection of allele-allele interactions
 if vabs.detect_interactions == "yes":
     print("Detecting allele-allele interactions...")
-    
+
     # Use the comprehensive analysis function
     analyze_gene_interaction_network(GQ, P, test_loader_geno, dataset_path)
 
