@@ -1,9 +1,11 @@
 # G-P Atlas
 
 ## Overview
+
 This script implements the **G-P Atlas** method for mapping genotype to phenotype as described in [this publication](https://doi.org/10.57844/arcadia-d316-721f). It employs neural networks to encode and decode genetic and phenotypic data and applies feature attribution analysis for interpretability.
 
 ## Features
+
 - **Genotype-Phenotype Mapping**: Uses neural networks to predict phenotypic traits from genotypic data.
 - **Phenotype Autoencoder**: Learns representations of phenotypic traits.
 - **Feature Attribution Analysis**: Implements Captum's Feature Ablation for importance evaluation.
@@ -22,12 +24,17 @@ The script relies on the following dependencies:
 - Captum
 
 Install them using:
+
 ```sh
 pip install torch numpy scipy scikit-learn matplotlib captum
 ```
 
+For the exact versions used in the pub, see the [exact_environment.yml](../envs/exact_environment.yml) file.
+
 ## Usage
+
 ### Command-line Arguments
+
 The script accepts various arguments to configure model parameters. Below is a complete list of arguments:
 
 | Argument | Description | Default |
@@ -73,32 +80,45 @@ The script accepts various arguments to configure model parameters. Below is a c
 | `--phenotype_interaction_indices` | Comma-separated list of phenotype indices to analyze for interactions (e.g., '0,2,5') | `""` |
 
 To see all options, run:
+
 ```sh
 python3 g_p_atlas.py --help
 ```
 
 ### Input Data
+
 G-P Atlas expects input data to be a pickled python dictionary with `phenotype` and `genotype` entries.
 
-#### details of phenotype input
+#### Details of the phenotype input
+
 Currently, G-P Atlas only operates on continuously traits and expects inputs to be floating point numbers. It does not require rescaling the mean and variance of these values. The object indexed by `phenotype` is expected to be a list of lists where each sublist is the of phenotypes for an individual. It expects the main list to be in this format: [[phenotypes from individual 1], [phenotypes from individual 2]...]. It expects each sublist to be [phenotype 1, phenotype 2, ...].
 e.g., [[2.0,3.2,4.5...],[2.5,3.1,4.0...]...]
-#### details of Genotype input
+
+#### Details of the genotype input
+
 G-P Atlas expects the 'genotypes' entry to be a nested list where the main list is: [[genotypes from individual 1],[genotypes from individual 2]...]. It expects each sublist to be a list of sublists formatted as [[allelic state locus 1],[allelic state locus 2]...]. It expects allelic states to be 1 hot encoded. i.e., either [1,0] or [0,1] for a locus with 2 allelic states. If some loci in the population have more than 2 allelic states then all loci have to be 1 hot encoded with the possibility of the maximum number of allelic states. For example, if some loci have 3 allelic states then all loci have to be encoded as: [1,0,0], [0,1,0], or [0,0,1].
 e.g., [[[0,1],[0,1],[1,0]...],[[0,1],[1,0],[0,1]]...]
 
-### Running the Script
+### Running the script
+
 To train the model with default settings:
+
 ```sh
 python3 g_p_atlas.py --dataset_path /path/to/data/
 ```
 
 To load precomputed weights and resume training:
+
 ```sh
-python3 g_p_atlas.py --hot_start True --hot_start_path_e /path/to/encoder.pt --hot_start_path_d /path/to/decoder.pt --hot_start_path_ge /path/to/gen_encoder.pt
+python3 g_p_atlas.py \
+  --hot_start True \
+  --hot_start_path_e /path/to/encoder.pt \
+  --hot_start_path_d /path/to/decoder.pt \
+  --hot_start_path_ge /path/to/gen_encoder.pt
 ```
 
 ## Output Files
+
 - **Model Checkpoints**: Saves trained models (`phen_encoder_state.pt`, `phen_decoder_state.pt`, `gen_encoder_state.pt`)
 - **G-P Atlas Run Parameters**: `run_params.txt` (Contains the exact command line entered for that run)
 - **Plots**: 
