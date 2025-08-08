@@ -353,7 +353,6 @@ def plot_qq_with_bands(vi_matrix, interaction_loci_indices, non_interaction_loci
     max_val = max(np.max(x_values), np.max(y_values))
     ax.plot([min_val, max_val], [min_val, max_val], "--", color="#DA9085")
 
-
     # Create confidence bands (95%)
     lower_band = np.zeros_like(x_values)
     upper_band = np.zeros_like(x_values)

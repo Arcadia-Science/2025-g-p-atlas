@@ -623,9 +623,9 @@ def plot_vida_performance(
 
     percentiles = np.arange(1, 101)  # 1% to 100%
     enrichment_values = []
-    #interacting_loci_values = [
+    # interacting_loci_values = [
     #    sorted_df[metric_name][n] for n in range(n_total) if sorted_df["is_interaction"][n] == 1
-    #]
+    # ]
 
     for percentile in percentiles:
         """percentile_threshold = np.percentile(sorted_df[metric_name], percentile)
@@ -682,7 +682,7 @@ def plot_vida_performance(
     plt.show()
 
     # Calculate VIDA stats for known interacting and known non-interacting loci
-    '''vida_int = [
+    """vida_int = [
         metrics_df["vida_score"][n]
         for n in range(len(metrics_df["vida_score"]))
         if metrics_df["locus"][n] in allele_interaction_indices
@@ -691,7 +691,7 @@ def plot_vida_performance(
         metrics_df["vida_score"][n]
         for n in range(len(metrics_df["vida_score"]))
         if metrics_df["locus"][n] in allele_direct_indices
-    ]'''
+    ]"""
 
     # Print summary statistics
     print(f"\n=== PERFORMANCE SUMMARY for {metric_name} ===")
@@ -715,6 +715,7 @@ def plot_vida_performance(
         "enrichment_5pct": enrichment_5,
         "direction": direction,
     }
+
 
 def hypergeometric_enrichment_test(
     vida_results,
@@ -745,7 +746,7 @@ def hypergeometric_enrichment_test(
         Results of enrichment tests for each percentile
     """
     if top_percentiles is None:
-       top_percentiles=[5, 10, 20]
+        top_percentiles = [5, 10, 20]
 
     print("=== HYPERGEOMETRIC ENRICHMENT TEST ===")
     print(f"Testing enrichment for metric: {metric_name}")
@@ -933,8 +934,8 @@ def hypergeometric_enrichment_test(
         )
         print(f"  P-value: {best_enrichment['p_value']:.2e}")
         print(
-            f"  95% CI: {best_enrichment['enrichment_ci_lower']:.2f}-{best_enrichment\
-        ['enrichment_ci_upper']:.2f}"
+            f"  95% CI: {best_enrichment['enrichment_ci_lower']:.2f}-{
+                best_enrichment['enrichment_ci_upper']:.2f}"
         )
     else:
         print("No significant enrichment found at tested percentiles")
@@ -985,7 +986,7 @@ def multiple_metric_enrichment_test(
     Test enrichment for multiple metrics simultaneously
     """
     if metrics is None:
-        metrics=["VIDA_score", "avg_clumpiness_diff", "avg_extreme_ratio_diff"]
+        metrics = ["VIDA_score", "avg_clumpiness_diff", "avg_extreme_ratio_diff"]
 
     print("=== MULTIPLE METRIC ENRICHMENT TEST ===")
     print("-" * 50)
