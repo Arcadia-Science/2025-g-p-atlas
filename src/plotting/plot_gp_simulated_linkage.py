@@ -79,40 +79,49 @@ plt.savefig(target_folder + "MSV_vs_additive_contribution.png")
 plt.close()
 
 # create variables for allele specific indices for the followingplots
-allele_interaction_indices = list(set(hf.known_interaction_indices(test_data['interact_matrix']).flatten())) #indices of alleles involved in interactions
-allele_direct_indices = [x*3 for x in list(set(np.array(test_data['inds_of_loci_influencing_phen']).flatten()))] #indices of alleles directly influencing phenotypes
-allele_direct_only_indices = [x for x in allele_direct_indices if x not in allele_interaction_indices]
+allele_interaction_indices = list(
+    set(hf.known_interaction_indices(test_data["interact_matrix"]).flatten())
+)  # indices of alleles involved in interactions
+allele_direct_indices = [
+    x * 3 for x in list(set(np.array(test_data["inds_of_loci_influencing_phen"]).flatten()))
+]  # indices of alleles directly influencing phenotypes
+allele_direct_only_indices = [
+    x for x in allele_direct_indices if x not in allele_interaction_indices
+]
 all_loci_indices = np.concatenate([allele_interaction_indices, allele_direct_only_indices])
 
 # create a Q-Q plot to evaluate kurtosis
-q_q_plot = hf.plot_qq_with_bands(np.array(gene_attributions), allele_interaction_indices, allele_direct_only_indices)
-plt.savefig(target_folder + 'variable_importance_qq_interacting_vs_non.svg')
-plt.savefig(target_folder + 'variable_importance_qq_interacting_vs_non.png')
+q_q_plot = hf.plot_qq_with_bands(
+    np.array(gene_attributions), allele_interaction_indices, allele_direct_only_indices
+)
+plt.savefig(target_folder + "variable_importance_qq_interacting_vs_non.svg")
+plt.savefig(target_folder + "variable_importance_qq_interacting_vs_non.png")
 plt.close()
-boot_strap_kurtosis_results = hf.bootstrap_kurtosis_test(np.array(gene_attributions), allele_interaction_indices, allele_direct_only_indices)
+boot_strap_kurtosis_results = hf.bootstrap_kurtosis_test(
+    np.array(gene_attributions), allele_interaction_indices, allele_direct_only_indices
+)
 hf.plot_kurtosis_results(boot_strap_kurtosis_results)
 plt.savefig(target_folder + "boot_kurtosis_int_vs_non_int.svg")
 plt.savefig(target_folder + "boot_kurtosis_int_vs_non_int.png")
 plt.close()
 
-#run vida analysis and make plots
+# run vida analysis and make plots
 vida_metrics = v.calculate_optimized_hybrid_vida_scores(
-   np.array(gene_attributions),
-   all_loci_indices,
-   z_threshold=2.0,
-   clumpiness_percentile=5,
-   clumpiness_method='concentration'
+    np.array(gene_attributions),
+    all_loci_indices,
+    z_threshold=2.0,
+    clumpiness_percentile=5,
+    clumpiness_method="concentration",
 )
 
 performance_stats = v.plot_vida_performance(
-     vida_metrics,
-     allele_interaction_indices,
-     allele_direct_indices,
-     metric_name='vida_score',
-     title_suffix=' (Optimized Parameters)'
+    vida_metrics,
+    allele_interaction_indices,
+    allele_direct_indices,
+    metric_name="vida_score",
+    title_suffix=" (Optimized Parameters)",
 )
 
 plt.savefig(target_folder + "vida_plots_int_vs_non_int.svg")
 plt.savefig(target_folder + "vida_plots_int_vs_non_int.png")
 plt.close()
-

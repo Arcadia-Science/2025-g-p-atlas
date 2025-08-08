@@ -21,7 +21,7 @@ phen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr_p.p
 gen_encodings = pk.load(open(target_folder + "phens_phen_encodings_dng_attr.pk", "rb"))
 
 # tsne plot of phenotype latent space
-tsne_model = TSNE(n_components=2,  init="random", perplexity=30)
+tsne_model = TSNE(n_components=2, init="random", perplexity=30)
 latent_representation_phenotype = np.array(phen_encodings[2]).T
 embeddings = tsne_model.fit_transform(latent_representation_phenotype)
 plt.scatter(embeddings.T[0], embeddings.T[1])
