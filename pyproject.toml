@@ -1,6 +1,6 @@
 [project]
-name = "TODO: Tool name"
-description = "TODO: Tool description"
+name = "g-p-atlas"
+description = "A neural network framework for mapping genotypes to many phenotypes"
 version = "0.0.0"
 readme = "README.md"
 requires-python = ">=3.12"

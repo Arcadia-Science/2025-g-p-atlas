@@ -466,4 +466,4 @@ def non_interaction_alleles(i_matrix):
                 (interaction[1] * 3) + interaction[2],
             )
             non_int_coordinates.append(transformed_coordinates)
-    return
+    return np.array(non_int_coordinates)

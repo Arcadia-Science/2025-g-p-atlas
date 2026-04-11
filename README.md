@@ -52,8 +52,8 @@ All data anlyzed in https://doi.org/10.57844/arcadia-d316-721f are contained in 
 │   ├── full_g_p_run_simulated_data	# output for runs on simulated data
 │   └── yeast_data			# output for runs on yeast data
 │       ├── full_g_p_atlas_all_yeast_data	# output for G-P Atlas runs on the full yeast dataset and plots
-│       ├── no_hidden_layer_genotype_all_yeast_data	# output for G-P Atlas runs (with no genotype hidden layer) on the full yeast dataset and plots
-│       ├── no_hidden_layer_phenotype_all_yeast_data	# output for G-P Atlas runs (with no phenotype hidden layer) on the full yeast dataset and plots
+│       ├── no_hidden_layer_genotype_yeast_data	# output for 1-layer variant (g_p_atlas_1_layer_g_p.py) with no genotype hidden layer
+│       ├── no_hidden_layer_phenotype_yeast_data	# output for 1-layer variant (g_p_atlas_1_layer_p_p.py) with no phenotype hidden layer
 │       └── 41586_2013_BFnature11867_MOESM88_ESM_yeat_linkage_data.csv	# Linage data from 10.1038/nature11867. It is used in several plots.
 ├──envs 			# environement files
 │   ├── dev.yml                 # conda .yml for managing repository updates  
@@ -105,7 +105,7 @@ To recapitulate the primary analyses from [the pub](https://doi.org/10.57844/arc
    --n_alleles 3
    ```
 
-4. Run G-P Atlas on yeast data:	
+4. Run G-P Atlas on yeast data:
    ```sh
    python3 src/g-p_atlas_analysis_scripts/g_p_atlas.py \
       --dataset_path data/yeast_data/g_p_atlas_format_data/ \
@@ -121,26 +121,61 @@ To recapitulate the primary analyses from [the pub](https://doi.org/10.57844/arc
       --sd_noise 0.8 \
       --gen_noise 0.8
    ```
-5. Create run plots for simulated data: 
+
+5. (Optional) Run 1-layer variant with no hidden layer in genotype encoder:
+   ```sh
+   python3 src/g-p_atlas_analysis_scripts/g_p_atlas_1_layer_g_p.py \
+      --dataset_path data/yeast_data/g_p_atlas_format_data/ \
+      --n_epochs 250 \
+      --n_epochs_gen 250 \
+      --n_loci_measured 11623 \
+      --latent_dim 32 \
+      --e_hidden_dim 64 \
+      --d_hidden_dim 64 \
+      --ge_hidden_dim 2048 \
+      --n_phens_to_analyze 46 \
+      --n_phens_to_predict 46 \
+      --sd_noise 0.8 \
+      --gen_noise 0.8
+   ```
+
+6. (Optional) Run 1-layer variant with no hidden layer in phenotype encoder:
+   ```sh
+   python3 src/g-p_atlas_analysis_scripts/g_p_atlas_1_layer_p_p.py \
+      --dataset_path data/yeast_data/g_p_atlas_format_data/ \
+      --n_epochs 250 \
+      --n_epochs_gen 250 \
+      --n_loci_measured 11623 \
+      --latent_dim 32 \
+      --e_hidden_dim 64 \
+      --d_hidden_dim 64 \
+      --ge_hidden_dim 2048 \
+      --n_phens_to_analyze 46 \
+      --n_phens_to_predict 46 \
+      --sd_noise 0.8 \
+      --gen_noise 0.8
+   ```
+
+8. Create run plots for simulated data:
    ```sh
    python3 src/plotting/plot_gp_simulated_run.py \
       results/full_g_p_run_simulated_data/
    ```
 
-6. Create linkage plots for simulated data: 
+9. Create linkage plots for simulated data:
    ```sh
    python3 src/plotting/plot_gp_simulated_linkage.py \
       results/full_g_p_run_simulated_data/ \
       data/g_p_atlas_format_simulated_data/test.pk
    ```
 
-7. Create run plots for yeast data: 
+10. Create run plots for yeast data:
    ```sh
    python3 src/plotting/plot_gp_yeast_run.py \
       results/yeast_data/full_g_p_atlas_all_yeast_data/
    ```
 
-8. Create linkage plots for yeast data: 
+11. Create linkage plots for yeast data:
    ```sh
    python3 src/plotting/plot_gp_yeast_linkage.py \
       results/yeast_data/full_g_p_atlas_all_yeast_data/ \
